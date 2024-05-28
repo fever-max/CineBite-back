@@ -1,14 +1,21 @@
 package com.cine.back.config;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-import lombok.RequiredArgsConstructor;
-
-@OpenAPIDefinition(info = @Info(title = "cineBite API 명세서", description = "모의 프로젝트", version = "v1"))
-@RequiredArgsConstructor
 @Configuration
 public class SwaggerConfig {
+
+    @Bean
+    public OpenAPI openAPI() {
+        Info info = new Info()
+                .version("v1.0")
+                .title("CineBite API")
+                .description("영화 커뮤니티 프로젝트 API");
+        return new OpenAPI()
+                .info(info);
+    }
 
 }

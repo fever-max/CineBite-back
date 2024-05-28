@@ -37,7 +37,7 @@ out/
 .vscode/
 
 logs/
-.gitmessage.txt
+gitmessage.txt
 application.properties
 application-aws.properties
 application-oauth2.properties
