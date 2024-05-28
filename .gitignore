@@ -36,6 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 
+logs/
 .gitmessage.txt
 application.properties
 application-aws.properties
