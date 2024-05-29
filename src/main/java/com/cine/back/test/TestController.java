@@ -3,6 +3,7 @@ package com.cine.back.test;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/test")
@@ -21,7 +23,7 @@ public class TestController implements TestControllerDocs {
 
     @PostMapping("/save")
     public ResponseEntity<String> testPost(@RequestBody TestEntity userInfo) {
-        System.out.println("유저 정보 저장 컨트롤러");
+        log.info("유저 정보 저장 컨트롤러 실행");
         try {
             testService.save(userInfo);
             return ResponseEntity.ok("유저 정보 저장 완료");
@@ -33,7 +35,7 @@ public class TestController implements TestControllerDocs {
 
     @GetMapping("/findAll")
     public ResponseEntity<List<TestEntity>> testGet() {
-        System.out.println("유저 정보 반환 컨트롤러");
+        log.info("유저 정보 반환 컨트롤러 실행");
 
         try {
             List<TestEntity> testEntity = testService.findAll();
