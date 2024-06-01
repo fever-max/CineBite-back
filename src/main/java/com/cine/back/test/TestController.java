@@ -29,6 +29,7 @@ public class TestController implements TestControllerDocs {
             return ResponseEntity.ok("유저 정보 저장 완료");
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("유저 정보 저장 실패", e);
             return ResponseEntity.status(400).body("유저 정보 저장 실패");
         }
     }
@@ -42,7 +43,8 @@ public class TestController implements TestControllerDocs {
             return ResponseEntity.ok(testEntity);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(400).body(null);
+            log.error("유저 정보 반환 실패", e);
+            return ResponseEntity.status(400).build();
         }
     }
 
