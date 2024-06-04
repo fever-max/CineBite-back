@@ -1,4 +1,4 @@
-package com.cine.back;
+package handler;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
