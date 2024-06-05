@@ -53,9 +53,6 @@ public class BoardEntity {
     private int boardLikeCount = 0;
 
     // 이미지
-    @Column(name = "board_imgName", length = 1000)
-    private String boardImgName;
-
     @Column(name = "board_imgUrl", length = 1000)
     private String boardImgUrl;
 
@@ -74,14 +71,14 @@ public class BoardEntity {
 
     @Builder
     public BoardEntity(String boardTitle, String boardContent, String userEmail, LocalDateTime boardCreatedDate,
-            String boardImgName,
+            LocalDateTime boardUpdateDate,
             String boardImgUrl,
             String boardListTag) {
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
         this.userEmail = userEmail;
         this.boardCreatedDate = boardCreatedDate;
-        this.boardImgName = boardImgName;
+        this.boardUpdateDate = boardUpdateDate;
         this.boardImgUrl = boardImgUrl;
         this.boardListTag = boardListTag;
     }
