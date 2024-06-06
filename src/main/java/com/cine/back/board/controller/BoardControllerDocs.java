@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cine.back.board.dto.BoardDto;
+import com.cine.back.board.dto.BoardRequestDto;
+import com.cine.back.board.dto.BoardResponseDto;
 import com.cine.back.board.entity.BoardEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,7 +25,7 @@ public interface BoardControllerDocs {
                         @ApiResponse(responseCode = "200", description = "글 저장 성공"),
                         @ApiResponse(responseCode = "400", description = "글 저장 실패"),
                         @ApiResponse(responseCode = "500", description = "서버 내부 오류") })
-        public ResponseEntity<Long> saveBoard(@RequestPart(value = "dto") BoardDto boardDto,
+        public ResponseEntity<Long> saveBoard(@RequestPart(value = "dto") BoardRequestDto boardDto,
                         @RequestPart(value = "file") MultipartFile imgFile);
 
         // 글 전체 조회
@@ -32,14 +33,14 @@ public interface BoardControllerDocs {
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "글 전체 조회 성공"),
                         @ApiResponse(responseCode = "400", description = "글 전체 조회 실패") })
-        ResponseEntity<List<BoardEntity>> getAllBoards();
+        ResponseEntity<List<BoardResponseDto>> getAllBoards();
 
         // 글 세부 조회
         @Operation(summary = "게시판 글 세부 조회", description = "게시판에 저장된 특정 글을 조회합니다.")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "글 세부 조회 성공"),
                         @ApiResponse(responseCode = "400", description = "글 세부 조회 실패") })
-        ResponseEntity<BoardEntity> getBoardById(@PathVariable(value = "no") Long boardNo);
+        ResponseEntity<BoardResponseDto> getBoardById(@PathVariable(value = "no") Long boardNo);
 
         // 글 삭제
         @Operation(summary = "게시판 글 삭제", description = "게시판에서 글을 삭제합니다.")
@@ -55,6 +56,6 @@ public interface BoardControllerDocs {
                         @ApiResponse(responseCode = "400", description = "글 수정 실패"),
                         @ApiResponse(responseCode = "500", description = "서버 내부 오류") })
         ResponseEntity<Long> updateBoard(@PathVariable(value = "no") Long boardNo,
-                        @RequestPart(value = "dto") BoardDto boardDto,
+                        @RequestPart(value = "dto") BoardRequestDto boardDto,
                         @RequestPart(value = "file") MultipartFile imgFile);
 }

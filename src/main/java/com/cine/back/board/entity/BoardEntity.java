@@ -1,21 +1,12 @@
 package com.cine.back.board.entity;
 
 import java.time.LocalDateTime;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -65,22 +56,19 @@ public class BoardEntity {
     @Column(name = "board_updateDate")
     private LocalDateTime boardUpdateDate;
 
-    // 태그
-    @Column(name = "board_tag", length = 500)
-    private String boardListTag;
-
     @Builder
     public BoardEntity(String boardTitle, String boardContent, String userEmail, LocalDateTime boardCreatedDate,
             LocalDateTime boardUpdateDate,
-            String boardImgUrl,
-            String boardListTag) {
+            String boardImgUrl) {
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
         this.userEmail = userEmail;
         this.boardCreatedDate = boardCreatedDate;
         this.boardUpdateDate = boardUpdateDate;
         this.boardImgUrl = boardImgUrl;
-        this.boardListTag = boardListTag;
     }
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<BoardTagMapEntity> boardTagMappings;
 
 }
