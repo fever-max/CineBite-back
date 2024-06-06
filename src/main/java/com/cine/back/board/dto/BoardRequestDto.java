@@ -1,9 +1,10 @@
 package com.cine.back.board.dto;
 
 import lombok.Data;
+import java.util.List;
 
 @Data
-public class BoardDto {
+public class BoardRequestDto {
 
     private String boardTitle;
 
@@ -11,6 +12,6 @@ public class BoardDto {
 
     private String userEmail;
 
-    private String boardListTag;
+    private List<String> tagNames;
 
 }

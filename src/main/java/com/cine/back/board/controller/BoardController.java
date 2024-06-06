@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cine.back.board.dto.BoardDto;
+import com.cine.back.board.dto.BoardRequestDto;
+import com.cine.back.board.dto.BoardResponseDto;
 import com.cine.back.board.entity.BoardEntity;
 import com.cine.back.board.service.BoardService;
 
@@ -30,7 +31,7 @@ public class BoardController implements BoardControllerDocs {
 
     @Override
     @PostMapping("/write")
-    public ResponseEntity<Long> saveBoard(BoardDto boardDto, MultipartFile imgFile) {
+    public ResponseEntity<Long> saveBoard(BoardRequestDto boardDto, MultipartFile imgFile) {
         log.info("게시글 저장 컨트롤러, BoardTitle: {}", boardDto.getBoardTitle());
         try {
             BoardEntity boardEntity = boardService.writeBoard(boardDto, imgFile);
@@ -43,17 +44,17 @@ public class BoardController implements BoardControllerDocs {
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<List<BoardEntity>> getAllBoards() {
+    public ResponseEntity<List<BoardResponseDto>> getAllBoards() {
         log.info("전체 게시글 반환 컨트롤러");
-        List<BoardEntity> boards = boardService.getAllBoards();
+        List<BoardResponseDto> boards = boardService.getAllBoards();
         return ResponseEntity.ok().body(boards);
     }
 
     @Override
     @GetMapping("/post/{no}")
-    public ResponseEntity<BoardEntity> getBoardById(Long boardNo) {
+    public ResponseEntity<BoardResponseDto> getBoardById(Long boardNo) {
         log.info("특정 게시글 반환 컨트롤러, Board No: {}", boardNo);
-        BoardEntity board = boardService.getBoardByNo(boardNo);
+        BoardResponseDto board = boardService.getByBoardNo(boardNo);
         return ResponseEntity.ok().body(board);
     }
 
@@ -72,7 +73,7 @@ public class BoardController implements BoardControllerDocs {
 
     @Override
     @PutMapping("/modify/{no}")
-    public ResponseEntity<Long> updateBoard(Long boardNo, BoardDto boardDto, MultipartFile imgFile) {
+    public ResponseEntity<Long> updateBoard(Long boardNo, BoardRequestDto boardDto, MultipartFile imgFile) {
         log.info("특정 게시글 수정 컨트롤러, Board No: {}", boardNo);
         try {
             BoardEntity boardEntity = boardService.modifyBoard(boardNo, boardDto, imgFile);
