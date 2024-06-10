@@ -33,13 +33,12 @@ public class movieListController {
     }
 
     @GetMapping("/trend")
-    public ResponseEntity<TrendMovieResponse> getTrendInfo() {
+    public ResponseEntity<List<TrendMovieEntity>> getAllTrendMovies() {
         try {
-            TrendMovieResponse trendMovieResponse = listCall.getTrendMovieList();
-            
-            log.info("영화 목록 반환 컨트롤러, trendList : {}", trendMovieResponse);
-            return ResponseEntity.ok(trendMovieResponse);
-            // return ResponseEntity.ok(listCall.getTrendMovieList());
+            List<TrendMovieEntity> allMovies = listCall.getAllTrendMovies();
+            log.info("영화 목록 반환 컨트롤러, trendList : {}", allMovies);
+
+            return ResponseEntity.ok().body(allMovies);
         } catch (Exception e) {
             log.error("리스트 반환 실패 : ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

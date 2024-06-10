@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -30,11 +31,24 @@ public class ListCall {
         this.trendMovieRepository = trendMovieRepository;
     }
     
-    public TrendMovieResponse getTrendMovieList() {
+    public List<TrendMovieEntity> getAllTrendMovies() {
+    List<TrendMovieEntity> allMovies = new ArrayList<>();
+
+    for (int page = 1; page <= 1; page++) {
+        TrendMovieResponse trendMovieResponse = getTrendMovieList(page);
+            if (trendMovieResponse != null) {
+                List<TrendMovieEntity> movies = trendMovieResponse.getResults();
+                allMovies.addAll(movies);
+            }
+        }
+        return allMovies;
+    }
+
+    public TrendMovieResponse getTrendMovieList(int page) {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-            .url("https://api.themoviedb.org/3/trending/movie/week?language=ko-KR")
+            .url("https://api.themoviedb.org/3/trending/movie/week?language=ko-KR&page=" + page)
             .get()
             .addHeader("accept", "application/json")
             .addHeader("Authorization", "Bearer " +accessToken)
