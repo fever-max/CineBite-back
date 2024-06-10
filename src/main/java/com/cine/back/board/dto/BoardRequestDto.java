@@ -1,9 +1,10 @@
 package com.cine.back.board.dto;
 
-import lombok.Data;
+import lombok.Getter;
+
 import java.util.List;
 
-@Data
+@Getter
 public class BoardRequestDto {
 
     private String boardTitle;
