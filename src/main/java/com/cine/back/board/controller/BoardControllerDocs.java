@@ -1,5 +1,6 @@
 package com.cine.back.board.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cine.back.board.dto.BoardRequestDto;
 import com.cine.back.board.dto.BoardResponseDto;
-import com.cine.back.board.entity.BoardEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,7 +26,7 @@ public interface BoardControllerDocs {
                         @ApiResponse(responseCode = "400", description = "글 저장 실패"),
                         @ApiResponse(responseCode = "500", description = "서버 내부 오류") })
         public ResponseEntity<Long> saveBoard(@RequestPart(value = "dto") BoardRequestDto boardDto,
-                        @RequestPart(value = "file") MultipartFile imgFile);
+                        @RequestPart(value = "file") MultipartFile imgFile) throws IOException;
 
         // 글 전체 조회
         @Operation(summary = "게시판 글 전체 조회", description = "게시판에 저장된 모든 글을 조회합니다.")
@@ -47,7 +47,7 @@ public interface BoardControllerDocs {
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "글 삭제 성공"),
                         @ApiResponse(responseCode = "400", description = "글 삭제 실패") })
-        ResponseEntity<String> deleteBoard(@PathVariable(value = "no") Long boardNo);
+        ResponseEntity<String> deleteBoard(@PathVariable(value = "no") Long boardNo) throws IOException;
 
         // 글 수정
         @Operation(summary = "게시판 글 수정", description = "게시판에 저장된 글을 수정합니다.")
@@ -57,5 +57,5 @@ public interface BoardControllerDocs {
                         @ApiResponse(responseCode = "500", description = "서버 내부 오류") })
         ResponseEntity<Long> updateBoard(@PathVariable(value = "no") Long boardNo,
                         @RequestPart(value = "dto") BoardRequestDto boardDto,
-                        @RequestPart(value = "file") MultipartFile imgFile);
+                        @RequestPart(value = "file") MultipartFile imgFile) throws IOException;
 }

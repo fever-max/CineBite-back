@@ -38,7 +38,6 @@ public class BoardTagService {
         List<BoardTagMapEntity> tagMappings = boardEntity.getBoardTagMappings();
         boardTagMapRepository.deleteAll(tagMappings);
         saveTags(boardEntity, newTagNames);
-
         return newTagNames;
     }
 
