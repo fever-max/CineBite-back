@@ -41,6 +41,7 @@ gitmessage.txt
 application.properties
 application-aws.properties
 application-oauth2.properties
+application.yaml
 gradle/.DS_Store
 src/.DS_Store
 src/main/.DS_Store
