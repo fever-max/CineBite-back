@@ -1,18 +1,12 @@
 package com.cine.back.movieList.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.cine.back.movieList.entity.TrendMovieEntity;
 import com.cine.back.movieList.entity.movieDetailEntity;
 import com.cine.back.movieList.repository.MovieDetailRepository;
-import com.cine.back.movieList.repository.TrendMovieRepository;
-import com.cine.back.movieList.response.MovieDTO;
-import com.cine.back.movieList.response.TrendMovieResponse;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -59,7 +53,6 @@ public class DetailCall {
             }
 
             String responseBody = response.body().string();
-            // return parseMovieDetailResponse(responseBody);
             movieDetailEntity movieDetail = parseMovieDetailResponse(responseBody);
         
         // 가져온 상세 정보를 저장

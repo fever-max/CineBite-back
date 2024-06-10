@@ -7,20 +7,15 @@ import com.cine.back.movieList.repository.TrendMovieRepository;
 import com.cine.back.movieList.response.TrendMovieResponse;
 import com.cine.back.movieList.service.ListCall;
 
-import io.jsonwebtoken.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @Slf4j
 @RestController
-@CrossOrigin("localhost:3000")
 @RequestMapping("/api/trendMovie")
 public class movieListController {
 
@@ -45,7 +40,6 @@ public class movieListController {
         }
     }
 
-    @CrossOrigin("localhost:3000")
     @GetMapping("/list")
     public List<TrendMovieEntity> getFromDB() {
         return trendMovieRepository.findAll();
