@@ -34,7 +34,7 @@ public class ListCall {
     public List<TrendMovieEntity> getAllTrendMovies() {
     List<TrendMovieEntity> allMovies = new ArrayList<>();
 
-    for (int page = 1; page <= 10; page++) {
+    for (int page = 1; page <= 1; page++) {
         TrendMovieResponse trendMovieResponse = getTrendMovieList(page);
             if (trendMovieResponse != null) {
                 List<TrendMovieEntity> movies = trendMovieResponse.getResults();

@@ -30,11 +30,11 @@ public class movieDetailController {
     }
 
     @GetMapping("/detail/{movie_id}")
-    public ResponseEntity <movieDetailEntity> getMovieDetail(@PathVariable("movie_id") int movieId ) {
+    public ResponseEntity <movieDetailEntity> getMovieDetail(@PathVariable("movie_id") int movieId) {
         try {
             movieDetailEntity movieDetail = detailCall.getMovieDetail(movieId);
 
-            log.info("영화 상세 정보 반환 컨트롤러, detail : {}", movieDetail);
+            log.info("영화 상세 정보 반환 컨트롤러, detail : {}", movieId);
 
             return ResponseEntity.ok().body(movieDetail);
         } catch (Exception e) {

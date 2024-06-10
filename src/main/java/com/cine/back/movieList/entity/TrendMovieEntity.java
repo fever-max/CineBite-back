@@ -8,65 +8,37 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true) // 사용하지 않을 api 필드 무시
 @Entity
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Table(name = "TrendMovie")
 public class TrendMovieEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "trend_movie_no")
-    private int id;
+    private int trend_movie_no;
 
-    @JsonProperty("backdrop_path")
-    @Column(length = 100)
-    private String backdropPath;
-
-    @JsonProperty("original_title")
-    @Column(length = 100)
-    private String originalTitle;
-
-    @JsonProperty("overview")
-    @Column(columnDefinition = "TEXT")
-    private String overview;
+    @JsonProperty("id")
+    @Column(name = "movie_id")  // 영화 번호
+    private String movie_id;
 
     @JsonProperty("poster_path")
     @Column(length = 100)
     private String posterPath;
 
-    @JsonProperty("adult")
-    @Column
-    private boolean adult;
-
     @JsonProperty("title")
     @Column(length = 100)
     private String title;
 
-    @JsonProperty("original_language")
-    @Column(length = 10)
-    private String originalLanguage;
-
-    @JsonProperty("popularity")
-    @Column
-    private double popularity;
+    @JsonProperty("overview")
+    @Column(columnDefinition = "TEXT")
+    private String overview;
 
     @JsonProperty("release_date")
     @Column(length = 20)
     private String releaseDate;
-
-    @JsonProperty("video")
-    @Column
-    private boolean video;
-
-    @JsonProperty("vote_average")
-    @Column
-    private double voteAverage;
-
-    @JsonProperty("vote_count")
-    @Column
-    private int voteCount;
 }

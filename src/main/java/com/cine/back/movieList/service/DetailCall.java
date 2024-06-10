@@ -43,12 +43,15 @@ public class DetailCall {
     public movieDetailEntity getMovieDetail(int movieId) {
         OkHttpClient client = new OkHttpClient();
 
+        String url = detailHead+movieId+detailTail;
         Request request = new Request.Builder()
-                .url("https://api.themoviedb.org/3/movie/" +movieId+ "?append_to_response=credits&language=ko-KR")
+                .url(url)
                 .get()
                 .addHeader("accept", "application/json")
                 .addHeader("Authorization", "Bearer " + accessToken)
                 .build();
+
+                log.info("영화 상세정보 번호 - \n , movieId : {}", movieId);
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
@@ -56,7 +59,16 @@ public class DetailCall {
             }
 
             String responseBody = response.body().string();
-            return parseMovieDetailResponse(responseBody);
+            // return parseMovieDetailResponse(responseBody);
+            movieDetailEntity movieDetail = parseMovieDetailResponse(responseBody);
+        
+        // 가져온 상세 정보를 저장
+        if (movieDetail != null) {
+            saveMovieDetail(movieDetail);
+        }
+        log.info("영화 상세정보보보보:  - \n , movieId : {}", movieDetail);
+        return movieDetail;
+
         } catch (IOException e) {
             e.printStackTrace();
             log.error("상세 목록 반환 실패 : ", e);
