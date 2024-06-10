@@ -1,7 +1,6 @@
 package com.cine.back.board.service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -38,9 +37,8 @@ public class BoardService {
             log.info("게시글 작성 성공 / No: {}", savedBoard.getBoardNo());
             BoardResponseDto responseDto = boardMapper.toBoardResponseDto(savedBoard, boardDto.getTagNames());
             return responseDto;
-        } catch (IOException e) {
-            throw e;
         } catch (IllegalArgumentException e) {
+            log.error("잘못된 요청: {}", e);
             throw e;
         }
     }
@@ -65,6 +63,7 @@ public class BoardService {
             log.info("게시글 조회 완료 / No: {}", board.getBoardNo());
             return responseDto;
         } catch (NoSuchElementException e) {
+            log.error("조회할 게시글이 없음: {}", e.getMessage());
             throw e;
         }
     }
@@ -77,6 +76,7 @@ public class BoardService {
             boardRepository.delete(boardEntity);
             log.info("게시글 삭제 완료 / No: {}", boardNo);
         } catch (NoSuchElementException e) {
+            log.error("삭제할 게시글이 없음: {}", e.getMessage());
             throw e;
         }
     }
@@ -97,9 +97,7 @@ public class BoardService {
             BoardResponseDto responseDto = boardMapper.toBoardResponseDto(updatedBoard, tagNames);
             return responseDto;
         } catch (NoSuchElementException e) {
-            throw e;
-        } catch (IOException e) {
-
+            log.error("수정할 게시글이 없음: {}", e.getMessage());
             throw e;
         }
     }
