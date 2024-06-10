@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -57,7 +58,7 @@ public class S3Uploader {
         if (targetFile.delete()) {
             log.info("파일이 삭제되었습니다.");
         } else {
-            log.info("파일이 삭제되지 못했습니다.");
+            log.error("파일이 삭제되지 못했습니다.");
         }
     }
 
@@ -76,6 +77,19 @@ public class S3Uploader {
     private String changedImageName(String originName) {
         String random = UUID.randomUUID().toString();
         return random + originName;
+    }
+
+    // 파일 삭제 핸들러
+    public void deleteFile(String path) throws IOException {
+        // url 경로에서 '.com'기준으로 잘라서 Key (폴더/파일.확장자) 생성
+        String splitStr = ".com/";
+        String key = path.substring(path.lastIndexOf(splitStr) + splitStr.length());
+        try {
+            amazonS3Client.deleteObject(bucket, key);
+            log.info("S3에서 파일 삭제: {}", key);
+        } catch (SdkClientException e) {
+            throw new IOException("Delete ERROR from S3: {}", e);
+        }
     }
 
 }
