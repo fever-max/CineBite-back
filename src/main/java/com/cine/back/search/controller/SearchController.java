@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cine.back.search.dto.SearchDTO;
+import com.cine.back.search.dto.SaveSearchKeywordsRequest;
 import com.cine.back.search.service.SearchService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,11 +22,13 @@ public class SearchController implements SearchControllerDocs {
     private final SearchService searchService;
 
     @PostMapping("/saveSearchList")
-    public ResponseEntity<Void> saveSearchData(@RequestBody SearchDTO searchDTO) {
+    public ResponseEntity<Void> saveSearchData(@RequestBody SaveSearchKeywordsRequest request) { 
         log.info("검색기록 저장 컨트롤러 실행");
 
         try {
-            searchService.saveSearchData(searchDTO);
+            // 사용자 ID가 null이면 빈 문자열로 대체하여 저장
+            String userId = request.userId() != null ? request.userId() : "";
+            searchService.saveSearchData(new SaveSearchKeywordsRequest(userId, request.keywordListDTO())); 
             log.info("검색기록 저장 성공");
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {

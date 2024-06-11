@@ -48,4 +48,11 @@ public class movieDetailController {
     public List<movieDetailEntity> getFromDBdetail() {
         return movieDetailRepository.findAll();
     }
+
+    
+    //검색
+
+
+
+
 }

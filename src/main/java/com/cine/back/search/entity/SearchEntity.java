@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,8 +17,8 @@ public class SearchEntity {
     @Column(name = "search_list_no")
     private int searchListNo; //최근 검색 리스트 ID
 
-    @Column(name = "user_email", length = 100)
-    private String userEmail; //사용자 이메일
+    @Column(name = "user_id", length = 50)
+    private String userId; //사용자 아이디
 
     //FetchType : oneToMany시 명시적으로 지정
     //기본값(지연 로딩) : FetchType.LAZY
