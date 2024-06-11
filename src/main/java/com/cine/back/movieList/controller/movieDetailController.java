@@ -43,7 +43,7 @@ public class movieDetailController {
         }
     }
     
-    @GetMapping("/list")
+    @GetMapping("/info")
     public List<movieDetailEntity> getFromDBdetail() {
         try {
         return movieDetailRepository.findAll();
