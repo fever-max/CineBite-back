@@ -14,32 +14,31 @@ public class BoardMapper {
 
     public BoardEntity toBoardEntity(BoardRequestDto boardDto, String boardImgUrl) {
         return BoardEntity.builder()
-                .boardTitle(boardDto.getBoardTitle())
-                .boardContent(boardDto.getBoardContent())
-                .userEmail(boardDto.getUserEmail())
+                .boardTitle(boardDto.boardTitle())
+                .boardContent(boardDto.boardContent())
+                .userId(boardDto.userId())
                 .boardCreatedDate(LocalDateTime.now())
                 .boardImgUrl(boardImgUrl)
                 .build();
     }
 
     public BoardResponseDto toBoardResponseDto(BoardEntity board, List<String> tagNames) {
-        return BoardResponseDto.builder()
-                .boardNo(board.getBoardNo())
-                .boardTitle(board.getBoardTitle())
-                .boardContent(board.getBoardContent())
-                .userEmail(board.getUserEmail())
-                .tagNames(tagNames)
-                .boardHitCount(board.getBoardHitCount())
-                .boardCommentCount(board.getBoardCommentCount())
-                .boardLikeCount(board.getBoardLikeCount())
-                .boardImgUrl(board.getBoardImgUrl())
-                .boardCreatedDate(board.getBoardCreatedDate())
-                .build();
+        return BoardResponseDto.of(
+                board.getBoardNo(),
+                board.getBoardTitle(),
+                board.getBoardContent(),
+                board.getUserId(),
+                tagNames,
+                board.getBoardHitCount(),
+                board.getBoardCommentCount(),
+                board.getBoardLikeCount(),
+                board.getBoardImgUrl(),
+                board.getBoardCreatedDate());
     }
 
     public BoardEntity updateBoardEntity(BoardEntity boardEntity, BoardRequestDto boardDto, String boardImgUrl) {
-        boardEntity.setBoardTitle(boardDto.getBoardTitle());
-        boardEntity.setBoardContent(boardDto.getBoardContent());
+        boardEntity.setBoardTitle(boardDto.boardTitle());
+        boardEntity.setBoardContent(boardDto.boardContent());
         boardEntity.setBoardUpdateDate(LocalDateTime.now());
         boardEntity.setBoardImgUrl(boardImgUrl);
         return boardEntity;

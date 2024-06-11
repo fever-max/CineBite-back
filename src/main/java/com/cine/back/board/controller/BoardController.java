@@ -30,9 +30,9 @@ public class BoardController implements BoardControllerDocs {
     @Override
     @PostMapping("/write")
     public ResponseEntity<Long> saveBoard(BoardRequestDto boardDto, MultipartFile imgFile) throws IOException {
-        log.info("게시글 저장 컨트롤러, BoardTitle: {}", boardDto.getBoardTitle());
+        log.info("게시글 저장 컨트롤러, BoardTitle: {}", boardDto.boardTitle());
         BoardResponseDto responseDto = boardService.writeBoard(boardDto, imgFile);
-        return ResponseEntity.ok().body(responseDto.getBoardNo());
+        return ResponseEntity.ok().body(responseDto.boardNo());
 
     }
 
@@ -66,7 +66,7 @@ public class BoardController implements BoardControllerDocs {
             throws IOException {
         log.info("특정 게시글 수정 컨트롤러, Board No: {}", boardNo);
         BoardResponseDto responseDto = boardService.modifyBoard(boardNo, boardDto, imgFile);
-        return ResponseEntity.ok().body(responseDto.getBoardNo());
+        return ResponseEntity.ok().body(responseDto.boardNo());
     }
 
 }
