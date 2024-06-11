@@ -6,6 +6,7 @@ import com.cine.back.movieList.entity.TrendMovieEntity;
 import com.cine.back.movieList.repository.TrendMovieRepository;
 import com.cine.back.movieList.service.MovieListFetcher;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.HttpStatus;
@@ -15,21 +16,17 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/trendMovie")
 public class movieListController {
 
-    private final MovieListFetcher listCall;
+    private final MovieListFetcher movieListFetcher;
     private final TrendMovieRepository trendMovieRepository;
-
-    public movieListController(MovieListFetcher listCall, TrendMovieRepository trendMovieRepository) {
-        this.listCall = listCall;
-        this.trendMovieRepository = trendMovieRepository;
-    }
 
     @GetMapping("/trend")
     public ResponseEntity<List<TrendMovieEntity>> getAllTrendMovies() {
         try {
-            List<TrendMovieEntity> allMovies = listCall.getAllTrendMovies();
+            List<TrendMovieEntity> allMovies = movieListFetcher.getAllTrendMovies();
             log.info("영화 목록 반환 컨트롤러, trendList : {}", allMovies);
 
             return ResponseEntity.ok().body(allMovies);
