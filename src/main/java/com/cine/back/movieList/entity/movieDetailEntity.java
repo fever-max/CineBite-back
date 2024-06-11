@@ -50,7 +50,7 @@ public class movieDetailEntity {
     private List<Genre> genres;
 
     @JsonProperty("credits")
-    @Transient
+    // @Transient
     private Credits credits;
 
 }
