@@ -4,8 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cine.back.movieList.entity.TrendMovieEntity;
 import com.cine.back.movieList.repository.TrendMovieRepository;
-import com.cine.back.movieList.response.TrendMovieResponse;
-import com.cine.back.movieList.service.ListCall;
+import com.cine.back.movieList.service.MovieListFetcher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,10 +18,10 @@ import java.util.List;
 @RequestMapping("/api/trendMovie")
 public class movieListController {
 
-    private final ListCall listCall;
+    private final MovieListFetcher listCall;
     private final TrendMovieRepository trendMovieRepository;
 
-    public movieListController(ListCall listCall, TrendMovieRepository trendMovieRepository) {
+    public movieListController(MovieListFetcher listCall, TrendMovieRepository trendMovieRepository) {
         this.listCall = listCall;
         this.trendMovieRepository = trendMovieRepository;
     }
@@ -41,8 +40,14 @@ public class movieListController {
     }
 
     @GetMapping("/list")
-    public List<TrendMovieEntity> getFromDB() {
-        return trendMovieRepository.findAll();
+    public ResponseEntity <List<TrendMovieEntity>> getAllMovies() {
+        try {
+                List<TrendMovieEntity> allMovies = trendMovieRepository.findAll();
+                return ResponseEntity.ok().body(allMovies);
+            } catch (Exception e) {
+                log.error("DB에서 영화 목록을 가져오는 데 실패했습니다.", e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
     }
     
 }
