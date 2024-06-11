@@ -1,18 +1,12 @@
 package com.cine.back.movieList.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.cine.back.movieList.entity.TrendMovieEntity;
 import com.cine.back.movieList.entity.movieDetailEntity;
 import com.cine.back.movieList.repository.MovieDetailRepository;
-import com.cine.back.movieList.repository.TrendMovieRepository;
-import com.cine.back.movieList.response.MovieDTO;
-import com.cine.back.movieList.response.TrendMovieResponse;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,27 +17,27 @@ import okhttp3.Response;
 
 @Slf4j
 @Service
-public class DetailCall {
+public class MovieDetailFetcher {
 
-    @Value("${movieDetail.detail1}")
-    private String detailHead;
+    @Value("${movieDetail.urlHead}")
+    private String urlHead;
 
-    @Value("${movieDetail.detail2}")
-    private String detailTail;
+    @Value("${movieDetail.urlTail}")
+    private String urlTail;
 
     @Value("${movieList.access-token}")
     private String accessToken;
 
     private final MovieDetailRepository movieDetailRepository;
 
-    public DetailCall(MovieDetailRepository movieDetailRepository) {
+    public MovieDetailFetcher(MovieDetailRepository movieDetailRepository) {
         this.movieDetailRepository = movieDetailRepository;
     }
 
     public movieDetailEntity getMovieDetail(int movieId) {
         OkHttpClient client = new OkHttpClient();
 
-        String url = detailHead+movieId+detailTail;
+        String url = urlHead + movieId + urlTail;
         Request request = new Request.Builder()
                 .url(url)
                 .get()
@@ -55,16 +49,14 @@ public class DetailCall {
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
+                throw new IOException("유효하지 않은 데이터 : " + response);
             }
-
             String responseBody = response.body().string();
-            // return parseMovieDetailResponse(responseBody);
             movieDetailEntity movieDetail = parseMovieDetailResponse(responseBody);
         
         // 가져온 상세 정보를 저장
         if (movieDetail != null) {
-            saveMovieDetail(movieDetail);
+            movieDetailRepository.save(movieDetail);
         }
         log.info("영화 상세정보보보보:  - \n , movieId : {}", movieDetail);
         return movieDetail;
@@ -74,11 +66,6 @@ public class DetailCall {
             log.error("상세 목록 반환 실패 : ", e);
             return null;
         }
-    }
-
-    // 데이터 저장
-    private void saveMovieDetail(movieDetailEntity movie) {
-        movieDetailRepository.save(movie);
     }
 
     // JSON 문자열을 movieDetailEntity 객체로 변환

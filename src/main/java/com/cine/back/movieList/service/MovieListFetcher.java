@@ -5,6 +5,7 @@ import com.cine.back.movieList.repository.TrendMovieRepository;
 import com.cine.back.movieList.response.TrendMovieResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -20,16 +21,14 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class ListCall {
+@RequiredArgsConstructor
+public class MovieListFetcher {
 
     @Value("${movieList.access-token}")
     private String accessToken;
 
     private final TrendMovieRepository trendMovieRepository;
     
-    public ListCall(TrendMovieRepository trendMovieRepository) {
-        this.trendMovieRepository = trendMovieRepository;
-    }
     
     public List<TrendMovieEntity> getAllTrendMovies() {
     List<TrendMovieEntity> allMovies = new ArrayList<>();
