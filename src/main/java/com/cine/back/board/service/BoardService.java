@@ -33,9 +33,9 @@ public class BoardService {
             String boardImgUrl = !imgFile.isEmpty() ? fileService.uploadFile(imgFile, "boardImages") : null;
             BoardEntity boardEntity = boardMapper.toBoardEntity(boardDto, boardImgUrl);
             BoardEntity savedBoard = boardRepository.save(boardEntity);
-            boardTagService.saveTags(savedBoard, boardDto.getTagNames());
+            boardTagService.saveTags(savedBoard, boardDto.tagNames());
             log.info("게시글 작성 성공 / No: {}", savedBoard.getBoardNo());
-            BoardResponseDto responseDto = boardMapper.toBoardResponseDto(savedBoard, boardDto.getTagNames());
+            BoardResponseDto responseDto = boardMapper.toBoardResponseDto(savedBoard, boardDto.tagNames());
             return responseDto;
         } catch (IllegalArgumentException e) {
             log.error("잘못된 요청: {}", e);
@@ -92,7 +92,7 @@ public class BoardService {
                 boardImgUrl = fileService.uploadFile(imgFile, "boardImages");
             }
             BoardEntity updatedBoard = boardMapper.updateBoardEntity(boardEntity, boardDto, boardImgUrl);
-            List<String> tagNames = boardTagService.updateTags(updatedBoard, boardDto.getTagNames());
+            List<String> tagNames = boardTagService.updateTags(updatedBoard, boardDto.tagNames());
             log.info("게시글 수정 완료 No: {}", updatedBoard.getBoardNo());
             BoardResponseDto responseDto = boardMapper.toBoardResponseDto(updatedBoard, tagNames);
             return responseDto;

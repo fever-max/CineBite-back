@@ -28,8 +28,8 @@ public class BoardEntity {
 
     // 작성자
     @NotNull
-    @Column(name = "user_email", length = 100)
-    private String userEmail;
+    @Column(name = "userId", length = 100)
+    private String userId;
 
     // 조회수, 댓글수, 좋아요 수
     @Column(name = "board_hit_count")
@@ -53,11 +53,11 @@ public class BoardEntity {
     private LocalDateTime boardUpdateDate;
 
     @Builder
-    public BoardEntity(String boardTitle, String boardContent, String userEmail, LocalDateTime boardCreatedDate,
+    public BoardEntity(String boardTitle, String boardContent, String userId, LocalDateTime boardCreatedDate,
             String boardImgUrl) {
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
-        this.userEmail = userEmail;
+        this.userId = userId;
         this.boardCreatedDate = boardCreatedDate;
         this.boardImgUrl = boardImgUrl;
     }

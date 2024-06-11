@@ -1,18 +1,10 @@
 package com.cine.back.board.dto;
 
-import lombok.Getter;
-
 import java.util.List;
 
-@Getter
-public class BoardRequestDto {
-
-    private String boardTitle;
-
-    private String boardContent;
-
-    private String userEmail;
-
-    private List<String> tagNames;
-
+public record BoardRequestDto(
+        String boardTitle,
+        String boardContent,
+        String userId,
+        List<String> tagNames) {
 }
