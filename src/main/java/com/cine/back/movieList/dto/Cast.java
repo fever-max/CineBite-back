@@ -1,9 +1,9 @@
 package com.cine.back.movieList.dto;
 
 import jakarta.persistence.Embeddable;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @Embeddable
 public class Cast {
     private String name;
