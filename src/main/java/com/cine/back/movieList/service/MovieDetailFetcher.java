@@ -81,7 +81,7 @@ public class MovieDetailFetcher {
     private movieDetailEntity parseMovieDetailResponse(String responseBody) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); // json에서 매핑되지 않은 속성이 있어도 무시
             return objectMapper.readValue(responseBody, movieDetailEntity.class);
         } catch (IOException e) {
             log.error("JSON 파싱 실패: ", e);
