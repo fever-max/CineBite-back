@@ -5,6 +5,7 @@ import com.cine.back.movieList.repository.TrendMovieRepository;
 import com.cine.back.movieList.response.TrendMovieResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -14,8 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Slf4j
@@ -30,19 +30,29 @@ public class ListCall {
     public ListCall(TrendMovieRepository trendMovieRepository) {
         this.trendMovieRepository = trendMovieRepository;
     }
+
+    //서버 실행 시 자동 저장
+    @PostConstruct
+    public void init() {
+        try {
+            getAllTrendMovies();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
     public List<TrendMovieEntity> getAllTrendMovies() {
-    List<TrendMovieEntity> allMovies = new ArrayList<>();
-
-    for (int page = 1; page <= 1; page++) {
-        TrendMovieResponse trendMovieResponse = getTrendMovieList(page);
-            if (trendMovieResponse != null) {
-                List<TrendMovieEntity> movies = trendMovieResponse.getResults();
-                allMovies.addAll(movies);
+        List<TrendMovieEntity> allMovies = new ArrayList<>();
+            
+        for (int page = 1; page <= 10; page++) {
+            TrendMovieResponse trendMovieResponse = getTrendMovieList(page);
+                if (trendMovieResponse != null) {
+                    List<TrendMovieEntity> movies = trendMovieResponse.getResults();
+                    allMovies.addAll(movies);
+                }
             }
+            return allMovies;
         }
-        return allMovies;
-    }
 
     public TrendMovieResponse getTrendMovieList(int page) {
         OkHttpClient client = new OkHttpClient();
@@ -72,10 +82,18 @@ public class ListCall {
         }
     }
 
-    // 데이터 저장 
+    // 데이터 저장 (중복 방지)
     private void saveTrendMovies(List<TrendMovieEntity> trendMovies) {
         for (TrendMovieEntity movie : trendMovies) {
-            trendMovieRepository.save(movie);
+            Optional<TrendMovieEntity> optionalExistingMovie = trendMovieRepository.findByMovieId(movie.getMovie_id());
+            if(optionalExistingMovie.isPresent()){
+                TrendMovieEntity existingMovie = optionalExistingMovie.get();
+                existingMovie.setTitle(movie.getTitle());
+                existingMovie.setOverview(movie.getOverview());
+                trendMovieRepository.save(existingMovie);
+            }else{
+                trendMovieRepository.save(movie);
+            }
         }
     }
 

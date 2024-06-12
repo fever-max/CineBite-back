@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.cine.back.movieList.entity.movieDetailEntity;
+import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.repository.MovieDetailRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +34,7 @@ public class DetailCall {
         this.movieDetailRepository = movieDetailRepository;
     }
 
-    public movieDetailEntity getMovieDetail(int movieId) {
+    public MovieDetailEntity getMovieDetail(int movieId) {
         OkHttpClient client = new OkHttpClient();
 
         String url = detailHead+movieId+detailTail;
@@ -53,7 +53,7 @@ public class DetailCall {
             }
 
             String responseBody = response.body().string();
-            movieDetailEntity movieDetail = parseMovieDetailResponse(responseBody);
+            MovieDetailEntity movieDetail = parseMovieDetailResponse(responseBody);
         
         // 가져온 상세 정보를 저장
         if (movieDetail != null) {
@@ -70,16 +70,16 @@ public class DetailCall {
     }
 
     // 데이터 저장
-    private void saveMovieDetail(movieDetailEntity movie) {
+    private void saveMovieDetail(MovieDetailEntity movie) {
         movieDetailRepository.save(movie);
     }
 
     // JSON 문자열을 movieDetailEntity 객체로 변환
-    private movieDetailEntity parseMovieDetailResponse(String responseBody) {
+    private MovieDetailEntity parseMovieDetailResponse(String responseBody) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            return objectMapper.readValue(responseBody, movieDetailEntity.class);
+            return objectMapper.readValue(responseBody, MovieDetailEntity.class);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

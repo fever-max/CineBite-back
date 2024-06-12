@@ -18,7 +18,7 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-public class movieDetailEntity {
+public class MovieDetailEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,3 +54,4 @@ public class movieDetailEntity {
     private Credits credits;
 
 }
+

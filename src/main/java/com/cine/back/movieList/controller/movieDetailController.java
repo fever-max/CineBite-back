@@ -1,8 +1,7 @@
 package com.cine.back.movieList.controller;
-
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cine.back.movieList.entity.movieDetailEntity;
+import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.repository.MovieDetailRepository;
 import com.cine.back.movieList.service.DetailCall;
 
@@ -19,20 +18,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Slf4j
 @RestController
 @RequestMapping("/api/movie")
-public class movieDetailController {
+public class MovieDetailController {
+    
 
     private final DetailCall detailCall;
     private final MovieDetailRepository movieDetailRepository;
 
-    public movieDetailController(DetailCall detailCall, MovieDetailRepository movieDetailRepository) {
+    public MovieDetailController(DetailCall detailCall, MovieDetailRepository movieDetailRepository) {
         this.detailCall = detailCall;
         this.movieDetailRepository = movieDetailRepository;
     }
 
     @GetMapping("/detail/{movie_id}")
-    public ResponseEntity <movieDetailEntity> getMovieDetail(@PathVariable("movie_id") int movieId) {
+    public ResponseEntity <MovieDetailEntity> getMovieDetail(@PathVariable("movie_id") int movieId) {
         try {
-            movieDetailEntity movieDetail = detailCall.getMovieDetail(movieId);
+            MovieDetailEntity movieDetail = detailCall.getMovieDetail(movieId);
 
             log.info("영화 상세 정보 반환 컨트롤러, detail : {}", movieId);
 
@@ -45,7 +45,7 @@ public class movieDetailController {
     }
     
     @GetMapping("/list")
-    public List<movieDetailEntity> getFromDBdetail() {
+    public List<MovieDetailEntity> getFromDBdetail() {
         return movieDetailRepository.findAll();
     }
 }
