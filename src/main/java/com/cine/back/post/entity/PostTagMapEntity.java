@@ -1,4 +1,4 @@
-package com.cine.back.board.entity;
+package com.cine.back.post.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -7,20 +7,20 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "board_tag_map")
-public class BoardTagMapEntity {
+@Table(name = "post_tag_map")
+public class PostTagMapEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_tag_map_id")
-    private Long id;
+    @Column(name = "tag_map_no")
+    private Long mapNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_no")
-    private BoardEntity board;
+    @JoinColumn(name = "post_no")
+    private PostEntity post;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "tag_id")
-    private BoardTagEntity tag;
+    private PostTagEntity tag;
 
 }
