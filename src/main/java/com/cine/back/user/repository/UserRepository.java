@@ -7,4 +7,8 @@ import com.cine.back.user.entity.UserEntity;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
+
+    UserEntity findByUserId(String userId);
+
+    boolean existsByUserId(String userId);
 }
