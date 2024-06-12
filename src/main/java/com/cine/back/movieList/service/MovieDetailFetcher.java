@@ -1,7 +1,7 @@
 package com.cine.back.movieList.service;
 
 import java.io.IOException;
-
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +34,16 @@ public class MovieDetailFetcher {
         this.movieDetailRepository = movieDetailRepository;
     }
 
-    public movieDetailEntity getMovieDetail(int movieId) {
-        OkHttpClient client = new OkHttpClient();
+    // synchronized : 여러 요청이 들어와도 안전해서 동시성 문제 방지?
+    public synchronized Optional<movieDetailEntity> getMovieDetail(int movieId) {
+        Optional<movieDetailEntity> existingMovieDetail = movieDetailRepository.findByMovieId(movieId);
+        // 이미 존재하는 영화번호 DB에 있나 순회
+        if (existingMovieDetail.isPresent()) {
+            log.info("이미 DB에 저장된 영화 상세 정보, movie_id: {}", movieId);
+            return existingMovieDetail;
+        }
 
+        OkHttpClient client = new OkHttpClient();
         String url = urlHead + movieId + urlTail;
         Request request = new Request.Builder()
                 .url(url)
@@ -45,7 +52,7 @@ public class MovieDetailFetcher {
                 .addHeader("Authorization", "Bearer " + accessToken)
                 .build();
 
-                log.info("영화 상세정보 번호 - \n , movieId : {}", movieId);
+        log.info("영화 상세정보 번호 - \n , movieId : {}", movieId);
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
@@ -53,31 +60,32 @@ public class MovieDetailFetcher {
             }
             String responseBody = response.body().string();
             movieDetailEntity movieDetail = parseMovieDetailResponse(responseBody);
-        
-        // 가져온 상세 정보를 저장
-        if (movieDetail != null) {
-            movieDetailRepository.save(movieDetail);
-        }
-        log.info("영화 상세정보보보보:  - \n , movieId : {}", movieDetail);
-        return movieDetail;
+
+            // 중복된 영화번호가 없고 null이 아니라면 가져온 상세 정보를 저장
+            if (movieDetail != null) {
+                movieDetailRepository.save(movieDetail);
+                log.info("영화 상세 정보 반환 성공 : \n -> movieId : {}", movieDetail);
+                return Optional.of(movieDetail);    // 응답 값이 null 이 아니라면 movieDetail 포함하는 optional 객체 포함
+            } else {
+                log.error("유효하지 않은 영화 상세 정보, movie_id: {}", movieId);
+                return Optional.empty();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
             log.error("상세 목록 반환 실패 : ", e);
-            return null;
+            return Optional.empty();    // 응답 값이 null 일 경우 비어있는 optional 객체 생성
         }
     }
 
-    // JSON 문자열을 movieDetailEntity 객체로 변환
     private movieDetailEntity parseMovieDetailResponse(String responseBody) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             return objectMapper.readValue(responseBody, movieDetailEntity.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("JSON 파싱 실패: ", e);
             return null;
         }
     }
 }
-

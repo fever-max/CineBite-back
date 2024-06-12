@@ -25,7 +25,7 @@ public class movieListController {
     private final TrendMovieRepository trendMovieRepository;
 
     @GetMapping("/trend")
-    public ResponseEntity<List<TrendMovieEntity>> getAllTrendMovies() {
+    public ResponseEntity <List<TrendMovieEntity>> getAllTrendMovies() {
         try {
             List<TrendMovieEntity> allMovies = movieListFetcher.getAllTrendMovies();
             log.info("영화 목록 반환 컨트롤러, trendList : {}", allMovies);

@@ -28,8 +28,8 @@ public class movieDetailEntity {
     private long movieDetail;
 
     @JsonProperty("id")
-    @Column(name = "movie_id")
-    private int movie_id;
+    @Column(name = "movieId")
+    private int movieId;
 
     @JsonProperty("title")
     @Column(name = "title")
