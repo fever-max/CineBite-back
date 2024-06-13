@@ -23,8 +23,8 @@ public class TrendMovieEntity {
     private int trend_movie_no;
 
     @JsonProperty("id")
-    @Column(name = "movie_id")  // 영화 번호
-    private String movie_id;
+    @Column(name = "movieId")  // 영화 번호
+    private int movieId;
 
     @JsonProperty("poster_path")
     @Column(length = 100)
@@ -41,4 +41,10 @@ public class TrendMovieEntity {
     @JsonProperty("release_date")
     @Column(length = 20)
     private String releaseDate;
+
+    @JsonProperty("popularity")
+    @Column(length = 20)
+    private String popularity;
+
+
 }
