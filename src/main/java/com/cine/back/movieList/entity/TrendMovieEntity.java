@@ -41,4 +41,8 @@ public class TrendMovieEntity {
     @JsonProperty("release_date")
     @Column(length = 20)
     private String releaseDate;
+
+    @JsonProperty("popularity")
+    @Column(length = 100)
+    private String popularity;
 }

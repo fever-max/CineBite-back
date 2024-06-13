@@ -8,7 +8,7 @@ import com.cine.back.movieList.service.DetailCall;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
+import java.util.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("/api/movie")
 public class MovieDetailController {
     
-
     private final DetailCall detailCall;
     private final MovieDetailRepository movieDetailRepository;
 
@@ -31,21 +30,36 @@ public class MovieDetailController {
 
     @GetMapping("/detail/{movie_id}")
     public ResponseEntity <MovieDetailEntity> getMovieDetail(@PathVariable("movie_id") int movieId) {
+
         try {
-            MovieDetailEntity movieDetail = detailCall.getMovieDetail(movieId);
+            Optional<MovieDetailEntity> movieDetailOptional = detailCall.getMovieDetail(movieId);
+            if (movieDetailOptional.isPresent()) {
+                MovieDetailEntity movieDetail = movieDetailOptional.get();
+                log.info("영화 상세 정보 반환 컨트롤러, movieId : {}", movieId);
+                
+                return ResponseEntity.ok().body(movieDetail);
+                
+            } else {
+                log.error("영화 상세 정보 반환 실패, movieId : {}", movieId);
 
-            log.info("영화 상세 정보 반환 컨트롤러, detail : {}", movieId);
-
-            return ResponseEntity.ok().body(movieDetail);
-        } catch (Exception e) {
-            log.info("영화 상세 정보 반환 컨트롤러, detail : {}", movieId);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+             }
+            } catch (Exception e) {
+            log.info("영화 상세 정보 반환 컨트롤러, movieId : {}", movieId);
             log.error("상세 정보 반환 실패 : ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
     
-    @GetMapping("/list")
+    @GetMapping("/info")
     public List<MovieDetailEntity> getFromDBdetail() {
-        return movieDetailRepository.findAll();
+        try {
+            log.info("DB 에서 영화 상세 정보 가져옴");
+            return movieDetailRepository.findAll();
+        } catch (Exception e) {
+            log.error("DB에서 영화 상세 정보 가져오지 못함. ", e);
+            // return new ArrayList<>(); 애는 성능 저하
+            return Collections.emptyList(); // 빈 리스트 반환, Map일 경우 Collections.emptyMap() 사용
+        }
     }
 }

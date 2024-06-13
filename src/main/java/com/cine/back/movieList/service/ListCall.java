@@ -43,16 +43,21 @@ public class ListCall {
     
     public List<TrendMovieEntity> getAllTrendMovies() {
         List<TrendMovieEntity> allMovies = new ArrayList<>();
-            
-        for (int page = 1; page <= 10; page++) {
-            TrendMovieResponse trendMovieResponse = getTrendMovieList(page);
+        int maxPages = 1;
+    
+        for (int page = 1; page <= maxPages; page++) {
+            try {
+                TrendMovieResponse trendMovieResponse = getTrendMovieList(page);
                 if (trendMovieResponse != null) {
                     List<TrendMovieEntity> movies = trendMovieResponse.getResults();
                     allMovies.addAll(movies);
                 }
+            } catch (Exception e) {
+                System.err.println("페이지 " + page + "에서 오류 발생: " + e.getMessage());
             }
-            return allMovies;
         }
+        return allMovies;
+    }
 
     public TrendMovieResponse getTrendMovieList(int page) {
         OkHttpClient client = new OkHttpClient();
@@ -72,7 +77,7 @@ public class ListCall {
             String responseBody = response.body().string();
             TrendMovieResponse trendMovieResponse = parseTrendMovieResponse(responseBody);
             saveTrendMovies(trendMovieResponse.getResults());
-            log.info("영화 목록 반환 컨트롤러 확인, trendList : {}", trendMovieResponse);
+            //log.info("영화 목록 반환 컨트롤러 확인, trendList : {}", trendMovieResponse);
             
             return trendMovieResponse;
         } catch (IOException e) {

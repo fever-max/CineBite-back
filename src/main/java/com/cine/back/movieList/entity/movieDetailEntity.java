@@ -7,11 +7,14 @@ import com.cine.back.movieList.dto.Genre;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Transient;
 import lombok.Data;
 
@@ -27,7 +30,7 @@ public class MovieDetailEntity {
 
     @JsonProperty("id")
     @Column(name = "movie_id")
-    private int movie_id;
+    private int movieId;
 
     @JsonProperty("title")
     @Column(name = "title")
@@ -46,7 +49,8 @@ public class MovieDetailEntity {
     private String poster_path;
     
     @JsonProperty("genres")
-    @Transient  // jpa가 매핑 못하게 만드는 어노테이션
+    @ElementCollection
+    @CollectionTable(name = "movie_genres", joinColumns = @JoinColumn(name = "movie_id"))
     private List<Genre> genres;
 
     @JsonProperty("credits")

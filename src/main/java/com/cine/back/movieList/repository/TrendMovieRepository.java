@@ -9,6 +9,8 @@ import com.cine.back.movieList.entity.TrendMovieEntity;
 
 public interface TrendMovieRepository extends JpaRepository<TrendMovieEntity, Integer>{
     
-    @Query("SELECT m FROM TrendMovie m WHERE m.movie_id =:movieId")
+    @Query("SELECT m FROM TrendMovieEntity m WHERE m.movie_id =:movieId")
     Optional<TrendMovieEntity> findByMovieId(String movieId);
+
+    List<TrendMovieEntity> findAllByOrderByPopularityAsc();
 }
