@@ -19,7 +19,7 @@ import java.util.Collections;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/trendMovie")
-public class movieListController {
+public class MovieListController {
 
     private final MovieListFetcher movieListFetcher;
     private final TrendMovieRepository trendMovieRepository;

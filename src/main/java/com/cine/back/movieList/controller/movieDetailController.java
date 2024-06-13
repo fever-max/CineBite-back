@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Collections;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.HttpStatus;
@@ -24,7 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/movie")
-public class movieDetailController {
+public class MovieDetailController {
 
     private final MovieDetailFetcher movieDetailFetcher;
     private final MovieDetailRepository movieDetailRepository;
