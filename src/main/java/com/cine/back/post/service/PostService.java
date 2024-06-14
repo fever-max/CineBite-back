@@ -1,7 +1,6 @@
 package com.cine.back.post.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -45,12 +44,7 @@ public class PostService {
 
     public List<PostResponseDto> getAllBoards() {
         List<PostEntity> postEntities = postRepository.findAll();
-        List<PostResponseDto> postResponses = new ArrayList<>();
-        for (PostEntity board : postEntities) {
-            PostResponseDto responseDto = postMapper.toResponseDto(board,
-                    tagService.getTagNamesForBoard(board));
-            postResponses.add(responseDto);
-        }
+        List<PostResponseDto> postResponses = postMapper.toResponseDtos(postEntities, tagService);
         log.info("전체 게시글 조회 성공 / 총 {}개", postResponses.size());
         return postResponses;
     }

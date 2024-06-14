@@ -34,7 +34,7 @@ public class CommentEntity {
     private String commentContent;
 
     @NotNull
-    @Column(name = "userId", length = 100)
+    @Column(name = "user_id", length = 100)
     private String userId;
 
     // 작성일, 수정일

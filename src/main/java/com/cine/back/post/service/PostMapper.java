@@ -9,6 +9,8 @@ import com.cine.back.post.dto.PostRequestDto;
 import com.cine.back.post.dto.PostResponseDto;
 import com.cine.back.post.entity.PostEntity;
 
+import java.util.stream.Collectors;
+
 @Component
 public class PostMapper {
 
@@ -34,6 +36,12 @@ public class PostMapper {
                 board.getLikeCount(),
                 board.getImgUrl(),
                 board.getCreatedDate());
+    }
+
+    public List<PostResponseDto> toResponseDtos(List<PostEntity> postEntities, TagService tagService) {
+        return postEntities.stream()
+                .map(board -> toResponseDto(board, tagService.getTagNamesForBoard(board)))
+                .collect(Collectors.toList());
     }
 
     public PostEntity updatePostEntity(PostEntity boardEntity, PostRequestDto boardDto, String boardImgUrl) {

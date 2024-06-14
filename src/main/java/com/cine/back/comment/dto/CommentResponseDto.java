@@ -2,8 +2,6 @@ package com.cine.back.comment.dto;
 
 import java.time.LocalDateTime;
 
-import com.cine.back.post.entity.PostEntity;
-
 public record CommentResponseDto(
         Long postNo,
         Long commentNo,

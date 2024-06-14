@@ -17,7 +17,7 @@ public class PostEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_no")
-    private Long PostNo;
+    private Long postNo;
 
     // 제목, 내용
     @NotNull
@@ -30,7 +30,7 @@ public class PostEntity {
 
     // 작성자
     @NotNull
-    @Column(name = "userId", length = 100)
+    @Column(name = "user_id", length = 100)
     private String userId;
 
     // 조회수, 댓글수, 좋아요 수
