@@ -1,6 +1,7 @@
 package com.cine.back.comment.service;
 
-import java.util.NoSuchElementException;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
 
@@ -24,13 +25,35 @@ public class CommentService {
     private final CommentMapper commentMapper;
 
     public CommentResponseDto writeComment(Long postNo, CommentRequestDto requestDto) {
-        PostEntity post = postRepository.findById(postNo)
-                .orElseThrow(() -> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+        PostEntity post = findPostById(postNo);
         CommentEntity commentEntity = commentMapper.toCommentEntity(post, requestDto);
         commentRepository.save(commentEntity);
         log.info("댓글 저장 성공 / post No: {}, comment No: {}", postNo, commentEntity.getCommentNo());
         CommentResponseDto responseDto = commentMapper.toResponseDto(commentEntity);
         return responseDto;
+    }
+
+    public List<CommentResponseDto> getAllComments(Long postNo) {
+        PostEntity post = findPostById(postNo);
+        List<CommentEntity> commentEntities = commentRepository.findByPost_PostNo(post.getPostNo());
+        List<CommentResponseDto> commentResponseDtos = commentMapper.toResponseDtos(commentEntities);
+        log.info("댓글 조회 성공 / post No: {}, 총 댓글 수 {}개", postNo, commentResponseDtos.size());
+        return commentResponseDtos;
+    }
+
+    public void deleteComment(Long commentNo) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteComment'");
+    }
+
+    private PostEntity findPostById(Long postNo) {
+        return postRepository.findById(postNo)
+                .orElseThrow(() -> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+    }
+
+    private CommentEntity findCommentById(Long commentNo) {
+        return commentRepository.findById(commentNo)
+                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
     }
 
 }
