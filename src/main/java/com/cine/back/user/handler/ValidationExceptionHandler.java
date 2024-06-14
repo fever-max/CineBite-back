@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.cine.back.user.dto.response.ResponseDto;
 
 @RestControllerAdvice
-public class ValidationExceprionHandler {
+public class ValidationExceptionHandler {
     
     @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
     public ResponseEntity<ResponseDto> validationExceptionHandler(Exception exception) {
