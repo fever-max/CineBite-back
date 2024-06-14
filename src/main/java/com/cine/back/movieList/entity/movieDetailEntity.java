@@ -1,6 +1,6 @@
 package com.cine.back.movieList.entity;
 
-import java.util.List;
+import java.util.*;
 
 import com.cine.back.movieList.dto.Credits;
 import com.cine.back.movieList.dto.Genre;
@@ -10,24 +10,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Transient;
 import lombok.Data;
+
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Entity
+@Entity(name = "movie_details")
 public class MovieDetailEntity {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "movieDetail_no")
-    private long movieDetail;
-
     @JsonProperty("id")
     @Column(name = "movie_id")
     private int movieId;
@@ -38,7 +33,7 @@ public class MovieDetailEntity {
 
     @JsonProperty("release_date")
     @Column(length = 20)
-    private String release_date;
+    private String releaseDate;
 
     @JsonProperty("overview")
     @Column(columnDefinition = "TEXT")
@@ -46,7 +41,11 @@ public class MovieDetailEntity {
 
     @JsonProperty("poster_path")
     @Column(length = 100)
-    private String poster_path;
+    private String posterPath;
+
+    @JsonProperty("popularity")
+    @Column(length = 100)
+    private String popularity;
     
     @JsonProperty("genres")
     @ElementCollection
@@ -54,8 +53,6 @@ public class MovieDetailEntity {
     private List<Genre> genres;
 
     @JsonProperty("credits")
-    @Transient
+    @Embedded
     private Credits credits;
-
 }
-

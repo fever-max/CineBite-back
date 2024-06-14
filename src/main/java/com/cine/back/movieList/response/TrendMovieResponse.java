@@ -1,7 +1,6 @@
-// TrendMovieResponse.java
 package com.cine.back.movieList.response;
 
-import com.cine.back.movieList.entity.TrendMovieEntity;
+import com.cine.back.movieList.dto.TrendMovie;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -17,7 +16,7 @@ public class TrendMovieResponse {
     private int page;
 
     @JsonProperty("results")
-    private List<TrendMovieEntity> results;
+    private List<TrendMovie> results;
 
     @JsonProperty("total_pages")
     private int totalPages;

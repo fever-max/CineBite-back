@@ -1,20 +1,16 @@
 package com.cine.back.movieList.service;
 
-import com.cine.back.movieList.entity.TrendMovieEntity;
-import com.cine.back.movieList.repository.TrendMovieRepository;
+
+import org.springframework.stereotype.Service;
+
+import com.cine.back.movieList.dto.TrendMovie;
+import com.cine.back.movieList.entity.MovieDetailEntity;
+import com.cine.back.movieList.repository.MovieDetailRepository;
 import com.cine.back.movieList.response.TrendMovieResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 import java.util.*;
 
 
@@ -22,13 +18,12 @@ import java.util.*;
 @Service
 public class ListCall {
 
-    @Value("${movieList.access-token}")
-    private String accessToken;
-
-    private final TrendMovieRepository trendMovieRepository;
+    private final MovieDetailRepository movieDetailRepository;
+    private final ApiCall apiCall;
     
-    public ListCall(TrendMovieRepository trendMovieRepository) {
-        this.trendMovieRepository = trendMovieRepository;
+    public ListCall(MovieDetailRepository movieDetailRepository,ApiCall apiCall) {
+        this.movieDetailRepository = movieDetailRepository;
+        this.apiCall = apiCall;
     }
 
     //서버 실행 시 자동 저장
@@ -40,16 +35,15 @@ public class ListCall {
             e.printStackTrace();
         }
     }
+
+    public List<TrendMovie> fetchAllTrendMovies() {
+        List<TrendMovie> allMovies = new ArrayList<>();
     
-    public List<TrendMovieEntity> getAllTrendMovies() {
-        List<TrendMovieEntity> allMovies = new ArrayList<>();
-        int maxPages = 1;
-    
-        for (int page = 1; page <= maxPages; page++) {
+        for (int page = 1; page <= 1; page++) {
             try {
-                TrendMovieResponse trendMovieResponse = getTrendMovieList(page);
+                TrendMovieResponse trendMovieResponse = apiCall.fetchList(page);
                 if (trendMovieResponse != null) {
-                    List<TrendMovieEntity> movies = trendMovieResponse.getResults();
+                    List<TrendMovie> movies = trendMovieResponse.getResults();
                     allMovies.addAll(movies);
                 }
             } catch (Exception e) {
@@ -58,58 +52,39 @@ public class ListCall {
         }
         return allMovies;
     }
-
-    public TrendMovieResponse getTrendMovieList(int page) {
-        OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder()
-            .url("https://api.themoviedb.org/3/trending/movie/week?language=ko-KR&page=" + page)
-            .get()
-            .addHeader("accept", "application/json")
-            .addHeader("Authorization", "Bearer " +accessToken)
-            .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
+    
+    public void getAllTrendMovies() {
+        List<TrendMovie> allMovies = fetchAllTrendMovies();
+        if(allMovies!=null){
+            for (TrendMovie movie : allMovies) {
+                try {
+                    MovieDetailEntity movieDetails = apiCall.fetchMovieDetails(movie.getMovieId());
+                    if (movieDetails != null) {
+                        saveMovieDetail(movieDetails);
+                    }
+                } catch (Exception e) {
+                    System.err.println("영화 ID " + movie.getMovieId() + "에서 오류 발생: " + e.getMessage());
+                }
             }
-
-            String responseBody = response.body().string();
-            TrendMovieResponse trendMovieResponse = parseTrendMovieResponse(responseBody);
-            saveTrendMovies(trendMovieResponse.getResults());
-            //log.info("영화 목록 반환 컨트롤러 확인, trendList : {}", trendMovieResponse);
-            
-            return trendMovieResponse;
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.error("리스트 반환 실패2 : ", e);
-            return null;
         }
     }
 
     // 데이터 저장 (중복 방지)
-    private void saveTrendMovies(List<TrendMovieEntity> trendMovies) {
-        for (TrendMovieEntity movie : trendMovies) {
-            Optional<TrendMovieEntity> optionalExistingMovie = trendMovieRepository.findByMovieId(movie.getMovie_id());
-            if(optionalExistingMovie.isPresent()){
-                TrendMovieEntity existingMovie = optionalExistingMovie.get();
-                existingMovie.setTitle(movie.getTitle());
-                existingMovie.setOverview(movie.getOverview());
-                trendMovieRepository.save(existingMovie);
-            }else{
-                trendMovieRepository.save(movie);
-            }
-        }
-    }
-
-    // JSON 문자열을 TrendMovieResponse 객체로 변환
-    private TrendMovieResponse parseTrendMovieResponse(String responseBody) {
+    private void saveMovieDetail(MovieDetailEntity movieDetail) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(responseBody, TrendMovieResponse.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            Optional<MovieDetailEntity> optionalExistingMovie = movieDetailRepository.findByMovieId(movieDetail.getMovieId());
+            if (optionalExistingMovie.isPresent()) {
+                MovieDetailEntity existingMovie = optionalExistingMovie.get();
+                existingMovie.setTitle(movieDetail.getTitle());
+                existingMovie.setOverview(movieDetail.getOverview());
+                movieDetailRepository.save(existingMovie);
+                log.debug("Updated existing movie: {}", existingMovie);
+            } else {
+                movieDetailRepository.save(movieDetail);
+                log.debug("Saved new movie: {}", movieDetail);
+            }
+        } catch (Exception e) {
+            log.error("Error saving movie with ID {}: ", movieDetail.getMovieId(), e);
         }
     }
 }
