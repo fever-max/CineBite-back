@@ -1,6 +1,5 @@
 package com.cine.back.search.controller;
 
-import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +29,10 @@ public class SearchKeywordController implements SearchKeywordControllerDocs {
 
         try {
             SearchKeywordEntity savedKeyword = searchKeywordService.saveSearchKeyword(searchKeywordDTO);
-            log.info("검색어 저장 성공: {}", searchKeywordDTO.getKeyword());
+            log.info("검색한 키워드 저장 성공: {}", searchKeywordDTO.getKeyword());
             return ResponseEntity.status(HttpStatus.CREATED).body(savedKeyword);
         } catch (Exception e) {
-            log.error("검색어 저장 실패", e);
+            log.error("검색한 키워드 저장 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

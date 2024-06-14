@@ -7,27 +7,24 @@ import com.cine.back.movieList.dto.Genre;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
+import jakarta.persistence.JoinColumn;
 import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-public class movieDetailEntity {
+public class MovieDetailEntity {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "movieDetail_no")
-    private long movieDetail;
-
     @JsonProperty("id")
     @Column(name = "movie_id")
-    private int movie_id;
+    private int movieId;
 
     @JsonProperty("title")
     @Column(name = "title")
@@ -43,14 +40,18 @@ public class movieDetailEntity {
 
     @JsonProperty("poster_path")
     @Column(length = 100)
-    private String poster_path;
-    
-    @JsonProperty("genres")
-    @Transient  // jpa가 매핑 못하게 만드는 어노테이션
-    private List<Genre> genres;
+    private String posterPath;
 
+    @JsonProperty("genres")
+    @ElementCollection
+    @CollectionTable(name = "movie_genres", joinColumns = @JoinColumn(name = "movie_id"))
+    private List<Genre> genres;
+    
     @JsonProperty("credits")
-    @Transient
     private Credits credits;
+
+    @JsonProperty("popularity")
+    @Column(length = 100)
+    private String popularity;
 
 }
