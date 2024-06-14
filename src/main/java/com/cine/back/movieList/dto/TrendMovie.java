@@ -11,4 +11,10 @@ public class TrendMovie {
 
     @JsonProperty("id")
     private int movieId;
+    
+    private String posterPath;
+    private String title;
+    private String overview;
+    private String releaseDate;
+    private String popularity;
 }

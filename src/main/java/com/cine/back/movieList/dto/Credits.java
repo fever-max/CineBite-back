@@ -19,4 +19,3 @@ public class Credits {
   @ElementCollection
   private List<Cast> cast;
 }
-

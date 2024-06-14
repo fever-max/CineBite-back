@@ -1,6 +1,5 @@
 package com.cine.back.movieList.service;
 
-
 import org.springframework.stereotype.Service;
 
 import com.cine.back.movieList.dto.TrendMovie;
@@ -16,12 +15,11 @@ import java.util.*;
 
 @Slf4j
 @Service
-public class ListCall {
-
+public class MovieDetailService {
     private final MovieDetailRepository movieDetailRepository;
     private final ApiCall apiCall;
     
-    public ListCall(MovieDetailRepository movieDetailRepository,ApiCall apiCall) {
+    public MovieDetailService(MovieDetailRepository movieDetailRepository,ApiCall apiCall) {
         this.movieDetailRepository = movieDetailRepository;
         this.apiCall = apiCall;
     }
@@ -78,13 +76,13 @@ public class ListCall {
                 existingMovie.setTitle(movieDetail.getTitle());
                 existingMovie.setOverview(movieDetail.getOverview());
                 movieDetailRepository.save(existingMovie);
-                log.debug("Updated existing movie: {}", existingMovie);
+                log.debug("기존 영화 정보 수정 및 저장", existingMovie);
             } else {
                 movieDetailRepository.save(movieDetail);
-                log.debug("Saved new movie: {}", movieDetail);
+                log.debug("영화 상세정보 추가", movieDetail);
             }
         } catch (Exception e) {
-            log.error("Error saving movie with ID {}: ", movieDetail.getMovieId(), e);
+            log.error("에러 - 저장 실패", movieDetail.getMovieId(), e);
         }
     }
 }
