@@ -23,14 +23,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final JwtProvider jwtProvider;
 
     @Override
-    public void onAuthenticationSuccess(
-    HttpServletRequest request, 
-    HttpServletResponse response,
-    Authentication authentication
-    ) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) 
+        throws IOException, ServletException {
 
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-
         String username = oAuth2User.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -38,10 +34,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String token = jwtProvider.create(username, role, 60*60*60L);
+        String token = jwtProvider.create(username, role, 60 * 60 * 60L);
 
         response.addCookie(createCookie("Authorization", token));
-
         response.sendRedirect("http://localhost:3000/");
 
         // response.sendRedirect("http://localhost:3000/auth/oauth-response/" + token + "/3600");
@@ -49,9 +44,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
     private Cookie createCookie(String key, String value) {
-
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60*60*60);
+        cookie.setMaxAge(60 * 60 * 60);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
 

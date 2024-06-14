@@ -32,7 +32,6 @@ public class JWTFilter extends OncePerRequestFilter {
         String authorization= request.getHeader("Authorization");
 
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-
             System.out.println("token null");
             filterChain.doFilter(request, response);
 
@@ -48,10 +47,8 @@ public class JWTFilter extends OncePerRequestFilter {
         String authorization = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
-
             System.out.println(cookie.getName());
             if (cookie.getName().equals("Authorization")) {
-
                 authorization = cookie.getValue();
             }
         }
@@ -67,10 +64,8 @@ public class JWTFilter extends OncePerRequestFilter {
         String token = authorization;
         
         if (jwtProvider.isExpired(token)) {
-
             System.out.println("token expired");
             filterChain.doFilter(request, response);
-
             return;
         }
 
@@ -89,14 +84,10 @@ public class JWTFilter extends OncePerRequestFilter {
         */
 
         // 쿠키
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUserId(userId);
-        userDTO.setUserRole(userRole);
-
+        UserDTO userDTO = new UserDTO(userId, userRole, null);
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDTO);
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
-
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.cine.back.user.dto.UserDTO;
 import com.cine.back.user.dto.response.GoogleResponse;
+import com.cine.back.user.dto.response.KakaoResponse;
 import com.cine.back.user.dto.response.NaverResponse;
 import com.cine.back.user.dto.response.OAuth2Response;
 import com.cine.back.user.entity.CustomOAuth2User;
@@ -25,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class OAuth2UserServiceImplement extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
-  
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
     
@@ -34,65 +35,66 @@ public class OAuth2UserServiceImplement extends DefaultOAuth2UserService {
         log.info("OAuth2User attributes: " + oAuth2User.getAttributes());
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        OAuth2Response oAuth2Response = null;
-        if (registrationId.equals("naver")) {
+        OAuth2Response oAuth2Response = getOAuth2Response(registrationId, oAuth2User.getAttributes());
 
-            oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
-        }
-        else if (registrationId.equals("google")) {
-
-            // oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
-            // xx 구글 오어스
-        }
-        else if (registrationId.equals("kakao")) {
-          
-          // UserDTO userDTO = new UserDTO();
-          // String userId = "kakao_" + oAuth2User.getAttribute("id");
-          // UserEntity userEntity = new UserEntity(userId, null, "kakao"); // userEmail이나 userName은 null로 설정
-          // userRepository.save(userEntity);
-          // userDTO.setUserId(userId);
-          // return new CustomOAuth2User(userDTO);
-          // xx 카카오 오어스
-        }
-        else {
+        if (oAuth2Response == null) {
             return null;
         }
 
-        int length = Math.min(oAuth2Response.getProviderId().length(), 14);
-        String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId().substring(0, length);
-        UserEntity existData = userRepository.findByUserId(username);
+        String username = getUsername(oAuth2Response);
+        UserEntity userEntity = userRepository.findByUserId(username);
 
-        if (existData == null) {
-
-            UserEntity userEntity = new UserEntity();
-            userEntity.setUserId(username);
-            userEntity.setUserEmail(oAuth2Response.getUserEmail());
-            userEntity.setUserName(oAuth2Response.getUserName());
-            userEntity.setUserRole("ROLE_USER");
-            userEntity.setUserType(registrationId);
-
-            userRepository.save(userEntity);
-
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUserId(username);
-            userDTO.setUserName(oAuth2Response.getUserName());
-            userDTO.setUserRole("ROLE_USER");
-
-            return new CustomOAuth2User(userDTO);
+        if (userEntity == null) {
+            userEntity = createUserEntity(username, oAuth2Response, registrationId);
+        } else {
+            updateUserEntity(userEntity, oAuth2Response);
         }
-        else {
 
-            existData.setUserEmail(oAuth2Response.getUserEmail());
-            existData.setUserName(oAuth2Response.getUserName());
+        userRepository.save(userEntity);
 
-            userRepository.save(existData);
+        UserDTO userDTO = new UserDTO(userEntity.getUserId(), userEntity.getUserName(), userEntity.getUserRole());
+        return new CustomOAuth2User(userDTO);
+    }
 
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUserId(existData.getUserId());
-            userDTO.setUserName(oAuth2Response.getUserName());
-            userDTO.setUserRole(existData.getUserRole());
-
-            return new CustomOAuth2User(userDTO);
+    private OAuth2Response getOAuth2Response(String registrationId, Map<String, Object> attributes) {
+        switch (registrationId) {
+            case "naver":
+                return new NaverResponse(attributes);
+            case "google":
+                return new GoogleResponse(attributes);
+                // oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
+                // xx 구글 오어스
+            case "kakao":
+                // UserDTO userDTO = new UserDTO();
+                // String userId = "kakao_" + oAuth2User.getAttribute("id");
+                // UserEntity userEntity = new UserEntity(userId, null, "kakao"); // userEmail이나 userName은 null로 설정
+                // userRepository.save(userEntity);
+                // userDTO.setUserId(userId);
+                // return new CustomOAuth2User(userDTO);
+                // xx 카카오 오어스
+                return new KakaoResponse(attributes);
+            default:
+                throw new UnsupportedOperationException("Unsupported OAuth2 provider: " + registrationId);
         }
+    }
+
+    private String getUsername(OAuth2Response oAuth2Response) {
+        int userIdMaxLength = Math.min(oAuth2Response.getProviderId().length(), 14);
+        return oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId().substring(0, userIdMaxLength);
+    }
+
+    private UserEntity createUserEntity(String username, OAuth2Response oAuth2Response, String registrationId) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUserId(username);
+        userEntity.setUserEmail(oAuth2Response.getUserEmail());
+        userEntity.setUserName(oAuth2Response.getUserName());
+        userEntity.setUserRole("ROLE_USER");
+        userEntity.setUserType(registrationId);
+        return userEntity;
+    }
+
+    private void updateUserEntity(UserEntity userEntity, OAuth2Response oAuth2Response) {
+        userEntity.setUserEmail(oAuth2Response.getUserEmail());
+        userEntity.setUserName(oAuth2Response.getUserName());
     }
 }

@@ -1,15 +1,22 @@
 package com.cine.back.user.common;
 
-public interface ResponseMessage {
+public enum ResponseMessage {
     
-    String SUCCESS = "Success";
+    SUCCESS("Success"),
+    VALIDATION_FAIL("Validation Failed"),
+    DUPLICATE_ID("Duplicate Id"),
+    SIGN_IN_FAIL("Login information mismatch"),
+    CERTIFICATION_FAIL("Certification Failed"),
+    MAIL_FAIL("Mail send failed"),
+    DATABASE_ERROR("Database error");
 
-    String VALIDATION_FAIL = "Validation Failed";
-    String DUPLICATE_ID = "Duplicate Id";
+    private final String message;
 
-    String SIGN_IN_FAIL = "Login information mismatch";
-    String CERTIFICATION_FAIL = "Certification Failed";
+    ResponseMessage(String message) {
+        this.message = message;
+    }
 
-    String MAIL_FAIL = "Mail send failed";
-    String DATABASE_ERROR = "Database error";
+    public String getMessage() {
+        return message;
+    }
 }
