@@ -12,22 +12,22 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SearchEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "search_list_no")
-    private int searchListNo; //최근 검색 리스트 ID
+    private int searchListNo; // 최근 검색 리스트 ID
 
     @Column(name = "user_email", length = 100)
-    private String userEmail; //사용자 이메일
+    private String userEmail; // 사용자 이메일
 
-    //FetchType : oneToMany시 명시적으로 지정
-    //기본값(지연 로딩) : FetchType.LAZY
-    //즉시 로딩: FetchType.EAGER
+    // FetchType : oneToMany시 명시적으로 지정
+    // 기본값(지연 로딩) : FetchType.LAZY
+    // 즉시 로딩: FetchType.EAGER
     @OneToMany(mappedBy = "searchEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SearchKeywordEntity> searchKeywords; //최근 검색 리스트
+    private List<SearchKeywordEntity> searchKeywords; // 최근 검색 리스트
 
     @Column(name = "search_list_time")
-    private LocalDateTime searchListTime = LocalDateTime.now(); //검색한 시간
+    private LocalDateTime searchListTime = LocalDateTime.now(); // 검색한 시간
 
 }
