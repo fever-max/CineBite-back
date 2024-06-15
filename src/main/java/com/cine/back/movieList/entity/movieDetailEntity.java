@@ -43,8 +43,12 @@ public class MovieDetailEntity {
     private String posterPath;
 
     @JsonProperty("popularity")
-    @Column(length = 100)
+    @Column(length = 20)
     private String popularity;
+
+    @JsonProperty("runtime")
+    @Column(length = 100)
+    private String runtime;
     
     @JsonProperty("genres")
     @ElementCollection
@@ -53,4 +57,6 @@ public class MovieDetailEntity {
 
     @JsonProperty("credits")
     private Credits credits;
+
+
 }

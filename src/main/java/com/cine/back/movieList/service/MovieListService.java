@@ -14,11 +14,20 @@ public class MovieListService {
     public MovieListService (MovieDetailRepository movieDetailRepository){
         this.movieDetailRepository = movieDetailRepository;
     }
-    //(진행중)
-    public List<MovieDetailEntity> getMovieGernes(String genres){
-        System.out.println("서비스: "+genres);
-        List<MovieDetailEntity> movieGenres = movieDetailRepository.findByGenres(genres);
+
+    public List<MovieDetailEntity> getMovieGernes(String genre){
+        List<MovieDetailEntity> movieGenres = movieDetailRepository.findByGenres(genre);
         return movieGenres;
+    }
+
+    public List<MovieDetailEntity> getMovieActors(String actor){
+        List<MovieDetailEntity> movieActors = movieDetailRepository.findByActors(actor);
+        return movieActors;
+    }
+
+    public Optional<MovieDetailEntity> getMovieDetail(int movieId){
+        Optional<MovieDetailEntity> movieDetail = movieDetailRepository.findByMovieId(movieId);
+        return movieDetail;
     }
     
 }
