@@ -2,59 +2,77 @@ package com.cine.back.movieList.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cine.back.movieList.entity.TrendMovieEntity;
-import com.cine.back.movieList.repository.TrendMovieRepository;
-import com.cine.back.movieList.service.MovieListFetcher;
+import com.cine.back.movieList.entity.MovieDetailEntity;
+import com.cine.back.movieList.repository.MovieDetailRepository;
+import com.cine.back.movieList.service.MovieListService;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import java.util.List;
-import java.util.Collections;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
-@RequestMapping("/api/trendMovie")
+@RequestMapping("/api/movie")
 public class MovieListController {
+    
+    private final MovieDetailRepository movieDetailRepository;
+    private final MovieListService movieListService;
 
-    private final MovieListFetcher movieListFetcher;
+    public MovieListController(MovieDetailRepository movieDetailRepository,MovieListService movieListService) {
+        this.movieDetailRepository = movieDetailRepository;
+        this.movieListService = movieListService;
+    }
 
-    public ResponseEntity<List<TrendMovieEntity>> saveMovies() {// 매핑 없이 내부 메서드로 정의
+
+    //흥행 높은순 정렬
+    @GetMapping("/movieList")
+    public List<MovieDetailEntity> getMoviePopularity() {
+        return movieDetailRepository.findAllByOrderByPopularityAsc();
+    }
+
+    //장르별 정렬
+    @PostMapping("/movieGenres")
+    public ResponseEntity<List<MovieDetailEntity>> getMovieGenres(@RequestBody String genre) {
         try {
-            List<TrendMovieEntity> allMovies = movieListFetcher.getAllTrendMovies();
-            log.info("영화 목록 반환 컨트롤러, trendList : {}", allMovies);
-            return ResponseEntity.ok().body(allMovies);
+            List<MovieDetailEntity> movieDetailEntity = movieListService.getMovieGernes(genre);
+            return ResponseEntity.ok().body(movieDetailEntity);
         } catch (Exception e) {
-            log.error("리스트 반환 실패 : ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    // @GetMapping("/trend")
-    // public ResponseEntity <List<TrendMovieEntity>> getAllTrendMovies() {
-    //     try {
-    //         List<TrendMovieEntity> allMovies = movieListFetcher.getAllTrendMovies();
-    //         log.info("영화 목록 반환 컨트롤러, trendList : {}", allMovies);
 
-    //         return ResponseEntity.ok().body(allMovies);
-    //     } catch (Exception e) {
-    //         log.error("리스트 반환 실패 : ", e);
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    //     }
-    // }
+    //배우별 정렬
+    @PostMapping("/movieActor")
+    public ResponseEntity<List<MovieDetailEntity>> getMovieActors(@RequestBody String actor) {
+        try {
+            List<MovieDetailEntity> movieDetailEntity = movieListService.getMovieActors(actor);
+            return ResponseEntity.ok().body(movieDetailEntity);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
-    // @GetMapping("/list")
-    // public List<TrendMovieEntity> getAllMovies() {
-    //     try {
-    //             return trendMovieRepository.findAll();
-    //         } catch (Exception e) {
-    //             log.error("DB에서 영화 목록을 가져오는 데 실패했습니다.", e);
-    //             return Collections.emptyList();
-    //         }
-    // }
+    //한 개 영화정보 꺼내기
+    @GetMapping("/movieDetail/{movieId}")
+    public ResponseEntity<Optional<MovieDetailEntity>> getMovieDetail(@PathVariable int movieId) {
+        try {
+            // System.out.println("컨트롤러 movieId: "+movieId);
+            Optional<MovieDetailEntity> movieDetailEntity = movieListService.getMovieDetail(movieId);
+            return ResponseEntity.ok().body(movieDetailEntity);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     
 }
     

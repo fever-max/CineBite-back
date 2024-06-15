@@ -2,12 +2,14 @@ package com.cine.back.movieList.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Embeddable // 다른 클래스에 포함
 public class Credits {
