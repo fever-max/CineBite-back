@@ -1,4 +1,4 @@
-package com.cine.back.board.service;
+package com.cine.back.board.post.service;
 
 import java.io.IOException;
 
