@@ -20,11 +20,6 @@ public class MovieListService {
         this.movieDetailRepository = movieDetailRepository;
     }
 
-   //  public List<MovieDetailEntity> getMovieGernes(String genres){
-   //      List<MovieDetailEntity> movieGenres = movieDetailRepository.findByGenres(genres);
-   //      return movieGenres;
-   //  }
-    
    //영화명, 배우, 장르로 검색
    public List<MovieDetailEntity> searchByKeyword(String keyword) {
 

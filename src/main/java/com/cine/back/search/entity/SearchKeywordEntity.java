@@ -21,10 +21,10 @@ public class SearchKeywordEntity {
     private int searchKeywordNo; //검색어 ID
 
     @Column(name = "keyword")
-    private String keyword; //검색어
+    private String keyword; // 검색어
 
     @ManyToOne
     @JoinColumn(name = "search_list_no")
-    private SearchEntity searchEntity; //검색어 번호
+    private SearchEntity searchEntity; // 검색어 번호
 
 }

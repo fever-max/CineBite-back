@@ -16,56 +16,82 @@ import com.cine.back.search.repository.SearchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SearchService {
 
     private final SearchRepository searchRepository;
-    private final SearchKeywordService searchKeywordService;
 
-    // 검색어 저장
     @Transactional
-    public void saveSearchKeywords(List<SearchKeywordDTO> keywordListDTO, String userId, SearchEntity searchEntity) {
-        List<SearchKeywordEntity> savedKeywords = new ArrayList<>();
-        for(SearchKeywordDTO keywordDTO : keywordListDTO) {
-            SearchKeywordEntity savedKeyword = searchKeywordService.saveSearchKeyword(keywordDTO);
-            if (savedKeyword != null) {
-                savedKeywords.add(savedKeyword);
-                log.info("검색어 저장 성공: {}", keywordDTO.getKeyword());
-            } else {
-                log.error("검색어 저장 실패: {}", keywordDTO.getKeyword());
-            }
-        }
+    public void saveSearchList(SaveSearchKeywordsRequest request) {
+        try {
+            // 유저Id로 SearchEntity를 생성하고 현재 시간을 설정함
+            String userId = request.userId();
+            List<SearchKeywordDTO> keywordDTOs = request.keywordListDTO();
 
-        // 검색어들이 존재하면 검색 기록과 연결
-        if (!savedKeywords.isEmpty()) {
-            searchEntity.setSearchKeywords(savedKeywords);
+            if (userId == null || userId.isEmpty()) {
+                log.warn("사용자 ID가 null이거나 비어 있어서 검색 기록 저장 실패");
+                return;
+            }
+
+            SearchEntity searchEntity = createSearchEntity(userId);
+
+            List<SearchKeywordEntity> searchKeywords = createSearchKeywordEntities(keywordDTOs, searchEntity);
+
+            searchEntity.setSearchKeywords(searchKeywords);
+
             searchRepository.save(searchEntity);
-            log.info("검색 기록과 검색어 연결 성공");
-        } else {
-            log.warn("저장된 검색어가 없습니다.");
+            log.info("검색 기록 저장 성공: {}", searchEntity.getSearchListNo());
+        } catch (Exception e) {
+            log.error("검색 기록 저장 실패", e);
+            throw new RuntimeException("검색 기록 저장 중 오류 발생");
         }
     }
 
-    // 검색 리스트 DB 저장
-    @Transactional
-    public void saveSearchData(SaveSearchKeywordsRequest request) {
-        List<SearchKeywordDTO> keywordListDTO = request.keywordListDTO();
-        String userId = request.userId();
-        if (userId == null || userId.isEmpty()) {
-            log.warn("사용자 ID가 null이거나 비어 있어서 검색 기록 저장 실패");
-            return;
-        }
-
-        // 검색 기록 저장
+    // 주어진 사용자 ID로 SearchEntity를 생성하고 현재 시간을 설정합니다.
+    private SearchEntity createSearchEntity(String userId) {
         SearchEntity searchEntity = new SearchEntity();
         searchEntity.setUserId(userId);
         searchEntity.setSearchListTime(LocalDateTime.now());
-        searchEntity = searchRepository.save(searchEntity);
-        log.info("검색 엔티티 저장 성공: {}", searchEntity.getSearchListNo());
-
-        // 검색어 저장
-        saveSearchKeywords(keywordListDTO, userId, searchEntity);
+        return searchEntity;
     }
+
+    // 주어진 keywordDTOs 리스트에서 SearchKeywordEntity 리스트를 생성하고 이를 제공된 searchEntity와 연관시킵니다.
+    private List<SearchKeywordEntity> createSearchKeywordEntities(List<SearchKeywordDTO> keywordDTOs, SearchEntity searchEntity) {
+        List<SearchKeywordEntity> searchKeywords = new ArrayList<>();
+        for (SearchKeywordDTO keywordDTO : keywordDTOs) {
+            SearchKeywordEntity searchKeywordEntity = new SearchKeywordEntity();
+            searchKeywordEntity.setKeyword(keywordDTO.keyword());
+            searchKeywordEntity.setSearchEntity(searchEntity); // SearchEntity와 연관 설정
+            searchKeywords.add(searchKeywordEntity);
+        }
+        return searchKeywords;
+    }
+
+    // 사용자 ID에 따른 검색어 리스트 조회
+    @Transactional(readOnly = true)
+    public List<SearchKeywordDTO> getSearchListByUserId(String userId) {
+        List<SearchEntity> searchEntities;
+
+        // userId가 null이면 모든 사용자의 검색어를 조회하도록 처리
+        if (userId == null) {
+            log.info("모든 사용자의 검색어 조회");
+            searchEntities = searchRepository.findAll();
+        } else {
+            log.info("사용자 {}의 검색어 조회", userId);
+            searchEntities = searchRepository.findByUserId(userId);
+        }
+
+        List<SearchKeywordDTO> searchKeywordDTOs = new ArrayList<>();
+
+        for (SearchEntity searchEntity : searchEntities) {
+            for (SearchKeywordEntity keywordEntity : searchEntity.getSearchKeywords()) {
+                searchKeywordDTOs.add(new SearchKeywordDTO(keywordEntity.getSearchKeywordNo(), keywordEntity.getKeyword()));
+            }
+        }
+
+        return searchKeywordDTOs;
+    }
+
 }

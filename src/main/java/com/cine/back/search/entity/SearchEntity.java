@@ -1,6 +1,7 @@
 package com.cine.back.search.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -20,13 +21,16 @@ public class SearchEntity {
     @Column(name = "user_id", length = 50)
     private String userId; //사용자 아이디
 
-    //FetchType : oneToMany시 명시적으로 지정
-    //기본값(지연 로딩) : FetchType.LAZY
-    //즉시 로딩: FetchType.EAGER
-    @OneToMany(mappedBy = "searchEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SearchKeywordEntity> searchKeywords; //최근 검색 리스트
+    @OneToMany(mappedBy = "searchEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SearchKeywordEntity> searchKeywords = new ArrayList<>();
+
 
     @Column(name = "search_list_time")
-    private LocalDateTime searchListTime = LocalDateTime.now(); //검색한 시간
+    private LocalDateTime searchListTime = LocalDateTime.now(); // 검색한 시간
 
+    // 검색 키워드를 추가하는 메서드
+    public void addSearchKeyword(SearchKeywordEntity keywordEntity) {
+        searchKeywords.add(keywordEntity);
+        keywordEntity.setSearchEntity(this);
+    }
 }

@@ -42,16 +42,19 @@ public class MovieDetailEntity {
     @Column(length = 100)
     private String posterPath;
 
+    @JsonProperty("popularity")
+    @Column(length = 20)
+    private String popularity;
+
+    @JsonProperty("runtime")
+    @Column(length = 100)
+    private String runtime;
+    
     @JsonProperty("genres")
     @ElementCollection
     @CollectionTable(name = "movie_genres", joinColumns = @JoinColumn(name = "movie_id"))
     private List<Genre> genres;
-    
+
     @JsonProperty("credits")
     private Credits credits;
-
-    @JsonProperty("popularity")
-    @Column(length = 100)
-    private String popularity;
-
 }
