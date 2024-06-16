@@ -17,9 +17,9 @@ public interface MovieDetailRepository extends JpaRepository<MovieDetailEntity, 
 
     @Query("SELECT md FROM movie_details md JOIN md.credits.cast c WHERE c.name = :actor")
     List<MovieDetailEntity> findByActors(@Param("actor") String actor);
-    
- // 검색
+
+    // 영화명, 배우, 장르로 검색
     List<MovieDetailEntity> findByTitleContainingOrCredits_Cast_NameOrGenres_Name(String title, String castName,
-            String genreName);
+          String genreName);
 
 }

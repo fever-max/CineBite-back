@@ -35,15 +35,15 @@ public class MovieListService {
   // 영화명, 배우, 장르로 검색
   public List<MovieDetailEntity> searchByKeyword(String keyword) {
 
-    try {
-        log.info("검색할 키워드: {}", keyword);
-        return movieDetailRepository.findByTitleContainingOrCredits_Cast_NameOrGenres_Name(keyword, keyword,
-                keyword);
-    } catch (Exception e) {
-        log.error("키워드 검색 실패", e);
-        return Collections.emptyList(); // 빈 리스트 반환
-    }
+      try {
+          log.info("영화 검색 서비스 - 키워드: {}", keyword);
+          return movieDetailRepository.findByTitleContainingOrCredits_Cast_NameOrGenres_Name(keyword, keyword,
+                  keyword);
+      } catch (Exception e) {
+          log.error("영화 검색 서비스 - 키워드 검색 실패", e);
+          return Collections.emptyList(); // 빈 리스트 반환
+      }
 
-}
+  }
     
 }
