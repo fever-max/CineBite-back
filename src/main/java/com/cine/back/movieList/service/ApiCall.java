@@ -49,7 +49,7 @@ public class ApiCall {
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
+                throw new IOException("잘못된 요청: " + response);
             }
 
             String responseBody = response.body().string();
@@ -68,7 +68,7 @@ public class ApiCall {
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
+                throw new IOException("잘못된 요청: " + response);
             }
 
             String responseBody = response.body().string();

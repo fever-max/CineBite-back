@@ -42,10 +42,10 @@ public class SearchService {
             searchEntity.setSearchKeywords(searchKeywords);
 
             searchRepository.save(searchEntity);
-            log.info("검색 기록 저장 성공: {}", searchEntity.getSearchListNo());
+            log.info("[서비스] 검색 기록 저장 성공: {}", searchEntity.getSearchListNo());
         } catch (Exception e) {
-            log.error("검색 기록 저장 실패", e);
-            throw new RuntimeException("검색 기록 저장 중 오류 발생");
+            log.error("[서비스] 검색 기록 저장 실패", e);
+            throw new RuntimeException("[서비스] 검색 기록 저장 중 오류 발생");
         }
     }
 

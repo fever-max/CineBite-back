@@ -9,8 +9,9 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TrendMovie {
 
-    @JsonProperty("id") // Ensure this matches the JSON key from the API response
+    @JsonProperty("id")
     private int movieId;
+    
     private String posterPath;
     private String title;
     private String overview;

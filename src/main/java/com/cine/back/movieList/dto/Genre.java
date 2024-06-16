@@ -1,9 +1,9 @@
 package com.cine.back.movieList.dto;
 
 import jakarta.persistence.Embeddable;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 @Embeddable
 public class Genre {
 

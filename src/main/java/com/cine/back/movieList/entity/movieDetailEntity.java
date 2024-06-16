@@ -1,6 +1,6 @@
 package com.cine.back.movieList.entity;
 
-import java.util.List;
+import java.util.*;
 
 import com.cine.back.movieList.dto.Credits;
 import com.cine.back.movieList.dto.Genre;
@@ -10,15 +10,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import lombok.Data;
 
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Entity
+@Entity(name = "movie_details")
 public class MovieDetailEntity {
     
     @Id
@@ -32,7 +32,7 @@ public class MovieDetailEntity {
 
     @JsonProperty("release_date")
     @Column(length = 20)
-    private String release_date;
+    private String releaseDate;
 
     @JsonProperty("overview")
     @Column(columnDefinition = "TEXT")
@@ -57,4 +57,6 @@ public class MovieDetailEntity {
 
     @JsonProperty("credits")
     private Credits credits;
+
+
 }
