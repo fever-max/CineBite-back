@@ -74,7 +74,8 @@ public class SearchService {
     public List<SearchEntity> getSearchListByUserId(String userId) {
 
         if (userId == null) {
-            log.info("검색어 조회 서비스 - 모든 사용자 검색어 조회");
+            //로그인 안한 사람은 세션으로 구분할지, 로그인을 하라고 할지 고민 후 추후 반영 예정 
+            log.info("검색어 조회 서비스 - userId 제외한 나머지 키워드 조회");
             return searchRepository.findAll();
         } else {
             log.info("검색어 조회 서비스 - 사용자 {}의 검색어 조회", userId);

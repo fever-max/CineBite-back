@@ -42,7 +42,7 @@ public class SearchController implements SearchControllerDocs {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<SearchEntity>> getSearchListByUserId(@PathVariable(value = "userId") String userId) {
-        log.info("사용자 검색어 조회 컨틀로러 실행", userId);
+        log.info("사용자 검색어 조회 컨트롤러 실행", userId);
 
         try {
             List<SearchEntity> searchEntities = searchService.getSearchListByUserId(userId);
