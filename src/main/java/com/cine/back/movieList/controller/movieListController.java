@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/movie")
-public class MovieListController {
+@RequestMapping("/movie")
+public class MovieListController implements MovieListControllerDocs{
     
     private final MovieDetailRepository movieDetailRepository;
     private final MovieListService movieListService;
@@ -36,7 +36,7 @@ public class MovieListController {
 
     //흥행 높은순 정렬
     @GetMapping("/movieList")
-    public List<MovieDetailEntity> getMoviePopularity() {
+    public List<MovieDetailEntity> getMoviePopularity() {   // 흥행 순은 리포지토리에서 바로 정렬이 가능.
         return movieDetailRepository.findAllByOrderByPopularityAsc();
     }
 
