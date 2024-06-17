@@ -24,6 +24,8 @@ public class SearchService {
     // 사용자Id로 SearchEntity를 생성해서 검색어 저장
     @Transactional
     public void saveSearchList(SearchRequest request) {
+
+        log.info("검색어 저장 서비스");
         try {
             String userId = request.userId();
             List<String> keywords = request.keywords();
@@ -38,38 +40,46 @@ public class SearchService {
                 log.info("사용자 ID가 없으므로 'guest'를 사용합니다.");
             }
 
-            // 사용자 ID와 keyword로 SearchEntity를 생성해서 리스트에 추가
-            List<SearchEntity> searchEntities = new ArrayList<>();
-            for (String keyword : keywords) {
-                SearchEntity searchEntity = new SearchEntity();
-                searchEntity.setUserId(userId);
-                searchEntity.setSearchKeyword(keyword);
-                searchEntity.setSearchListTime(LocalDateTime.now());
-                searchEntities.add(searchEntity);
-            }
+           // 검색어를 SearchEntity로 변환하여 저장
+           saveSearchEntities(userId, keywords);
 
-            for (SearchEntity searchEntity : searchEntities) {
-                searchRepository.save(searchEntity);
-            }
-
-            log.info("검색어 저장 서비스 - 저장 성공");
+            log.info("검색어 저장 서비스 - 성공");
 
         } catch (Exception e) {
-            log.error("검색어 저장 서비스 - 저장 실패", e);
-            throw new RuntimeException("검색어 저장 서비스 - 저장 중 오류 발생");
+            log.error("검색어 저장 서비스 - 실패", e);
+            throw new RuntimeException("검색어 서비스 - 저장 중 오류 발생");
         }
     }
 
-    @Transactional(readOnly = true)
-    // 사용자 ID에 따른 검색어 리스트를 조회합니다.
+    //사용자 ID와 검색 리스트 받아서 SearchEntity로 변환하고 저장
+    @Transactional
+    private void saveSearchEntities(String userId, List<String> keywords) {
+        List<SearchEntity> searchEntities = new ArrayList<>();
+        for (String keyword : keywords) {
+            SearchEntity searchEntity = new SearchEntity();
+            searchEntity.setUserId(userId);
+            searchEntity.setSearchKeyword(keyword);
+            searchEntity.setSearchListTime(LocalDateTime.now());
+            searchEntities.add(searchEntity);
+        }
 
+        // 검색어 엔티티를 저장
+        for (SearchEntity searchEntity : searchEntities) {
+            searchRepository.save(searchEntity);
+        }
+    }
+
+    // 사용자 ID에 따른 검색어 리스트 조회
+    @Transactional(readOnly = true)
     public List<SearchEntity> getSearchListByUserId(String userId) {
+
         if (userId == null) {
-            log.info("모든 사용자의 검색어 조회");
+            log.info("검색어 조회 서비스 - 모든 사용자 검색어 조회");
             return searchRepository.findAll();
         } else {
-            log.info("사용자 {}의 검색어 조회", userId);
-            return searchRepository.findByUserId(userId);
+            log.info("검색어 조회 서비스 - 사용자 {}의 검색어 조회", userId);
+            return searchRepository.findByUserIdOrderBySearchListTimeDesc(userId);
         }
     }
+    
 }

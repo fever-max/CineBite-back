@@ -32,26 +32,26 @@ public class SearchController implements SearchControllerDocs {
 
         try {
             searchService.saveSearchList(request);
-            log.info("검색어 저장 성공");
+            log.info("검색어 저장 컨트롤러 - 성공");
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
-            log.error("검색어 저장 실패", e);
+            log.error("검색어 저장 컨트롤러 - 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<SearchEntity>> getSearchListByUserId(@PathVariable(value = "userId") String userId) {
-        log.info("사용자 {}의 검색어 조회", userId);
+        log.info("사용자 검색어 조회 컨틀로러 실행", userId);
 
         try {
             List<SearchEntity> searchEntities = searchService.getSearchListByUserId(userId);
             return ResponseEntity.ok(searchEntities);
         } catch (IllegalArgumentException e) {
-            log.error("사용자 ID가 잘못되었습니다.", e);
+            log.error("검색어 조회 컨트롤러 - 사용자 ID가 잘못되었습니다.", e);
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            log.error("검색어 조회 실패", e);
+            log.error("검색어 조회 컨트롤러 - 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

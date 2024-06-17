@@ -2,10 +2,11 @@ package com.cine.back.movieList.service;
 
 import org.springframework.stereotype.Service;
 
-import com.cine.back.movieList.dto.TrendMovie;
+import com.cine.back.config.MovieConfig;
+import com.cine.back.movieList.dto.Movie;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.repository.MovieDetailRepository;
-import com.cine.back.movieList.response.TrendMovieResponse;
+import com.cine.back.movieList.response.MovieResponse;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +18,9 @@ import java.util.*;
 @Service
 public class MovieDetailService {
     private final MovieDetailRepository movieDetailRepository;
-    private final ApiCall apiCall;
+    private final MovieConfig apiCall;
     
-    public MovieDetailService(MovieDetailRepository movieDetailRepository,ApiCall apiCall) {
+    public MovieDetailService(MovieDetailRepository movieDetailRepository,MovieConfig apiCall) {
         this.movieDetailRepository = movieDetailRepository;
         this.apiCall = apiCall;
     }
@@ -34,27 +35,27 @@ public class MovieDetailService {
         }
     }
 
-    public List<TrendMovie> fetchAllTrendMovies() {
-        List<TrendMovie> allMovies = new ArrayList<>();
+    public List<Movie> fetchAllTrendMovies() {
+        List<Movie> allMovies = new ArrayList<>();
     
         for (int page = 1; page <= 1; page++) {
             try {
-                TrendMovieResponse trendMovieResponse = apiCall.fetchList(page);
+                MovieResponse trendMovieResponse = apiCall.fetchList(page);
                 if (trendMovieResponse != null) {
-                    List<TrendMovie> movies = trendMovieResponse.getResults();
+                    List<Movie> movies = trendMovieResponse.getResults();
                     allMovies.addAll(movies);
                 }
             } catch (Exception e) {
-                System.err.println("페이지 " + page + "에서 오류 발생: " + e.getMessage());
+                log.error("페이지 " + page + "에서 오류 발생: " + e.getMessage());
             }
         }
-        return allMovies;
+        return allMovies != null ? allMovies : List.of();
     }
     
     public void getAllTrendMovies() {
-        List<TrendMovie> allMovies = fetchAllTrendMovies();
+        List<Movie> allMovies = fetchAllTrendMovies();
         if(allMovies!=null){
-            for (TrendMovie movie : allMovies) {
+            for (Movie movie : allMovies) {
                 try {
                     MovieDetailEntity movieDetails = apiCall.fetchMovieDetails(movie.getMovieId());
                     if (movieDetails != null) {
