@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.repository.MovieDetailRepository;
 
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.*;
+@Slf4j
 @Service
 public class MovieListService {
     private final MovieDetailRepository movieDetailRepository;
@@ -15,19 +17,48 @@ public class MovieListService {
         this.movieDetailRepository = movieDetailRepository;
     }
 
-    public List<MovieDetailEntity> getMovieGernes(String genre){
-        List<MovieDetailEntity> movieGenres = movieDetailRepository.findByGenres(genre);
-        return movieGenres;
+    public Optional<List<MovieDetailEntity>> getAllMovieList(){
+        try {
+            Optional<List<MovieDetailEntity>> allMovieList = movieDetailRepository.findAllByOrderByPopularityAsc();
+            log.info("영화 전체 리스트 조회 성공");
+            return allMovieList;
+        } catch (Exception e) {
+            log.error("에러 - 영화 전체 리스트 조회 실패", e);
+            throw e;
+        }
     }
 
-    public List<MovieDetailEntity> getMovieActors(String actor){
-        List<MovieDetailEntity> movieActors = movieDetailRepository.findByActors(actor);
-        return movieActors;
+    public Optional<List<MovieDetailEntity>> getMovieGernes(String genre){
+        try {
+            Optional<List<MovieDetailEntity>> genresList = movieDetailRepository.findByGenres(genre);
+            log.info("장르별 영화 조회 성공");
+            return genresList;
+        } catch (Exception e) {
+            log.error("에러 - 장르별 영화 조회 실패", e);
+            throw e;
+        }
+    }
+
+    public Optional<List<MovieDetailEntity>> getMovieActors(String actor){
+        try {
+            Optional<List<MovieDetailEntity>> actorsList = movieDetailRepository.findByActors(actor);
+            log.info("배우별 영화 조회 성공");
+            return actorsList;
+        } catch (Exception e) {
+            log.error("에러 - 배우별 영화 조회 실패", e);
+            throw e;
+        }
     }
 
     public Optional<MovieDetailEntity> getMovieDetail(int movieId){
-        Optional<MovieDetailEntity> movieDetail = movieDetailRepository.findByMovieId(movieId);
-        return movieDetail;
+        try {
+            Optional<MovieDetailEntity> movieDetail = movieDetailRepository.findByMovieId(movieId);
+            log.info("영화 상세 조회 성공", movieDetail);
+            return movieDetail;
+        } catch (Exception e) {
+            log.error("에러 - 영화 상세 조회 실패", e,movieId);
+            throw e;
+        }
     }
     
 }

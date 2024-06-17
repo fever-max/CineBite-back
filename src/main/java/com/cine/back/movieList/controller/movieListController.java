@@ -3,12 +3,10 @@ package com.cine.back.movieList.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cine.back.movieList.entity.MovieDetailEntity;
-import com.cine.back.movieList.repository.MovieDetailRepository;
 import com.cine.back.movieList.service.MovieListService;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,55 +20,45 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/movie")
+@RequestMapping("/movie")
 public class MovieListController {
     
-    private final MovieDetailRepository movieDetailRepository;
     private final MovieListService movieListService;
 
-    public MovieListController(MovieDetailRepository movieDetailRepository,MovieListService movieListService) {
-        this.movieDetailRepository = movieDetailRepository;
+    public MovieListController(MovieListService movieListService) {
         this.movieListService = movieListService;
     }
 
-
     //흥행 높은순 정렬
     @GetMapping("/movieList")
-    public List<MovieDetailEntity> getMoviePopularity() {
-        return movieDetailRepository.findAllByOrderByPopularityAsc();
+    public ResponseEntity<Optional<List<MovieDetailEntity>>> getMoviePopularity() {
+        log.info("전체 영화 조회 컨트롤러");
+        Optional<List<MovieDetailEntity>> allMovieList = movieListService.getAllMovieList();
+        return ResponseEntity.ok().body(allMovieList);
     }
 
     //장르별 정렬
-    @PostMapping("/movieGenres")
-    public ResponseEntity<List<MovieDetailEntity>> getMovieGenres(@RequestBody String genre) {
-        try {
-            List<MovieDetailEntity> movieDetailEntity = movieListService.getMovieGernes(genre);
-            return ResponseEntity.ok().body(movieDetailEntity);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    @PostMapping("/genresList")
+    public ResponseEntity<Optional<List<MovieDetailEntity>>> getMovieGenres(@RequestBody String genre) {
+        log.info("장르별 조회 컨트롤러");
+        Optional<List<MovieDetailEntity>> genresList = movieListService.getMovieGernes(genre);
+        return ResponseEntity.ok().body(genresList);
     }
 
     //배우별 정렬
-    @PostMapping("/movieActor")
-    public ResponseEntity<List<MovieDetailEntity>> getMovieActors(@RequestBody String actor) {
-        try {
-            List<MovieDetailEntity> movieDetailEntity = movieListService.getMovieActors(actor);
-            return ResponseEntity.ok().body(movieDetailEntity);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    @PostMapping("/actorList")
+    public ResponseEntity<Optional<List<MovieDetailEntity>>> getMovieActors(@RequestBody String actor) {
+        log.info("배우별 조회 컨트롤러");
+        Optional<List<MovieDetailEntity>> actorsList = movieListService.getMovieActors(actor);
+        return ResponseEntity.ok().body(actorsList);
     }
 
     //한 개 영화정보 꺼내기
-    @GetMapping("/movieDetail/{movieId}")
+    @GetMapping("/{movieId}")
     public ResponseEntity<Optional<MovieDetailEntity>> getMovieDetail(@PathVariable int movieId) {
-        try {
-            Optional<MovieDetailEntity> movieDetailEntity = movieListService.getMovieDetail(movieId);
-            return ResponseEntity.ok().body(movieDetailEntity);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        log.info("영화 상세 조회 컨트롤러");
+        Optional<MovieDetailEntity> movieDetail = movieListService.getMovieDetail(movieId);
+        return ResponseEntity.ok().body(movieDetail);
     }
     
 }

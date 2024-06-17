@@ -2,10 +2,11 @@ package com.cine.back.movieList.service;
 
 import org.springframework.stereotype.Service;
 
-import com.cine.back.movieList.dto.TrendMovie;
+import com.cine.back.config.MovieConfig;
+import com.cine.back.movieList.dto.Movie;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.repository.MovieDetailRepository;
-import com.cine.back.movieList.response.TrendMovieResponse;
+import com.cine.back.movieList.response.MovieResponse;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -17,51 +18,54 @@ import java.util.*;
 @Service
 public class MovieDetailService {
     private final MovieDetailRepository movieDetailRepository;
-    private final ApiCall apiCall;
+    private final MovieConfig movieConfig;
     
-    public MovieDetailService(MovieDetailRepository movieDetailRepository,ApiCall apiCall) {
+    public MovieDetailService(MovieDetailRepository movieDetailRepository,MovieConfig movieConfig) {
         this.movieDetailRepository = movieDetailRepository;
-        this.apiCall = apiCall;
+        this.movieConfig = movieConfig;
     }
 
     //서버 실행 시 자동 저장
     @PostConstruct
     public void init() {
         try {
-            getAllTrendMovies();
+            getAllMovies();
+            log.info("영화 api 데이터 저장 성공");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("에러 - api 데이터 자동 저장 실패", e);
         }
     }
 
-    public List<TrendMovie> fetchAllTrendMovies() {
-        List<TrendMovie> allMovies = new ArrayList<>();
+    public List<Movie> fetchAllMovies() {
+        List<Movie> allMovies = new ArrayList<>();
     
         for (int page = 1; page <= 1; page++) {
             try {
-                TrendMovieResponse trendMovieResponse = apiCall.fetchList(page);
-                if (trendMovieResponse != null) {
-                    List<TrendMovie> movies = trendMovieResponse.getResults();
+                MovieResponse allMovieResponse = movieConfig.fetchMovieList(page);
+                if (allMovieResponse != null) {
+                    List<Movie> movies = allMovieResponse.getResults();
                     allMovies.addAll(movies);
+                    log.info("페이지 {}의 영화 {}개 가져오기 성공", page, movies.size());
                 }
             } catch (Exception e) {
-                System.err.println("페이지 " + page + "에서 오류 발생: " + e.getMessage());
+                log.error("에러 - api 영화 전체 데이터 조회 실패", e);
             }
         }
         return allMovies;
     }
     
-    public void getAllTrendMovies() {
-        List<TrendMovie> allMovies = fetchAllTrendMovies();
+    public void getAllMovies() {
+        List<Movie> allMovies = fetchAllMovies();
         if(allMovies!=null){
-            for (TrendMovie movie : allMovies) {
+            for (Movie movie : allMovies) {
                 try {
-                    MovieDetailEntity movieDetails = apiCall.fetchMovieDetails(movie.getMovieId());
+                    MovieDetailEntity movieDetails = movieConfig.fetchMovieDetails(movie.getMovieId());
                     if (movieDetails != null) {
                         saveMovieDetail(movieDetails);
+                        log.info("영화 ID {} 상세 정보 저장 성공", movie.getMovieId());
                     }
                 } catch (Exception e) {
-                    System.err.println("영화 ID " + movie.getMovieId() + "에서 오류 발생: " + e.getMessage());
+                    log.error("에러 - api 영화 상세 데이터 조회 실패", movie.getMovieId(), e);
                 }
             }
         }
