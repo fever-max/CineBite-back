@@ -93,7 +93,7 @@ public class MovieDetailService {
                 existingMovie.setTitle(movieDetail.getTitle());
                 existingMovie.setOverview(movieDetail.getOverview());
                 movieDetailRepository.save(existingMovie);
-                log.info("수정된 영화 상세 정보 : {}", existingMovie);
+                log.info("수정된 영화 상세 정보 : {}", existingMovie.getMovieId());
                 return Optional.of(existingMovie);
             } else {
                 movieDetailRepository.save(movieDetail);
@@ -101,6 +101,7 @@ public class MovieDetailService {
                 return Optional.of(movieDetail);    // 응답 값이 포함되어 있다면 해당 값을 포함하는 optional 객체 생성
             }
         } catch (Exception e) {
+            
             e.printStackTrace();
             log.error("에러 - 저장된 movieId ", movieDetail.getMovieId(), e);
             return Optional.empty();    // 응답 값이 null 일 경우 비어있는 optional 객체 생성
