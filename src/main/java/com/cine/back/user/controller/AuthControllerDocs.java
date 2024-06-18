@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.cine.back.user.dto.request.IdCheckRequestDto;
 import com.cine.back.user.dto.response.IdCheckResponseDto;
+import com.cine.back.user.dto.request.EmailCertificationRequestDto;
+import com.cine.back.user.dto.response.EmailCertificationResponseDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,4 +23,10 @@ public interface AuthControllerDocs {
         @ApiResponse(responseCode = "200", description = "아이디 중복 체크 성공"),
         @ApiResponse(responseCode = "409", description = "아이디 중복 체크 실패(중복된 아이디)")})
         public ResponseEntity<? super IdCheckResponseDto> idCheck(@RequestBody @Valid IdCheckRequestDto requestBody);
+
+        @Operation(summary = "이메일 인증", description = "이메일 인증 여부를 확인합니다.")
+        @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "이메일 인증 확인 성공"),
+        @ApiResponse(responseCode = "409", description = "이메일 인증 확인 실패(중복된 아이디)")})
+        public ResponseEntity<? super EmailCertificationResponseDto> emailCertification(@RequestBody @Valid EmailCertificationRequestDto requestBody);
 }
