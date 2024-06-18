@@ -8,6 +8,8 @@ import com.cine.back.user.dto.request.EmailCertificationRequestDto;
 import com.cine.back.user.dto.request.IdCheckRequestDto;
 import com.cine.back.user.dto.response.EmailCertificationResponseDto;
 import com.cine.back.user.dto.response.IdCheckResponseDto;
+import com.cine.back.user.dto.request.CheckCertificationRequestDto;
+import com.cine.back.user.dto.response.CheckCertificationResponseDto;
 import com.cine.back.user.dto.response.ResponseDto;
 import com.cine.back.user.entity.CertificationEntity;
 import com.cine.back.user.provider.EmailProvider;
@@ -66,5 +68,25 @@ public class AuthServiceImplement implements AuthService {
             return ResponseDto.databaseError();
         }
         return EmailCertificationResponseDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super CheckCertificationResponseDto> checkCertification(CheckCertificationRequestDto dto) {
+        try {
+            String userId = dto.getUserId();
+            String userEmail = dto.getUserEmail();
+            String certificationNumber = dto.getCertificationNumber();
+
+            CertificationEntity certificationEntity = certificationRepository.findByUserId(userId);
+            if (certificationEntity == null) return CheckCertificationResponseDto.certificationFail();
+
+            boolean isMatched = certificationEntity.getUserEmail().equals(userEmail) && certificationEntity.getCertificationNumber().equals(certificationNumber);
+            if (!isMatched) return CheckCertificationResponseDto.certificationFail();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return CheckCertificationResponseDto.success();
     }
 }
