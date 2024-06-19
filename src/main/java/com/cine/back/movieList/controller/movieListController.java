@@ -2,47 +2,63 @@ package com.cine.back.movieList.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cine.back.movieList.entity.TrendMovieEntity;
-import com.cine.back.movieList.repository.TrendMovieRepository;
-import com.cine.back.movieList.response.TrendMovieResponse;
-import com.cine.back.movieList.service.ListCall;
+import com.cine.back.movieList.entity.MovieDetailEntity;
+import com.cine.back.movieList.service.MovieListService;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import java.util.List;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
 
 @Slf4j
 @RestController
-@RequestMapping("/api/trendMovie")
-public class movieListController {
+@RequestMapping("/movie")
+public class MovieListController {
+    
+    private final MovieListService movieListService;
 
-    private final ListCall listCall;
-    private final TrendMovieRepository trendMovieRepository;
-
-    public movieListController(ListCall listCall, TrendMovieRepository trendMovieRepository) {
-        this.listCall = listCall;
-        this.trendMovieRepository = trendMovieRepository;
+    public MovieListController(MovieListService movieListService) {
+        this.movieListService = movieListService;
     }
 
-    @GetMapping("/trend")
-    public ResponseEntity<List<TrendMovieEntity>> getAllTrendMovies() {
-        try {
-            List<TrendMovieEntity> allMovies = listCall.getAllTrendMovies();
-            log.info("영화 목록 반환 컨트롤러, trendList : {}", allMovies);
-
-            return ResponseEntity.ok().body(allMovies);
-        } catch (Exception e) {
-            log.error("리스트 반환 실패 : ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    //흥행 높은순 정렬
+    @GetMapping("/movieList")
+    public ResponseEntity<Optional<List<MovieDetailEntity>>> getMoviePopularity() {
+        log.info("전체 영화 조회 컨트롤러");
+        Optional<List<MovieDetailEntity>> allMovieList = movieListService.getAllMovieList();
+        return ResponseEntity.ok().body(allMovieList);
     }
 
-    @GetMapping("/list")
-    public List<TrendMovieEntity> getFromDB() {
-        return trendMovieRepository.findAll();
+    //장르별 정렬
+    @PostMapping("/genresList")
+    public ResponseEntity<Optional<List<MovieDetailEntity>>> getMovieGenres(@RequestBody String genre) {
+        log.info("장르별 조회 컨트롤러");
+        Optional<List<MovieDetailEntity>> genresList = movieListService.getMovieGernes(genre);
+        return ResponseEntity.ok().body(genresList);
+    }
+
+    //배우별 정렬
+    @PostMapping("/actorList")
+    public ResponseEntity<Optional<List<MovieDetailEntity>>> getMovieActors(@RequestBody String actor) {
+        log.info("배우별 조회 컨트롤러");
+        Optional<List<MovieDetailEntity>> actorsList = movieListService.getMovieActors(actor);
+        return ResponseEntity.ok().body(actorsList);
+    }
+
+    //한 개 영화정보 꺼내기
+    @GetMapping("/{movieId}")
+    public ResponseEntity<Optional<MovieDetailEntity>> getMovieDetail(@PathVariable int movieId) {
+        log.info("영화 상세 조회 컨트롤러");
+        Optional<MovieDetailEntity> movieDetail = movieListService.getMovieDetail(movieId);
+        return ResponseEntity.ok().body(movieDetail);
     }
     
 }
