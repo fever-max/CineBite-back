@@ -17,7 +17,7 @@ public class MovieListService {
         this.movieDetailRepository = movieDetailRepository;
     }
 
-    public List<MovieDetailEntity> getMovieGernes(String genre){    // 장르 별 데이터 목록 불러오기
+    public List<MovieDetailEntity> getMovieGenres(String genre){    // 장르 별 데이터 목록 불러오기
         List<MovieDetailEntity> movieGenres = movieDetailRepository.findByGenres(genre);
         return movieGenres;
     }
