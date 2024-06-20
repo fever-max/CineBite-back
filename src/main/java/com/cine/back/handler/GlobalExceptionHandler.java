@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.cine.back.movieList.exception.AlreadyEvaluatedException;
 import com.cine.back.movieList.exception.MovieNotFoundException;
-import com.cine.back.movieList.service.EvaluateService;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     /**
@@ -15,7 +15,10 @@ public class GlobalExceptionHandler {
      * @ExceptionHandler()
      */
 
+    
+
     private static final int NOT_FOUND_ERROR = 404;
+    private static final int CONFILCT_ERROR = 409;
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
@@ -31,4 +34,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleMovieNotFoundException(MovieNotFoundException e) {
         return ResponseEntity.status(NOT_FOUND_ERROR).body(e.getMessage());
     }
+
+    @ExceptionHandler(AlreadyEvaluatedException.class)
+    public ResponseEntity<?> handleAlreadyEvaluatedException(AlreadyEvaluatedException e) {
+        return ResponseEntity.status(CONFILCT_ERROR).body(e.getMessage());
+    }
+
+
+
 }
