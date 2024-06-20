@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.entity.UserRating;
+import com.cine.back.movieList.exception.AlreadyEvaluatedException;
+import com.cine.back.movieList.exception.MovieNotFoundException;
 import com.cine.back.movieList.repository.MovieDetailRepository;
 import com.cine.back.movieList.repository.UserRatingRepository;
 import com.cine.back.movieList.service.EvaluateService;
@@ -31,7 +33,7 @@ public class EvaluateServiceTest {
 
     @BeforeEach
     public void setUp() {
-        // Optional: 데이터베이스 초기화 또는 테스트 데이터 삽입 로직
+
     }
 
     @DisplayName("\n + 유저 1의 평가 : 좋음")
@@ -48,7 +50,7 @@ public class EvaluateServiceTest {
         movie.setFreshCount(0);
         movie.setRottenCount(0);
         movie.setTomatoScore(0.0);
-        movieDetailRepository.save(movie); // 실제 데이터베이스에 저장
+        movieDetailRepository.save(movie);
 
         // When
         evaluateService.rateMovie(movieId, userId, rating);
@@ -83,14 +85,14 @@ public class EvaluateServiceTest {
         movie.setFreshCount(1);
         movie.setRottenCount(0);
         movie.setTomatoScore(100.0);
-        movieDetailRepository.save(movie); // 실제 데이터베이스에 저장
+        movieDetailRepository.save(movie);
 
         // When
         evaluateService.rateMovie(movieId, userId, rating);
 
         // Then
         MovieDetailEntity updatedMovie = movieDetailRepository.findByMovieId(movieId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 영화가 존재하지 않음2!."));
+                                                                    .orElseThrow(MovieNotFoundException::new);
         
         assertEquals(1, updatedMovie.getFreshCount(), "신선도 테스 에러");
         log.info("신선도는 : {}", updatedMovie.getFreshCount());
@@ -114,10 +116,10 @@ public class EvaluateServiceTest {
         UserRating existingRating = new UserRating();
         existingRating.setUserId(userId);
         existingRating.setMovieId(movieId);
-        userRatingRepository.save(existingRating); // 실제 데이터베이스에 저장
+        userRatingRepository.save(existingRating);
 
         // When / Then
-        assertThrows(Exception.class, () -> evaluateService.rateMovie(movieId, userId, rating));
+        assertThrows(AlreadyEvaluatedException.class, () -> evaluateService.rateMovie(movieId, userId, rating));
     }
 
     @DisplayName("찾을 수 없는 영화입니당")
@@ -130,6 +132,6 @@ public class EvaluateServiceTest {
         String rating = "fresh";
 
         // When / Then
-        assertThrows(IllegalArgumentException.class, () -> evaluateService.rateMovie(movieId, userId, rating));
+        assertThrows(MovieNotFoundException.class, () -> evaluateService.rateMovie(movieId, userId, rating));
     }
 }
