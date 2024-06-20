@@ -43,7 +43,7 @@ public interface MovieListControllerDocs {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류로 인한 정렬 실패")
     })
     ResponseEntity<List<MovieDetailEntity>> getMovieActors(
-                @PathVariable(value = "genre") String actor);
+                @PathVariable(value = "actor") String actor);
     
     // 한 개 영화정보 가져오기
     @Operation(summary = "영화 상세 정보 가져오기", description = "영화 ID를 기반으로 영화의 상세 정보를 가져옵니다.")
@@ -53,5 +53,5 @@ public interface MovieListControllerDocs {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류로 인한 정보 가져오기 실패")
     })
     ResponseEntity<Optional<MovieDetailEntity>> getMovieDetail(
-            @PathVariable(value = "movieId") int movieId);
+                @PathVariable(value = "movieId") int movieId);
 }

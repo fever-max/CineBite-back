@@ -44,7 +44,7 @@ public class MovieListController implements MovieListControllerDocs{
     @PostMapping("/movieGenres")
     public ResponseEntity<List<MovieDetailEntity>> getMovieGenres(@RequestBody String genre) {
         try {
-            List<MovieDetailEntity> movieDetailEntity = movieListService.getMovieGernes(genre);
+            List<MovieDetailEntity> movieDetailEntity = movieListService.getMovieGenres(genre);
             return ResponseEntity.ok().body(movieDetailEntity);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
