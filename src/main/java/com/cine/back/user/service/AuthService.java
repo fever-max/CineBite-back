@@ -9,11 +9,13 @@ import com.cine.back.user.dto.response.IdCheckResponseDto;
 import com.cine.back.user.dto.request.CheckCertificationRequestDto;
 import com.cine.back.user.dto.response.CheckCertificationResponseDto;
 
+
 public interface AuthService {
     
     ResponseEntity<? super IdCheckResponseDto> userIdCheck(IdCheckRequestDto dto);
-
+  
     ResponseEntity<? super EmailCertificationResponseDto> emailCertification(EmailCertificationRequestDto dto);
 
     ResponseEntity<? super CheckCertificationResponseDto> checkCertification(CheckCertificationRequestDto dto);
+
 }

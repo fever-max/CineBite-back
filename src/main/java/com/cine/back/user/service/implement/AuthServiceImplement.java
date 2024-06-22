@@ -25,8 +25,8 @@ public class AuthServiceImplement implements AuthService {
 
     private final UserRepository userRepository;
     private final CertificationRepository certificationRepository;
-
     private final EmailProvider emailProvider;
+
 
     // ID 중복 확인
     @Override
@@ -44,7 +44,7 @@ public class AuthServiceImplement implements AuthService {
 
         return IdCheckResponseDto.success();
     }
-
+  
     // 이메일 인증
     @Override
     public ResponseEntity<? super EmailCertificationResponseDto> emailCertification(EmailCertificationRequestDto dto) {
