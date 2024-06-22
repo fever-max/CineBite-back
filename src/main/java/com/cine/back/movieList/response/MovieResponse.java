@@ -1,16 +1,15 @@
+// TrendMovieResponse.java
 package com.cine.back.movieList.response;
 
-import java.util.List;
-
 import com.cine.back.movieList.dto.Movie;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Data;
+import lombok.Getter;
+import java.util.List;
 
-@Data
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Getter
 public class MovieResponse {
+
     @JsonProperty("page")
     private int page;
 
@@ -22,4 +21,5 @@ public class MovieResponse {
 
     @JsonProperty("total_results")
     private int totalResults;
+
 }
