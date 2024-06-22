@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.persistence.EntityNotFoundException;
 
+import com.cine.back.movieList.exception.AlreadyEvaluatedException;
+import com.cine.back.movieList.exception.MovieNotFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     /**
@@ -17,6 +19,11 @@ public class GlobalExceptionHandler {
      * required : HttpStatus, Exception e
      * @ExceptionHandler()
      */
+
+    
+
+    private static final int NOT_FOUND_ERROR = 404;
+    private static final int CONFILCT_ERROR = 409;
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
@@ -26,6 +33,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IOException.class)
     public ResponseEntity<String> handleIOException(IOException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 처리 중 오류: " + e.getMessage());
+    }
+    
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalStateException(IllegalStateException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류: " + e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -42,5 +54,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("엔티티를 찾을 수 없음: " + e.getMessage());
     }
+
+    @ExceptionHandler(MovieNotFoundException.class)
+    public ResponseEntity<?> handleMovieNotFoundException(MovieNotFoundException e) {
+        return ResponseEntity.status(NOT_FOUND_ERROR).body(e.getMessage());
+    }
+
+    @ExceptionHandler(AlreadyEvaluatedException.class)
+    public ResponseEntity<?> handleAlreadyEvaluatedException(AlreadyEvaluatedException e) {
+        return ResponseEntity.status(CONFILCT_ERROR).body(e.getMessage());
+    }
+
+
 
 }
