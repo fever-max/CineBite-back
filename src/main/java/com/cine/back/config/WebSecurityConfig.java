@@ -23,10 +23,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 
-import com.cine.back.user.filter.JWTFilter;
 import com.cine.back.user.filter.JwtAuthenticationFilter;
 import com.cine.back.user.handler.OAuth2SuccessHandler;
-import com.cine.back.user.provider.JwtProvider;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,7 +39,6 @@ public class WebSecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final DefaultOAuth2UserService oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
-    private final JwtProvider jwtProvider;
     private final com.cine.back.user.service.implement.OAuth2UserServiceImplement OAuth2UserServiceImplement;
 
     @Bean
@@ -56,7 +53,7 @@ public class WebSecurityConfig {
             .sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .addFilterAfter(new JWTFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class) // 재로그인, 무한로프 방지 // xx 추가
+            // .addFilterAfter(new JWTFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class) // 재로그인, 무한로프 방지 // xx 추가
 
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/","/api/v1/auth/**","/oauth2/**").permitAll()

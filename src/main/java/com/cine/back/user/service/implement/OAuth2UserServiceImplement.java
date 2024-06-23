@@ -1,7 +1,6 @@
 package com.cine.back.user.service.implement;
 
-import java.util.Map;
-
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -9,11 +8,11 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.cine.back.user.dto.UserDTO;
-import com.cine.back.user.dto.response.GoogleResponse;
-import com.cine.back.user.dto.response.KakaoResponse;
-import com.cine.back.user.dto.response.NaverResponse;
-import com.cine.back.user.dto.response.OAuth2Response;
-import com.cine.back.user.entity.CustomOAuth2User;
+import com.cine.back.user.dto.oauth2.CustomOAuth2User;
+import com.cine.back.user.dto.oauth2.GoogleResponse;
+import com.cine.back.user.dto.oauth2.KakaoResponse;
+import com.cine.back.user.dto.oauth2.NaverResponse;
+import com.cine.back.user.dto.oauth2.OAuth2Response;
 import com.cine.back.user.entity.UserEntity;
 import com.cine.back.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -29,72 +28,51 @@ public class OAuth2UserServiceImplement extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-    
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        log.info("OAuth2User attributes: " + oAuth2User.getAttributes());
-
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        OAuth2Response oAuth2Response = getOAuth2Response(registrationId, oAuth2User.getAttributes());
+        OAuth2Response oAuthResponse = null;
 
-        if (oAuth2Response == null) {
-            return null;
+        if(registrationId.equals("naver")){
+            oAuthResponse = new NaverResponse(oAuth2User.getAttributes());
+        }else if(registrationId.equals("kakao")){
+            oAuthResponse = new KakaoResponse(oAuth2User.getAttributes());
+        }else if(registrationId.equals("google")){
+            oAuthResponse = new GoogleResponse(oAuth2User.getAttributes());
+        }else {
+            log.error("지원하지 않는 소셜 로그인입니다.");
         }
 
-        String username = getUsername(oAuth2Response);
-        UserEntity userEntity = userRepository.findByUserId(username);
+        String username = oAuthResponse.getProvider() + " " + oAuthResponse.getProviderId();
+        UserEntity existData = userRepository.findByUserId(username);
 
-        if (userEntity == null) {
-            userEntity = createUserEntity(username, oAuth2Response, registrationId);
-        } else {
-            updateUserEntity(userEntity, oAuth2Response);
+        if(existData == null){
+            String nickname = oAuthResponse.getUserNick() != null ? oAuthResponse.getUserNick() : RandomStringUtils.random(10, true, false);
+
+            UserEntity user = UserEntity.builder()  
+                    .userId(username)
+                    .userEmail(oAuthResponse.getUserEmail())
+                    .userType(oAuthResponse.getProvider())
+                    .userNick(nickname)
+                    .userRole("ROLE_USER")
+                    .build();
+            userRepository.save(user); 
+
+            UserDTO userDto = UserDTO.builder()
+                    .userName(username)
+                    .userNick(user.getUserNick())
+                    .userRole("ROLE_USER")
+                    .build();
+            return new CustomOAuth2User(userDto);
+        } else{
+            existData.setUserEmail(oAuthResponse.getUserEmail());
+
+            UserDTO userDto = UserDTO.builder()
+                    .userName(existData.getUserId())
+                    .userNick(existData.getUserNick())
+                    .userRole(existData.getUserRole())
+                    .build();
+            return new CustomOAuth2User(userDto);
         }
-
-        userRepository.save(userEntity);
-
-        UserDTO userDTO = new UserDTO(userEntity.getUserId(), userEntity.getUserName(), userEntity.getUserRole());
-        return new CustomOAuth2User(userDTO);
-    }
-
-    private OAuth2Response getOAuth2Response(String registrationId, Map<String, Object> attributes) {
-        switch (registrationId) {
-            case "naver":
-                return new NaverResponse(attributes);
-            case "google":
-                return new GoogleResponse(attributes);
-                // oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
-                // xx 구글 오어스
-            case "kakao":
-                // UserDTO userDTO = new UserDTO();
-                // String userId = "kakao_" + oAuth2User.getAttribute("id");
-                // UserEntity userEntity = new UserEntity(userId, null, "kakao"); // userEmail이나 userName은 null로 설정
-                // userRepository.save(userEntity);
-                // userDTO.setUserId(userId);
-                // return new CustomOAuth2User(userDTO);
-                // xx 카카오 오어스
-                return new KakaoResponse(attributes);
-            default:
-                throw new UnsupportedOperationException("Unsupported OAuth2 provider: " + registrationId);
-        }
-    }
-
-    private String getUsername(OAuth2Response oAuth2Response) {
-        int userIdMaxLength = Math.min(oAuth2Response.getProviderId().length(), 14);
-        return oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId().substring(0, userIdMaxLength);
-    }
-
-    private UserEntity createUserEntity(String username, OAuth2Response oAuth2Response, String registrationId) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUserId(username);
-        userEntity.setUserEmail(oAuth2Response.getUserEmail());
-        userEntity.setUserName(oAuth2Response.getUserName());
-        userEntity.setUserRole("ROLE_USER");
-        userEntity.setUserType(registrationId);
-        return userEntity;
-    }
-
-    private void updateUserEntity(UserEntity userEntity, OAuth2Response oAuth2Response) {
-        userEntity.setUserEmail(oAuth2Response.getUserEmail());
-        userEntity.setUserName(oAuth2Response.getUserName());
     }
 }
