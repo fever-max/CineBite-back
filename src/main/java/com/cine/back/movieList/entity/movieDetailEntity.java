@@ -14,8 +14,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import lombok.Data;
-
-
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity(name = "movie_details")
@@ -57,6 +55,14 @@ public class MovieDetailEntity {
 
     @JsonProperty("credits")
     private Credits credits;
+    
+    @Column(name = "fresh_count")
+    private int freshCount;
 
+    @Column(name = "rotten_count")
+    private int rottenCount;
+    
+    @Column(name = "tomato_score")
+    private double tomatoScore; // 평가 퍼센티지
 
 }
