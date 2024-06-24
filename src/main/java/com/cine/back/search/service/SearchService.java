@@ -1,58 +1,93 @@
 package com.cine.back.search.service;
 
-import java.util.List;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-
-import org.springframework.core.annotation.MergedAnnotations.Search;
+import com.cine.back.search.dto.SearchRequest;
+import com.cine.back.search.entity.SearchEntity;
+import com.cine.back.search.repository.SearchRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cine.back.search.dto.SearchDTO;
-import com.cine.back.search.dto.SearchKeywordDTO;
-import com.cine.back.search.entity.SearchEntity;
-import com.cine.back.search.entity.SearchKeywordEntity;
-import com.cine.back.search.repository.SearchKeywordRepository;
-import com.cine.back.search.repository.SearchRepository;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class SearchService {
-    
+
     private final SearchRepository searchRepository;
+    private final RelatedService relatedService;
 
-    // 검색 리스트 DB 저장
-    public void saveSearchData(SearchDTO searchDTO) {
-
-        if (searchDTO.getSearchKeywords() == null) {
-            log.warn("검색어 리스트가 null입니다.");
+    // 검색어 저장
+    @Transactional
+    public void saveSearchList(SearchRequest request) {
+        log.info("검색어 저장 서비스 시작");
+        String userId = checkUserId(request.userId());
+        List<String> keywords = request.keywords();
+        if (keywords == null || keywords.isEmpty()) {
+            log.warn("검색어 저장 서비스 - 검색어가 없습니다.");
             return;
         }
-
-        SearchEntity searchEntity = new SearchEntity();
-
-        searchEntity.setSearchListTime(LocalDateTime.now());
-        searchEntity.setUserEmail(searchDTO.getUserEmail());
-
-         List<SearchKeywordEntity> searchKeywords = new ArrayList<>();
-        for (SearchKeywordDTO keywordDTO : searchDTO.getSearchKeywords()) {
-            SearchKeywordEntity searchKeywordEntity = new SearchKeywordEntity();
-            searchKeywordEntity.setKeyword(keywordDTO.getKeyword());
-            searchKeywordEntity.setSearchEntity(searchEntity);
-            searchKeywords.add(searchKeywordEntity);
-            
-            log.info("검색어 저장 성공: " + keywordDTO.getKeyword());
+        for (String keyword : keywords) {
+            saveSearchEntity(userId, keyword);
         }
-
-        searchEntity.setSearchKeywords(searchKeywords);
-
-        // 검색 엔티티를 저장할 때 키워드도 같이 저장
-        searchRepository.save(searchEntity);
+        log.info("검색어 저장 서비스 완료");
     }
 
+    // 사용자ID 확인
+    private String checkUserId(String userId) {
+        if (userId == null || userId.isEmpty()) {
+            userId = "guest";
+            log.info("검색어 저장 서비스 - 사용자 ID가 없으므로 'guest'로 설정합니다.");
+        }
+        return userId;
+    }
+
+    // SearchEntity 저장
+    @Transactional
+    private void saveSearchEntity(String userId, String keyword) {
+        SearchEntity searchEntity = createSearchEntity(userId, keyword);
+        searchEntity = searchRepository.save(searchEntity);
+        relatedService.saveRelatedEntity(searchEntity, keyword);
+    }
+
+    private SearchEntity createSearchEntity(String userId, String keyword) {
+        SearchEntity searchEntity = new SearchEntity();
+        searchEntity.setUserId(userId);
+        searchEntity.setSearchKeyword(keyword);
+        searchEntity.setSearchListTime(LocalDateTime.now());
+        return searchEntity;
+    }
+
+    // 로그인 한 사용자 최근 검색 리스트 불러오기
+    @Transactional(readOnly = true)
+    public List<SearchEntity> getSearchListByUserId(String userId) {
+        if (userId == null) {
+            return searchRepository.findAll();
+        }
+        return searchRepository.findByUserIdOrderBySearchListTimeDesc(userId);
+    }
+
+    // 검색어 삭제
+    @Transactional
+    public void deleteSearchKeyword(String userId, int searchListNo) {
+        SearchEntity deleteData = searchRepository.findByUserIdAndSearchListNo(userId, searchListNo);
+        if (deleteData == null) {
+            throw new IllegalArgumentException("검색어 삭제 서비스 - 검색어가 없습니다.");
+        }
+        searchRepository.delete(deleteData);
+    }
+
+    // 검색어 전체삭제
+    @Transactional
+    public void deleteAllSearchKeyword(String userId) {
+        try {
+            searchRepository.deleteByUserId(userId);
+            log.info("사용자 {} 검색어 전체삭제 서비스 - 완료", userId);
+        } catch (Exception e) {
+            log.error("사용자 {} 검색어 전체삭제 서비스 - 실패", userId, e);
+            throw new RuntimeException("사용자 검색어 전체 삭제 실패", e);
+        }
+    }
 }

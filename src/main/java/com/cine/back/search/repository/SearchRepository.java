@@ -10,6 +10,16 @@ import com.cine.back.search.entity.SearchEntity;
 @Repository
 public interface SearchRepository extends JpaRepository<SearchEntity, Integer> {
 
-     // 사용자의 최근 검색 기록
-     List<SearchEntity> findByUserEmailOrderBySearchListTimeDesc(String userEmail);
- }
+    // 사용자ID로 검색 (날짜 내림차순)
+    List<SearchEntity> findByUserIdOrderBySearchListTimeDesc(String userId);
+
+    // 주어진 검색어로 검색 엔터티를 찾습니다.
+    SearchEntity findBySearchKeyword(String searchKeyword);
+
+    // 삭제 - 사용자Id와 검색어번호로 조회
+    SearchEntity findByUserIdAndSearchListNo(String userId, int searchListNo);
+
+    // 전체삭제
+    void deleteByUserId(String userId);
+
+}
