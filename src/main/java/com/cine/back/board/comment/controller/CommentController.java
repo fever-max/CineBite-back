@@ -29,6 +29,7 @@ public class CommentController implements CommentControllerDocs {
     @PostMapping("/post/{postNo}/comment")
     public ResponseEntity<CommentResponseDto> saveComment(Long postNo, CommentRequestDto requestDto) {
         log.info("댓글 저장 컨트롤러, 게시글 NO: {}", postNo);
+        log.info("댓글 저장 내용: {}", requestDto.content());
         CommentResponseDto responseDto = commentService.writeComment(postNo, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
