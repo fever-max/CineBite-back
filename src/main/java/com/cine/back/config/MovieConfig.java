@@ -14,7 +14,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-
 @Slf4j
 @Component
 public class MovieConfig {
@@ -27,14 +26,14 @@ public class MovieConfig {
 
     @Value("${movieList.urlTail}")
     private String urlTail;
-    
+
     @Value("${movieList.urlweek}")
-    private String week; 
-    
+    private String week;
+
     // 상세 정보
     @Value("${movieDetail.urlHead}")
     private String urlDetailHead;
-    
+
     @Value("${movieDetail.urlTail}")
     private String urlDetailTail;
 
@@ -44,11 +43,11 @@ public class MovieConfig {
     public MovieResponse fetchMovieList(int page) throws IOException {
         String url = urlHead + week + urlTail;
         Request request = new Request.Builder()
-            .url(url + page)
-            .get()
-            .addHeader("accept", "application/json")
-            .addHeader("Authorization", "Bearer " + accessToken)
-            .build();
+                .url(url + page)
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .build();
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
@@ -60,7 +59,7 @@ public class MovieConfig {
             log.debug("영화 목록 응답: {}", responseBody);
             return parseTrendMovieResponse(responseBody);
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             log.error("에러 - 영화 목록 요청 중 예외 발생", e);
             throw e;
         }
@@ -69,11 +68,11 @@ public class MovieConfig {
     // 상세 정보
     public MovieDetailEntity fetchMovieDetails(int movieId) throws IOException {
         Request request = new Request.Builder()
-            .url(urlDetailHead + movieId + urlDetailTail)
-            .get()
-            .addHeader("accept", "application/json")
-            .addHeader("Authorization", "Bearer " + accessToken)
-            .build();
+                .url(urlDetailHead + movieId + urlDetailTail)
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .build();
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
@@ -84,7 +83,7 @@ public class MovieConfig {
             String responseBody = response.body().string();
             log.debug("영화 상세 정보 응답: {}", responseBody);
             return parseMovieDetails(responseBody);
-        }catch (IOException e) {
+        } catch (IOException e) {
             log.error("에러 - 영화 상세 정보 요청 중 예외 발생: ", movieId, e);
             throw e;
         }
