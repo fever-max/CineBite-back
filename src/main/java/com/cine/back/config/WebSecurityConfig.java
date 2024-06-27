@@ -1,8 +1,5 @@
 package com.cine.back.config;
 
-import java.io.IOException;
-import java.util.Arrays;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,8 +24,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import lombok.RequiredArgsConstructor;
-
 import com.cine.back.user.filter.CustomLogoutFilter;
 import com.cine.back.user.filter.JwtFilter;
 import com.cine.back.user.filter.LoginFilter;
@@ -38,6 +33,9 @@ import com.cine.back.user.repository.RefreshRepository;
 import com.cine.back.user.service.implement.CustomUserDetailsService;
 import com.cine.back.user.service.implement.OAuth2UserServiceImplement;
 
+import java.io.IOException;
+import java.util.Arrays;
+import lombok.RequiredArgsConstructor;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -70,7 +68,6 @@ public class WebSecurityConfig {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
-        
         httpSecurity
             .cors(cors -> cors
                 .configurationSource(corsConfigurationSource())
@@ -100,9 +97,7 @@ public class WebSecurityConfig {
             )
             .addFilterAt(new LoginFilter(authenticationManager(), jwtProvider, refreshRepository), UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new JwtFilter(jwtProvider), LoginFilter.class) // JWT 인증 필터 추가
-
-            // xx 추가
-            .csrf((auth) -> auth.disable())
+            .csrf((auth) -> auth.disable()) // xx 추가
             .formLogin((auth) -> auth.disable())
             .httpBasic((auth) -> auth.disable());
         return httpSecurity.build();
@@ -116,8 +111,6 @@ public class WebSecurityConfig {
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*"); 
         corsConfiguration.setAllowCredentials(true); // xx 추가 인증정보 포함 여부 
-
-        corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setMaxAge(3600L); // xx 추가
         corsConfiguration.setExposedHeaders(Arrays.asList(
             "Set-Cookie", "Authorization", "access", "refresh"
@@ -125,22 +118,18 @@ public class WebSecurityConfig {
                 "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
                 "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers" */
         )); // 노출된 헤더 설정
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
-
         return source;
-    }
-    // xx cors 에러2 같이 확인 "/api/v1/**" 변경
+    } // xx cors 에러2 같이 확인 "/api/v1/**" 변경
 }
 
 // 인증 실패 핸들러 클래스
 class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN); 
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.getWriter().write("{\"code\": \"NP\", \"message\": \"No Permission.\"}");
     }
 }
