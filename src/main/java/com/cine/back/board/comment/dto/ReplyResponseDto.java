@@ -7,9 +7,12 @@ public record ReplyResponseDto(
         Long replyNo,
         String userId,
         String content,
-        LocalDateTime date) {
-    public static ReplyResponseDto of(Long commentNo, Long replyNo, String userId, String content, LocalDateTime date) {
-        return new ReplyResponseDto(commentNo, replyNo, userId, content, date);
+        LocalDateTime createDate,
+        LocalDateTime updateDate) {
+    public static ReplyResponseDto of(Long commentNo, Long replyNo, String userId, String content,
+            LocalDateTime createDate,
+            LocalDateTime updateDate) {
+        return new ReplyResponseDto(commentNo, replyNo, userId, content, createDate, updateDate);
     }
 
 }

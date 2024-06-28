@@ -49,7 +49,7 @@ public interface ReplyControllerDocs {
                         @ApiResponse(responseCode = "200", description = "댓글 수정 성공"),
                         @ApiResponse(responseCode = "400", description = "댓글 수정 실패"),
                         @ApiResponse(responseCode = "500", description = "서버 내부 오류") })
-        public ResponseEntity<Long> updateComment(@PathVariable(value = "commentNo") Long commentNo,
+        public ResponseEntity<Long> updateReply(@PathVariable(value = "commentNo") Long commentNo,
                         @PathVariable(value = "replyNo") Long replyNo,
                         @RequestBody CommentRequestDto commentRequestDto);
 
