@@ -72,12 +72,9 @@ public class WebSecurityConfig {
             .cors(cors -> cors
                 .configurationSource(corsConfigurationSource())
             )
-            .csrf(CsrfConfigurer::disable) 
-            .httpBasic(HttpBasicConfigurer::disable)
             .sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/", "/login", "/reissue", "/api/v1/auth/**","/oauth2/**", "/error").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/user/**").permitAll()
@@ -97,6 +94,7 @@ public class WebSecurityConfig {
             )
             .addFilterAt(new LoginFilter(authenticationManager(), jwtProvider, refreshRepository), UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new JwtFilter(jwtProvider), LoginFilter.class) // JWT 인증 필터 추가
+            .addFilterBefore(new CustomLogoutFilter(jwtProvider, refreshRepository), LogoutFilter.class)
             .csrf((auth) -> auth.disable()) // xx 추가
             .formLogin((auth) -> auth.disable())
             .httpBasic((auth) -> auth.disable());
@@ -113,11 +111,10 @@ public class WebSecurityConfig {
         corsConfiguration.setAllowCredentials(true); // xx 추가 인증정보 포함 여부 
         corsConfiguration.setMaxAge(3600L); // xx 추가
         corsConfiguration.setExposedHeaders(Arrays.asList(
-            "Set-Cookie", "Authorization", "access", "refresh"
-            /* ,"Access-Control-Allow-Headers",
-                "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
-                "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers" */
-        )); // 노출된 헤더 설정
+            "Access-Control-Allow-Headers", "Set-Cookie", "Authorization", "access", "refresh"
+            /* "x-xsrf-token, Origin, Accept, X-Requested-With, Content-Type, 
+                Access-Control-Request-Method, Access-Control-Request-Headers" */
+        ));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
