@@ -70,7 +70,9 @@ public class PostService {
     public void deleteBoard(Long postNo) throws IOException {
         try {
             PostEntity postEntity = entityUtil.findPostById(postNo);
-            fileService.deleteFile(postEntity.getImgUrl());
+            if (postEntity.getImgUrl() != null && !postEntity.getImgUrl().isEmpty()) {
+                fileService.deleteFile(postEntity.getImgUrl());
+            }
             postRepository.delete(postEntity);
             log.info("게시글 삭제 완료 / No: {}", postNo);
         } catch (NoSuchElementException e) {
