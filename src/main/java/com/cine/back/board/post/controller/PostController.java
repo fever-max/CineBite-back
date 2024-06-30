@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,27 +46,28 @@ public class PostController implements PostControllerDocs {
     }
 
     @Override
-    @GetMapping("/post/{no}")
-    public ResponseEntity<PostResponseDto> getBoardById(Long boardNo) {
-        log.info("특정 게시글 반환 컨트롤러, Board No: {}", boardNo);
-        PostResponseDto board = boardService.getByBoardNo(boardNo);
+    @GetMapping("/post/{postNo}")
+    public ResponseEntity<PostResponseDto> getBoardById(Long postNo) {
+        log.info("특정 게시글 반환 컨트롤러, Post No: {}", postNo);
+        PostResponseDto board = boardService.getByBoardNo(postNo);
         return ResponseEntity.ok().body(board);
     }
 
     @Override
-    @DeleteMapping("/post/delete/{no}")
-    public ResponseEntity<String> deleteBoard(Long boardNo) throws IOException {
-        log.info("특정 게시글 삭제 컨트롤러, Board No: {}", boardNo);
-        boardService.deleteBoard(boardNo);
+    @DeleteMapping("/post/delete/{postNo}")
+    public ResponseEntity<String> deleteBoard(Long postNo) throws IOException {
+        log.info("특정 게시글 삭제 컨트롤러, Post No: {}", postNo);
+        boardService.deleteBoard(postNo);
         return ResponseEntity.ok().body("게시글 삭제 성공");
     }
 
     @Override
-    @PutMapping("/post/modify/{no}")
-    public ResponseEntity<Long> updateBoard(Long boardNo, PostRequestDto boardDto, MultipartFile imgFile)
+    @PatchMapping("/post/modify/{postNo}")
+    public ResponseEntity<Long> updateBoard(Long postNo, PostRequestDto boardDto, MultipartFile imgFile,
+            boolean deleteImage)
             throws IOException {
-        log.info("특정 게시글 수정 컨트롤러, Board No: {}", boardNo);
-        PostResponseDto responseDto = boardService.modifyBoard(boardNo, boardDto, imgFile);
+        log.info("특정 게시글 수정 컨트롤러, Board No: {}", postNo);
+        PostResponseDto responseDto = boardService.modifyBoard(postNo, boardDto, imgFile, deleteImage);
         return ResponseEntity.ok().body(responseDto.postNo());
     }
 

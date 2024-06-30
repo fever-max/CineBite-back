@@ -7,9 +7,11 @@ public record CommentResponseDto(
         Long commentNo,
         String userId,
         String content,
-        LocalDateTime date) {
+        LocalDateTime createDate,
+        LocalDateTime updateDate) {
+
     public static CommentResponseDto of(Long postNo, Long commentNo, String userId, String content,
-            LocalDateTime date) {
-        return new CommentResponseDto(postNo, commentNo, userId, content, date);
+            LocalDateTime createDate, LocalDateTime updateDate) {
+        return new CommentResponseDto(postNo, commentNo, userId, content, createDate, updateDate);
     }
 }

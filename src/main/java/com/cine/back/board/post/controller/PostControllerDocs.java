@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,14 +41,14 @@ public interface PostControllerDocs {
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "글 세부 조회 성공"),
                         @ApiResponse(responseCode = "400", description = "글 세부 조회 실패") })
-        ResponseEntity<PostResponseDto> getBoardById(@PathVariable(value = "no") Long boardNo);
+        ResponseEntity<PostResponseDto> getBoardById(@PathVariable(value = "postNo") Long postNo);
 
         // 글 삭제
         @Operation(summary = "게시판 글 삭제", description = "게시판에서 글을 삭제합니다.")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "글 삭제 성공"),
                         @ApiResponse(responseCode = "400", description = "글 삭제 실패") })
-        ResponseEntity<String> deleteBoard(@PathVariable(value = "no") Long boardNo) throws IOException;
+        ResponseEntity<String> deleteBoard(@PathVariable(value = "postNo") Long postNo) throws IOException;
 
         // 글 수정
         @Operation(summary = "게시판 글 수정", description = "게시판에 저장된 글을 수정합니다.")
@@ -55,7 +56,9 @@ public interface PostControllerDocs {
                         @ApiResponse(responseCode = "200", description = "글 수정 성공"),
                         @ApiResponse(responseCode = "400", description = "글 수정 실패"),
                         @ApiResponse(responseCode = "500", description = "서버 내부 오류") })
-        ResponseEntity<Long> updateBoard(@PathVariable(value = "no") Long boardNo,
+        ResponseEntity<Long> updateBoard(@PathVariable(value = "postNo") Long postNo,
                         @RequestPart(value = "dto") PostRequestDto boardDto,
-                        @RequestPart(value = "file") MultipartFile imgFile) throws IOException;
+                        @RequestPart(value = "file") MultipartFile imgFile,
+                        @RequestParam(value = "deleteImage", required = false, defaultValue = "false") boolean deleteImage)
+                        throws IOException;
 }

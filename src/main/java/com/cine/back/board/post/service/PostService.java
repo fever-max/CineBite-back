@@ -70,7 +70,9 @@ public class PostService {
     public void deleteBoard(Long postNo) throws IOException {
         try {
             PostEntity postEntity = entityUtil.findPostById(postNo);
-            fileService.deleteFile(postEntity.getImgUrl());
+            if (postEntity.getImgUrl() != null && !postEntity.getImgUrl().isEmpty()) {
+                fileService.deleteFile(postEntity.getImgUrl());
+            }
             postRepository.delete(postEntity);
             log.info("게시글 삭제 완료 / No: {}", postNo);
         } catch (NoSuchElementException e) {
@@ -80,16 +82,23 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto modifyBoard(Long postNo, PostRequestDto postDto, MultipartFile imgFile)
+    public PostResponseDto modifyBoard(Long postNo, PostRequestDto postDto, MultipartFile imgFile, boolean deleteImage)
             throws IOException {
         try {
             PostEntity postEntity = entityUtil.findPostById(postNo);
-            String boardImgUrl = null;
-            if (!imgFile.isEmpty()) {
+            if (deleteImage && postEntity.getImgUrl() != null) {
+                log.info("게시글 이미지 삭제 요청");
                 fileService.deleteFile(postEntity.getImgUrl());
-                boardImgUrl = fileService.uploadFile(imgFile, "boardImages");
+                postEntity.setImgUrl(null);
             }
-            PostEntity updatedBoard = postMapper.updatePostEntity(postEntity, postDto, boardImgUrl);
+            if (imgFile != null && !imgFile.isEmpty()) {
+                if (postEntity.getImgUrl() != null) {
+                    log.info("게시글 이미지 교체 요청");
+                    fileService.deleteFile(postEntity.getImgUrl());
+                }
+                postEntity.setImgUrl(fileService.uploadFile(imgFile, "boardImages"));
+            }
+            PostEntity updatedBoard = postMapper.updatePostEntity(postEntity, postDto, postEntity.getImgUrl());
             List<String> tagNames = tagService.updateTags(updatedBoard, postDto.tagNames());
             log.info("게시글 수정 완료 No: {}", updatedBoard.getPostNo());
             PostResponseDto responseDto = postMapper.toResponseDto(updatedBoard, tagNames);
