@@ -1,6 +1,5 @@
 package com.cine.back.movieList.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,16 +11,20 @@ import com.cine.back.movieList.service.EvaluateService;
 
 @RestController
 @RequestMapping("/movies")
-public class TomatoController {
+public class TomatoController implements TomatoControllerDocs {
 
-    @Autowired
-    private EvaluateService evaluateService;
+    private final EvaluateService evaluateService;
 
+    public TomatoController(EvaluateService evaluateService) {
+        this.evaluateService = evaluateService;
+    }
+
+    @Override
     @PostMapping("/{movieId}/rate")
     public ResponseEntity<String> rateMovie(
-            @RequestParam String userId,
-            @PathVariable int movieId,
-            @RequestParam String rating) {
+            @RequestParam(value = "userId") String userId,
+            @PathVariable(value = "movieId") int movieId,
+            @RequestParam(value = "rating") String rating) {
         try {
             evaluateService.rateMovie(movieId, userId, rating);
             return ResponseEntity.ok("평가가 성공적으로 저장되었습니다.");
