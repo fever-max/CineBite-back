@@ -36,6 +36,20 @@ public interface PostControllerDocs {
                         @ApiResponse(responseCode = "400", description = "글 전체 조회 실패") })
         ResponseEntity<List<PostResponseDto>> getAllBoards();
 
+        // 최근 게시글 조회
+        @Operation(summary = "최근 게시글 조회", description = "게시판에서 최근 3개의 게시글을 조회합니다.")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "최근 게시글 조회 성공"),
+                        @ApiResponse(responseCode = "400", description = "최근 게시글 조회 실패") })
+        ResponseEntity<List<PostResponseDto>> getRecentBoards();
+
+        // 인기 게시글 조회
+        @Operation(summary = "인기 게시글 조회", description = "게시판에서 인기 3개의 게시글을 조회합니다.")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "인기 게시글 조회 성공"),
+                        @ApiResponse(responseCode = "400", description = "인기 게시글 조회 실패") })
+        ResponseEntity<List<PostResponseDto>> getPopularBoards();
+
         // 글 세부 조회
         @Operation(summary = "게시판 글 세부 조회", description = "게시판에 저장된 특정 글을 조회합니다.")
         @ApiResponses(value = {

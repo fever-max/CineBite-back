@@ -46,6 +46,22 @@ public class PostController implements PostControllerDocs {
     }
 
     @Override
+    @GetMapping("/post/recentList")
+    public ResponseEntity<List<PostResponseDto>> getRecentBoards() {
+        log.info("최신 게시글 반환 컨트롤러");
+        List<PostResponseDto> boards = boardService.getRecentBoards();
+        return ResponseEntity.ok().body(boards);
+    }
+
+    @Override
+    @GetMapping("/post/popularList")
+    public ResponseEntity<List<PostResponseDto>> getPopularBoards() {
+        log.info("인기 게시글 반환 컨트롤러");
+        List<PostResponseDto> boards = boardService.getPopularBoards();
+        return ResponseEntity.ok().body(boards);
+    }
+
+    @Override
     @GetMapping("/post/{postNo}")
     public ResponseEntity<PostResponseDto> getBoardById(Long postNo) {
         log.info("특정 게시글 반환 컨트롤러, Post No: {}", postNo);

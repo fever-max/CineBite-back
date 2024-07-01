@@ -51,6 +51,20 @@ public class PostService {
         return postResponses;
     }
 
+    public List<PostResponseDto> getRecentBoards() {
+        List<PostEntity> postEntities = postRepository.findTop3ByOrderByCreatedDateDesc();
+        List<PostResponseDto> postResponses = postMapper.toResponseDtos(postEntities, tagService);
+        log.info("최근 게시글 조회 성공 / 총 {}개", postResponses.size());
+        return postResponses;
+    }
+
+    public List<PostResponseDto> getPopularBoards() {
+        List<PostEntity> postEntities = postRepository.findTop3ByOrderByHitCountDesc();
+        List<PostResponseDto> postResponses = postMapper.toResponseDtos(postEntities, tagService);
+        log.info("인기 게시글 조회 성공 / 총 {}개", postResponses.size());
+        return postResponses;
+    }
+
     @Transactional
     public PostResponseDto getByBoardNo(Long postNo) {
         try {
