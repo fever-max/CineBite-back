@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,8 +51,8 @@ public class ReplyController implements ReplyControllerDocs {
     }
 
     @Override
-    @PutMapping("/comment/{commentNo}/reply/{replyNo}")
-    public ResponseEntity<Long> updateComment(Long commentNo, Long replyNo, CommentRequestDto commentRequestDto) {
+    @PatchMapping("/comment/{commentNo}/reply/{replyNo}")
+    public ResponseEntity<Long> updateReply(Long commentNo, Long replyNo, CommentRequestDto commentRequestDto) {
         log.info("특정 대댓글 수정 컨트롤러, Reply No: {}", replyNo);
         ReplyResponseDto replyResponseDto = replyService.modifyReply(replyNo, commentRequestDto);
         return ResponseEntity.ok().body(replyResponseDto.commentNo());

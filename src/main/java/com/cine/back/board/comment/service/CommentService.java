@@ -10,10 +10,8 @@ import com.cine.back.board.comment.dto.CommentResponseDto;
 import com.cine.back.board.comment.entity.CommentEntity;
 import com.cine.back.board.comment.repository.CommentRepository;
 import com.cine.back.board.post.entity.PostEntity;
-import com.cine.back.board.post.repository.PostRepository;
 import com.cine.back.board.util.EntityUtil;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

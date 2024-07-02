@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 
 import com.cine.back.board.comment.dto.CommentRequestDto;
@@ -24,7 +25,7 @@ public interface ReplyControllerDocs {
                         @ApiResponse(responseCode = "400", description = "댓글 저장 실패"),
                         @ApiResponse(responseCode = "500", description = "서버 내부 오류") })
         public ResponseEntity<ReplyResponseDto> saveReply(@PathVariable(value = "commentNo") Long commentNo,
-                        @RequestPart(value = "dto") CommentRequestDto requestDto);
+                        @RequestBody CommentRequestDto requestDto);
 
         // 게시글 댓글 조회
         @Operation(summary = "대댓글 조회", description = "댓글 No로 해당 대댓글을 조회합니다.")
@@ -48,8 +49,8 @@ public interface ReplyControllerDocs {
                         @ApiResponse(responseCode = "200", description = "댓글 수정 성공"),
                         @ApiResponse(responseCode = "400", description = "댓글 수정 실패"),
                         @ApiResponse(responseCode = "500", description = "서버 내부 오류") })
-        public ResponseEntity<Long> updateComment(@PathVariable(value = "commentNo") Long commentNo,
+        public ResponseEntity<Long> updateReply(@PathVariable(value = "commentNo") Long commentNo,
                         @PathVariable(value = "replyNo") Long replyNo,
-                        @RequestPart(value = "dto") CommentRequestDto commentRequestDto);
+                        @RequestBody CommentRequestDto commentRequestDto);
 
 }
