@@ -29,7 +29,7 @@ public class CommentService {
     public CommentResponseDto writeComment(Long postNo, CommentRequestDto requestDto) {
         try {
             PostEntity post = entityUtil.findPostById(postNo);
-            entityUtil.updateCommentCount(postNo);
+            entityUtil.updateCommentCount(post);
             CommentEntity commentEntity = commentMapper.toCommentEntity(post, requestDto);
             commentRepository.save(commentEntity);
             log.info("댓글 저장 성공 / post No: {}, comment No: {}", postNo, commentEntity.getCommentNo());
@@ -60,7 +60,7 @@ public class CommentService {
     public void deleteComment(Long postNo, Long commentNo) {
         try {
             PostEntity post = entityUtil.findPostById(postNo);
-            entityUtil.deleteCommentCount(post.getPostNo());
+            entityUtil.deleteCommentCount(post);
             CommentEntity comment = entityUtil.findCommentById(commentNo);
             commentRepository.delete(comment);
             log.info("댓글 삭제 성공 / comment No: {}", commentNo);

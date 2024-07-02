@@ -29,7 +29,7 @@ public class ReplyService {
     public ReplyResponseDto writeReply(Long commentNo, CommentRequestDto requestDto) {
         try {
             CommentEntity commentEntity = entityUtil.findCommentById(commentNo);
-            entityUtil.updateCommentCount(commentEntity.getPost().getPostNo());
+            entityUtil.updateCommentCount(commentEntity.getPost());
             ReplyEntity replyEntity = commentMapper.toReplyEntity(commentEntity, requestDto);
             replyRepository.save(replyEntity);
             log.info("대댓글 저장 성공 /comment No: {}, Reply No", commentNo, replyEntity.getReplyNo());
@@ -59,7 +59,7 @@ public class ReplyService {
     public void deleteReply(Long commentNo, Long replyNo) {
         try {
             CommentEntity comment = entityUtil.findCommentById(commentNo);
-            entityUtil.deleteCommentCount(comment.getPost().getPostNo());
+            entityUtil.deleteCommentCount(comment.getPost());
             ReplyEntity replyEntity = entityUtil.findReplyById(replyNo);
             replyRepository.delete(replyEntity);
             log.info("댓글 삭제 성공 / reply No: {}", replyNo);

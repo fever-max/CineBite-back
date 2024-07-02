@@ -40,15 +40,13 @@ public class EntityUtil {
                 .orElseThrow(() -> new EntityNotFoundException("대댓글을 찾을 수 없습니다."));
     }
 
-    public void updateCommentCount(Long postNo) {
-        log.info("updateCommentCount 실행, postNo: {}", postNo);
-        PostEntity post = findPostById(postNo);
+    public void updateCommentCount(PostEntity post) {
+        log.info("updateCommentCount 실행, postNo: {}", post.getPostNo());
         post.setCommentCount(post.getCommentCount() + 1);
     }
 
-    public void deleteCommentCount(Long postNo) {
-        log.info("deleteCommentCount 실행, postNo: {}", postNo);
-        PostEntity post = findPostById(postNo);
+    public void deleteCommentCount(PostEntity post) {
+        log.info("deleteCommentCount 실행, postNo: {}", post.getPostNo());
         post.setCommentCount(post.getCommentCount() - 1);
     }
 
@@ -56,6 +54,16 @@ public class EntityUtil {
         log.info("updateHitCount 실행, postNo: {}", post.getPostNo());
         post.setHitCount(post.getHitCount() + 1);
         return post;
+    }
+
+    public void updateLikeCount(PostEntity post) {
+        log.info("updateLikeCount 실행, postNo: {}", post.getPostNo());
+        post.setLikeCount(post.getLikeCount() + 1);
+    }
+
+    public void deleteLikeCount(PostEntity post) {
+        log.info("deleteLikeCount 실행, postNo: {}", post.getPostNo());
+        post.setLikeCount(post.getLikeCount() - 1);
     }
 
 }

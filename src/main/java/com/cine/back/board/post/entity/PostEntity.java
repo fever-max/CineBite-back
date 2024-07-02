@@ -7,6 +7,8 @@ import lombok.*;
 import java.util.List;
 
 import com.cine.back.board.comment.entity.CommentEntity;
+import com.cine.back.board.comment.entity.ReplyEntity;
+import com.cine.back.board.like.entity.LikeEntity;
 
 @Entity
 @Data
@@ -64,10 +66,13 @@ public class PostEntity {
         this.imgUrl = imgUrl;
     }
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<PostTagMapEntity> postTagMappings;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CommentEntity> commentEntity;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<LikeEntity> likeEntities;
 
 }
