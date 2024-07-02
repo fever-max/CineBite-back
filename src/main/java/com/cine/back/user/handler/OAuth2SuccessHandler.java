@@ -25,24 +25,25 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        String username = oAuth2User.getUsername();
-
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
-        String token = jwtProvider.create(username, role, 60 * 60 * 60L);
 
-        response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("http://localhost:3000/");
+        String username = oAuth2User.getUsername();
+        String role = auth.getAuthority();
+        String token = jwtProvider.create("refresh", username, role, 24*60*60*1000L);
+
+        response.addCookie(createCookie("refresh", token));
+        response.sendRedirect("http://localhost:3000/getAccess");
+        // response.sendRedirect("http://localhost:3000/");
     }
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 60 * 60);
+        cookie.setMaxAge(60 * 60 * 60);// 1시간
         cookie.setPath("/");
+        cookie.setSecure(true);
         cookie.setHttpOnly(true);
-
         return cookie;
     }
 }

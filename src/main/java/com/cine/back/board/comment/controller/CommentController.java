@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +29,7 @@ public class CommentController implements CommentControllerDocs {
     @PostMapping("/post/{postNo}/comment")
     public ResponseEntity<CommentResponseDto> saveComment(Long postNo, CommentRequestDto requestDto) {
         log.info("댓글 저장 컨트롤러, 게시글 NO: {}", postNo);
+        log.info("댓글 저장 내용: {}", requestDto.content());
         CommentResponseDto responseDto = commentService.writeComment(postNo, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
@@ -50,7 +51,7 @@ public class CommentController implements CommentControllerDocs {
     }
 
     @Override
-    @PutMapping("/post/{postNo}/comment/{commentNo}")
+    @PatchMapping("/post/{postNo}/comment/{commentNo}")
     public ResponseEntity<Long> updateComment(Long postNo, Long commentNo,
             CommentRequestDto commentRequestDto) {
         log.info("특정 댓글 수정 컨트롤러, Comment No: {}", commentNo);
