@@ -77,6 +77,7 @@ public class AuthServiceImplement implements AuthService {
 
             boolean isSuccessed = emailProvider.sendCertificationMail(userEmail, certificationNumber);
             if (!isSuccessed) return EmailCertificationResponseDto.mailSendFail();
+            certificationRepository.deleteByUserEmail(userEmail);
             CertificationEntity certificationEntity = new CertificationEntity(null, userId, userEmail, certificationNumber);
             certificationRepository.save(certificationEntity);
         } catch (Exception e) {
@@ -99,6 +100,8 @@ public class AuthServiceImplement implements AuthService {
 
             boolean isMatched = certificationEntity.getUserEmail().equals(userEmail) && certificationEntity.getCertificationNumber().equals(certificationNumber);
             if (!isMatched) return CheckCertificationResponseDto.certificationFail();
+
+            certificationRepository.deleteByUserEmail(userEmail);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
