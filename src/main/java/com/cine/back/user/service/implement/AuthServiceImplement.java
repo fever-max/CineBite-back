@@ -32,7 +32,7 @@ public class AuthServiceImplement implements AuthService {
     private final EmailProvider emailProvider;
     private final PasswordEncoder bCryptPasswordEncoder;
 
-    // ID 중복 확인
+    // 아이디 중복 확인
     @Override
     public ResponseEntity<? super IdCheckResponseDto> userIdCheck(IdCheckRequestDto dto) {
         try {
@@ -46,6 +46,22 @@ public class AuthServiceImplement implements AuthService {
             return ResponseDto.databaseError();
         }
         return IdCheckResponseDto.success();
+    }
+
+    // 이메일 중복 확인
+    @Override
+    public ResponseEntity<? super EmailCertificationResponseDto> checkEmail(EmailCertificationRequestDto dto) {
+        try {
+            String userEmail = dto.getUserEmail();
+            boolean isExistEmail = userRepository.existsByUserEmail(userEmail);
+            if (isExistEmail) {
+                return EmailCertificationResponseDto.duplicateEmail();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return EmailCertificationResponseDto.success();
     }
 
     // 이메일 인증

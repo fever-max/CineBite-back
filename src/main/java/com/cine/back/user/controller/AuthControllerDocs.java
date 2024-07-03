@@ -29,6 +29,12 @@ public interface AuthControllerDocs {
         @ApiResponse(responseCode = "409", description = "아이디 중복 체크 실패(중복된 아이디)")})
         public ResponseEntity<? super IdCheckResponseDto> idCheck(@RequestBody @Valid IdCheckRequestDto requestBody);
 
+        @Operation(summary = "이메일 중복 확인", description = "이메일 중복 여부를 확인합니다.")
+        @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "이메일 중복 확인 성공"),
+        @ApiResponse(responseCode = "409", description = "이메일 중복 확인 실패(중복된 이메일)")})
+        public ResponseEntity<? super EmailCertificationResponseDto> checkEmail(@RequestBody @Valid EmailCertificationRequestDto requestBody);
+
         @Operation(summary = "이메일 인증", description = "이메일 인증 여부를 확인합니다.")
         @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "이메일 인증 확인 성공"),

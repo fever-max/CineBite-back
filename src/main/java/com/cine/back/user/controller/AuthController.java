@@ -3,9 +3,13 @@ package com.cine.back.user.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cine.back.user.service.AuthService;
+
+import io.swagger.v3.oas.models.responses.ApiResponse;
+
 import com.cine.back.user.dto.request.IdCheckRequestDto;
 import com.cine.back.user.dto.response.IdCheckResponseDto;
 import com.cine.back.user.dto.response.ResponseDto;
+import com.cine.back.user.common.ResponseCode;
 import com.cine.back.user.dto.UserDTO;
 import com.cine.back.user.dto.request.CheckCertificationRequestDto;
 import com.cine.back.user.dto.request.EmailCertificationRequestDto;
@@ -37,6 +41,16 @@ public class AuthController implements AuthControllerDocs{
 
         ResponseEntity<? super IdCheckResponseDto> response = authService.userIdCheck(requestBody);
         return response;
+    }
+
+    // 이메일 중복 확인
+    @PostMapping("/email-check")
+    public ResponseEntity<? super EmailCertificationResponseDto> checkEmail(@RequestBody @Valid EmailCertificationRequestDto requestBody) {
+
+        log.info("이메일 중복 체크 컨트롤러 실행");
+        ResponseEntity<? super EmailCertificationResponseDto> response = authService.checkEmail(requestBody);
+        return response;
+
     }
 
     // 이메일 인증
