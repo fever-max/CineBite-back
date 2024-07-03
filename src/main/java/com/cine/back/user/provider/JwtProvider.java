@@ -20,10 +20,11 @@ public class JwtProvider {
         this.secretKey = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    public String create(String category, String userId, String userRole, Long expiredMs) {
+    public String create(String category, String userId, String userNick, String userRole, Long expiredMs) {
         return Jwts.builder()
                 .claim("category",category) // access, refresh
                 .claim("userId", userId)
+                .claim("userNick", userNick)
                 .claim("userRole", userRole)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
@@ -37,6 +38,10 @@ public class JwtProvider {
 
     public String getUserRole(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userRole", String.class);
+    }
+
+    public String getUserNick(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userNick", String.class);
     }
 
     public String getCategory(String token) {

@@ -79,10 +79,11 @@ public class ReissueController implements ReissueControllerDocs{
         }
 
         String userId = jwtProvider.getUserId(refresh);
+        String userNick = jwtProvider.getUserNick(refresh);
         String userRole = jwtProvider.getUserRole(refresh);
 
-        String newAccess = jwtProvider.create("access", userId, userRole, 10 * 60 * 1000L);
-        String newRefresh = jwtProvider.create("refresh", userId, userRole, 24 * 60 * 60 * 1000L);
+        String newAccess = jwtProvider.create("access", userId, userNick, userRole, 10 * 60 * 1000L);
+        String newRefresh = jwtProvider.create("refresh", userId, userNick, userRole, 24 * 60 * 60 * 1000L);
     
         // DB에 기존 토큰 삭제 후 새 토큰 저장
         refreshRepository.deleteByRefresh(refresh);

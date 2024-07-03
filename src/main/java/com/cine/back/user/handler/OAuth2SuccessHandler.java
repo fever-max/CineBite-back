@@ -33,8 +33,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         GrantedAuthority auth = iterator.next();
 
         String userId = oAuth2User.getUsername();
+        String userNick = oAuth2User.getName();
         String userRole = auth.getAuthority();
-        String refresh = jwtProvider.create("refresh", userId, userRole, 24 * 60 * 60 * 1000L);
+        String refresh = jwtProvider.create("refresh", userId, userNick, userRole, 24 * 60 * 60 * 1000L);
         addRefreshEntity(userId, refresh, 86400000L);
 
         response.addCookie(createCookie("refresh", refresh));
