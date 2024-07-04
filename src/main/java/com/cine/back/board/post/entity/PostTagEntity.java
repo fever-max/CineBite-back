@@ -13,9 +13,9 @@ public class PostTagEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_no")
-    private Long TagNo;
+    private Long tagNo;
 
     @Column(name = "tag_name", nullable = false)
-    private String TagName;
+    private String tagName;
 
 }

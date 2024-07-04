@@ -24,6 +24,7 @@ public class LikeService {
 
     @Transactional
     public String toggleLike(Long postNo, String userId) {
+        // 동시성 문제 해결 필요
         PostEntity post = entityUtil.findPostById(postNo);
         Optional<LikeEntity> like = likeRepository.findByPostAndUserId(post, userId);
         if (like.isEmpty()) {

@@ -21,7 +21,7 @@ public class LikeController implements LikeControllerDocs {
     @Override
     @GetMapping("/post/{postNo}/{userId}")
     public ResponseEntity<String> toggleLike(Long postNo, String userId) {
-        log.info("toggleLike 실행, postNo: {} / userId: {}", postNo, userId);
+        log.info("[GET][/like/post/{}/{}] - 게시글 좋아요 저장/취소", postNo, userId);
         String msg = likeService.toggleLike(postNo, userId);
         return ResponseEntity.ok().body(msg);
     }

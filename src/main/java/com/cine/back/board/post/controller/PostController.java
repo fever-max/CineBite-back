@@ -31,7 +31,7 @@ public class PostController implements PostControllerDocs {
     @Override
     @PostMapping("/post/write")
     public ResponseEntity<Long> saveBoard(PostRequestDto boardDto, MultipartFile imgFile) throws IOException {
-        log.info("게시글 저장 컨트롤러, BoardTitle: {}", boardDto.postTitle());
+        log.info("[POST][/board/post/write] - 게시글 저장 {}", boardDto);
         PostResponseDto responseDto = boardService.writeBoard(boardDto, imgFile);
         return ResponseEntity.ok().body(responseDto.postNo());
 
@@ -40,7 +40,7 @@ public class PostController implements PostControllerDocs {
     @Override
     @GetMapping("/post/list")
     public ResponseEntity<List<PostResponseDto>> getAllBoards() {
-        log.info("전체 게시글 반환 컨트롤러");
+        log.info("[GET][/board/post/list] - 전체 게시글 반환");
         List<PostResponseDto> boards = boardService.getAllBoards();
         return ResponseEntity.ok().body(boards);
     }
@@ -48,7 +48,7 @@ public class PostController implements PostControllerDocs {
     @Override
     @GetMapping("/post/recentList")
     public ResponseEntity<List<PostResponseDto>> getRecentBoards() {
-        log.info("최신 게시글 반환 컨트롤러");
+        log.info("[GET][/board/post/recentList] - 최근 게시글 조회");
         List<PostResponseDto> boards = boardService.getRecentBoards();
         return ResponseEntity.ok().body(boards);
     }
@@ -56,7 +56,7 @@ public class PostController implements PostControllerDocs {
     @Override
     @GetMapping("/post/popularList")
     public ResponseEntity<List<PostResponseDto>> getPopularBoards() {
-        log.info("인기 게시글 반환 컨트롤러");
+        log.info("[GET][/board/post/popularList] - 인기 게시글 조회");
         List<PostResponseDto> boards = boardService.getPopularBoards();
         return ResponseEntity.ok().body(boards);
     }
@@ -64,7 +64,7 @@ public class PostController implements PostControllerDocs {
     @Override
     @GetMapping("/post/{postNo}")
     public ResponseEntity<PostResponseDto> getBoardById(Long postNo) {
-        log.info("특정 게시글 반환 컨트롤러, Post No: {}", postNo);
+        log.info("[GET][/board/post/{}] - 특정 게시글 조회", postNo);
         PostResponseDto board = boardService.getByBoardNo(postNo);
         return ResponseEntity.ok().body(board);
     }
@@ -72,7 +72,7 @@ public class PostController implements PostControllerDocs {
     @Override
     @DeleteMapping("/post/delete/{postNo}")
     public ResponseEntity<String> deleteBoard(Long postNo) throws IOException {
-        log.info("특정 게시글 삭제 컨트롤러, Post No: {}", postNo);
+        log.info("[DELETE][/board/post/delete/{}] - 특정 게시글 삭제", postNo);
         boardService.deleteBoard(postNo);
         return ResponseEntity.ok().body("게시글 삭제 성공");
     }
@@ -82,7 +82,7 @@ public class PostController implements PostControllerDocs {
     public ResponseEntity<Long> updateBoard(Long postNo, PostRequestDto boardDto, MultipartFile imgFile,
             boolean deleteImage)
             throws IOException {
-        log.info("특정 게시글 수정 컨트롤러, Board No: {}", postNo);
+        log.info("[PATCH][/board/post/modify/{}] - 특정 게시글 수정", postNo);
         PostResponseDto responseDto = boardService.modifyBoard(postNo, boardDto, imgFile, deleteImage);
         return ResponseEntity.ok().body(responseDto.postNo());
     }
