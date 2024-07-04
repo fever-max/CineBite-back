@@ -26,7 +26,4 @@ public class SearchEntity {
     @Column(name = "search_list_time")
     private LocalDateTime searchListTime = LocalDateTime.now(); // 검색한 시간
 
-    @OneToMany(mappedBy = "searchEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RelatedEntity> relatedEntities;
-
 }
