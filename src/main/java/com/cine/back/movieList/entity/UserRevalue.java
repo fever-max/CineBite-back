@@ -1,5 +1,6 @@
 package com.cine.back.movieList.entity;
 
+
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -16,12 +17,12 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
-@Entity(name = "User_Rating")
-public class UserRating {
+@Entity(name = "User_Revalue")
+public class UserRevalue {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ratingId;
+    private Long revalueId;
 
     @NotNull
     @Column(name = "movie_id")
@@ -31,19 +32,17 @@ public class UserRating {
     @Column(name = "user_id")
     private String userId;
     
-    @NotNull
-    @Column(name = "rating")
-    private String rating; // 'fresh' or 'rotten'
+    @Column(name = "deleted_Date")
+    private LocalDateTime deletedDate;    // 평가 삭제 시점
     
-    @NotNull
-    @Column(name = "tomato")
-    private int tomato; // 평가 척도
+    @Column(name = "check_Deleted")
+    private boolean checkDeleted; // 삭제 유무 판단
     
     @Builder
-    public UserRating(int movieId, String userId, String rating, int tomato) {
+    public UserRevalue(int movieId, String userId, LocalDateTime deletedDate, boolean checkDeleted) {
         this.movieId = movieId;
         this.userId = userId;
-        this.rating = rating;
-        this.tomato = tomato;
+        this.deletedDate = deletedDate;
+        this.checkDeleted = checkDeleted;
     }
 }

@@ -23,7 +23,7 @@ public interface TomatoControllerDocs {
         @ApiResponse(responseCode = "500", description = "서버 내부 오류로 인한 토마토 지수 출력 실패")
     })
     ResponseEntity<?> rateMovie(
-            @RequestBody Evaluation Evaluation);
+            @RequestBody Evaluation Evaluation, @PathVariable(value = "movieId") int movieId);
 
     // 영화 평가 삭제하기
     @Operation(summary = "영화에 대한 평가 정보 삭제", description = "사용자 평가를 삭제합니다.")

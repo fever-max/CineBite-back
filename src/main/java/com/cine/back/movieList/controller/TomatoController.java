@@ -27,11 +27,10 @@ public class TomatoController implements TomatoControllerDocs {
     }
 
     @PostMapping("/{movieId}/rate")
-    public ResponseEntity<?> rateMovie(@RequestBody Evaluation evaluation) {
+    public ResponseEntity<?> rateMovie(@RequestBody Evaluation evaluation, @PathVariable int movieId) {
         try {
-            System.out.println("하이테스트");
-            EvaluateResponse response = evaluateService.rateMovie(evaluation);
-            log.info("응답 테스트 : {}", response);
+            log.info("[POST][/movie/{}/rate] - 평가 저장", movieId);
+            EvaluateResponse response = evaluateService.rateMovie(movieId, evaluation);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -43,8 +42,8 @@ public class TomatoController implements TomatoControllerDocs {
                 @RequestParam String userId,
                 @PathVariable int movieId) {
         try {
+            log.info("[DELETE][/movie/{}/deleteRating] - 평가 삭제", movieId);
             evaluateService.deleteRating(userId, movieId);
-            log.info("삭제된 평가정보 : {}", userId, movieId);
             return ResponseEntity.ok().body("평가가 삭제되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
