@@ -24,19 +24,19 @@ public class UserRating {
     private Long ratingId;
 
     @NotNull
-    @Column(name = "movie_id")
+    @Column(nullable = false, name = "movie_id")
     private int movieId;
     
     @NotNull
-    @Column(name = "user_id")
+    @Column(nullable = false, name = "user_id")
     private String userId;
     
     @NotNull
-    @Column(name = "rating")
+    @Column(nullable = false, name = "rating")
     private String rating; // 'fresh' or 'rotten'
     
     @NotNull
-    @Column(name = "tomato")
+    @Column(nullable = false, name = "tomato")
     private int tomato; // 평가 척도
     
     @Builder

@@ -48,5 +48,5 @@ public interface UserFavoriteControllerDocs {
                 @ApiResponse(responseCode = "500", description = "서버 내부 오류로 인한 찜 목록 조회 실패"),
     })
         ResponseEntity<List<FavoriteResponseDto>> getToFavorite(
-            @RequestParam(value = "userId") String userId) throws IOException;
+            @RequestParam(value = "userId") String userId);
 }

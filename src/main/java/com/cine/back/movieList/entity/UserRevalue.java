@@ -25,17 +25,17 @@ public class UserRevalue {
     private Long revalueId;
 
     @NotNull
-    @Column(name = "movie_id")
+    @Column(nullable = false, name = "movie_id")
     private int movieId;
     
     @NotNull
-    @Column(name = "user_id")
+    @Column(nullable = false, name = "user_id")
     private String userId;
     
-    @Column(name = "deleted_Date")
+    @Column(nullable = false, name = "deleted_Date")
     private LocalDateTime deletedDate;    // 평가 삭제 시점
     
-    @Column(name = "check_Deleted")
+    @Column(nullable = false, name = "check_Deleted")
     private boolean checkDeleted; // 삭제 유무 판단
     
     @Builder

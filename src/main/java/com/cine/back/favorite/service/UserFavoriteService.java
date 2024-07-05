@@ -1,19 +1,24 @@
 package com.cine.back.favorite.service;
 
-import org.springframework.stereotype.Service;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.cine.back.favorite.dto.FavoriteAndMovie;
 import com.cine.back.favorite.dto.FavoriteRequestDto;
 import com.cine.back.favorite.dto.FavoriteResponseDto;
+import com.cine.back.favorite.dto.MovieInfoRequest;
 import com.cine.back.favorite.entity.UserFavorite;
 import com.cine.back.favorite.exception.handleAddFavoriteFailure;
 import com.cine.back.favorite.exception.handleCancelFavoriteFailure;
 import com.cine.back.favorite.repository.UserFavoriteRepository;
+import com.cine.back.movieList.entity.MovieDetailEntity;
+import com.cine.back.config.MovieConfig;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -21,58 +26,84 @@ public class UserFavoriteService {
 
     private final UserFavoriteRepository userFavoriteRepository;
     private final UserFavoriteMapper userFavoriteMapper;
+    private final MovieConfig movieConfig;
 
-    public UserFavoriteService(UserFavoriteRepository userFavoriteRepository, UserFavoriteMapper userFavoriteMapper) {
+    public UserFavoriteService(UserFavoriteRepository userFavoriteRepository, UserFavoriteMapper userFavoriteMapper, MovieConfig movieConfig) {
         this.userFavoriteRepository = userFavoriteRepository;
         this.userFavoriteMapper = userFavoriteMapper;
+        this.movieConfig = movieConfig;
     }
 
     @Transactional
     public Optional<FavoriteResponseDto> addFavorite(FavoriteRequestDto favoriteDto) {
-    String userId = favoriteDto.userId();
-    int movieId = favoriteDto.movieId();
-
-    Optional<UserFavorite> existingFavorite = userFavoriteRepository.findByUserIdAndMovieId(userId, movieId);
-
-    existingFavorite.ifPresent(favorite -> {
+        try {
+            Optional<UserFavorite> existingFavorite = findExistingFavorite(favoriteDto.userId(), favoriteDto.movieId());
+            if (existingFavorite.isPresent()) {
+                return cancelFavorite(existingFavorite.get(), favoriteDto); // 이미 찜 상태라면 취소
+            } else {
+                return addFavoriteIfNotExists(favoriteDto); // 새로운 찜
+            }
+        } catch (IOException e) {
+            log.error("에러 - 영화 찜 요청 실패", e);
+            return Optional.empty();
+        }
+    }
+    
+    // 이미 찜한 영화인지 검사
+    private Optional<UserFavorite> findExistingFavorite(String userId, int movieId) throws IOException {
+        return userFavoriteRepository.findByUserIdAndMovieId(userId, movieId);
+    }
+    
+    // 찜 취소하기
+    private Optional<FavoriteResponseDto> cancelFavorite(UserFavorite favorite, FavoriteRequestDto favoriteDto) {
         try {
             userFavoriteRepository.delete(favorite);
-            log.info("찜 취소: 유저 {}, 영화번호 {}", userId, movieId);
+            log.info("찜 취소: 유저 {}, 영화번호 {}", favoriteDto.userId(), favoriteDto.movieId());
+            return Optional.empty();
         } catch (Exception e) {
             log.error("찜 취소 실패: {}", e.getMessage());
             throw new handleCancelFavoriteFailure();
         }
-    });
-        // 원래 없으면 찜 추가
-        if (!existingFavorite.isPresent()) {
-            return addFavoriteIfNotExists(favoriteDto);
-        }
-            return Optional.empty();
     }
-    private Optional<FavoriteResponseDto> addFavoriteIfNotExists(FavoriteRequestDto favoriteDto) {
-    String userId = favoriteDto.userId();
-    int movieId = favoriteDto.movieId();
-
-    try {
-        UserFavorite userFavorite = userFavoriteMapper.toUserFavorite(favoriteDto);
-        UserFavorite savedFavorite = userFavoriteRepository.save(userFavorite);
-        FavoriteResponseDto responseDto = userFavoriteMapper.toResponseDto(savedFavorite);
-        log.info("찜 추가: 유저 {}, 영화번호 {}", userId, movieId);
-        return Optional.of(responseDto);
-    } catch (Exception e) {
-        log.error("찜 추가 실패: {}", e.getMessage());
-        throw new handleAddFavoriteFailure();
+    
+    // 찜 상태가 아니라면 찜목록에 추가하기
+    private Optional<FavoriteResponseDto> addFavoriteIfNotExists(FavoriteRequestDto favoriteDto) throws IOException {
+        MovieDetailEntity movieDetail = fetchMovieDetails(favoriteDto.movieId());
+        FavoriteAndMovie favoriteAndMovie = new FavoriteAndMovie(favoriteDto,
+                new MovieInfoRequest(movieDetail.getMovieId(), movieDetail.getPosterPath(), movieDetail.getTitle()));
+    
+        try {
+            // UserFavorite userFavorite = userFavoriteMapper.toUserFavorite(favoriteAndMovie);
+            // UserFavorite savedFavorite = userFavoriteRepository.save(userFavorite);
+            UserFavorite savedFavorite = userFavoriteRepository.save(userFavoriteMapper.toUserFavorite(favoriteAndMovie));
+            FavoriteResponseDto responseDto = userFavoriteMapper.toResponseDto(savedFavorite);
+            log.info("찜 추가: 유저 {}, 영화번호 {}", favoriteDto.userId(), favoriteDto.movieId());
+            log.info("찜된 영화 정보 : {}", responseDto);
+    
+            return Optional.of(responseDto);
+        } catch (Exception e) {
+            log.error("찜 추가 실패: {}", e.getMessage());
+            throw new handleAddFavoriteFailure();
         }
     }
+    
+    // 상세정보에서 포스터, 타이틀, 내용만 가져오기
+    private MovieDetailEntity fetchMovieDetails(int movieId) throws IOException {
+        return movieConfig.fetchMovieDetails(movieId);
+    }
 
+    // 찜한 영화 선택 삭제
     @Transactional
     public void deleteFavorite(String userId, int movieId) {
         userFavoriteRepository.deleteByUserIdAndMovieId(userId, movieId);
+        log.info("[DELETE][/favorite/delete] - 찜을 취소한 유저 : {}, 찜목록에서 취소된 영화 :{} ", userId, movieId);
     }
-
+    
+    // 찜 목록 불러오기
     public List<FavoriteResponseDto> favoriteList(String userId) {
-        Optional<List<UserFavorite>> userFavorites = userFavoriteRepository.findByUserId(userId);
-        return userFavorites.map(userFavoriteMapper::toResponseDtos)
-                            .orElseThrow(() -> new RuntimeException("찜 목록이 없습니다."));
+        log.info("[GET][/favorite/list] - 유저 {}의 찜목록 ", userId);
+        List<UserFavorite> userFavorites = userFavoriteRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("찜 목록이 없습니다."));
+        return userFavoriteMapper.toResponseDtos(userFavorites);
     }
 }

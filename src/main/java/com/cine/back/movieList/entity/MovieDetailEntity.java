@@ -86,5 +86,7 @@ public class MovieDetailEntity {
         this.freshCount = freshCount;
         this.rottenCount = rottenCount;
         this.tomatoScore = tomatoScore;
+        
     }
+
 }
