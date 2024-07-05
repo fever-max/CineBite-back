@@ -13,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import com.cine.back.favorite.exception.handleAddFavoriteFailure;
 import com.cine.back.favorite.exception.handleCancelFavoriteFailure;
 import com.cine.back.movieList.exception.AlreadyEvaluatedException;
+import com.cine.back.movieList.exception.EvaluationNotPermittedException;
 import com.cine.back.movieList.exception.MovieNotFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -75,6 +76,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(handleAddFavoriteFailure.class)
     public ResponseEntity<String> handleAddOrCancelFavoriteFailure(handleAddFavoriteFailure e) {
         return ResponseEntity.status(BAD_REQUEST_ERROR).body(e.getMessage());
+    }
+    
+    @ExceptionHandler(EvaluationNotPermittedException.class)
+    public ResponseEntity<?> EvaluationNotPermittedException(EvaluationNotPermittedException e) {
+        return ResponseEntity.status(CONFILCT_ERROR).body("아직 평가할 수 없습니다." + e.getMessage());
     }
 
 
