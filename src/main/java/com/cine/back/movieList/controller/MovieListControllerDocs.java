@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.cine.back.movieList.dto.Genre;
 import com.cine.back.movieList.entity.MovieDetailEntity;
@@ -35,7 +35,7 @@ public interface MovieListControllerDocs {
                         @ApiResponse(responseCode = "500", description = "서버 내부 오류로 인한 정렬 실패")
         })
         ResponseEntity<Optional<List<MovieDetailEntity>>> getMovieGenres(
-                        @RequestPart(value = "genre") Genre genree);
+                        @RequestBody List<Genre> genre);
 
         // 배우별 정렬
         @Operation(summary = "배우별 정렬", description = "배우별로 영화를 정렬합니다.")

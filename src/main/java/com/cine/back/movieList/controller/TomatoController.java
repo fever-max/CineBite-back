@@ -11,7 +11,7 @@
 // import com.cine.back.movieList.service.EvaluateService;
 
 // @RestController
-// @RequestMapping("/movies")
+// @RequestMapping("/movie")
 // public class TomatoController {
 
 // @Autowired
@@ -19,9 +19,9 @@
 
 // @PostMapping("/{movieId}/rate")
 // public ResponseEntity<String> rateMovie(
-// @RequestParam String userId,
-// @PathVariable int movieId,
-// @RequestParam String rating) {
+// @RequestParam("userId") String userId,
+// @PathVariable("movieId") int movieId,
+// @RequestParam("rating") String rating) {
 // try {
 // evaluateService.rateMovie(movieId, userId, rating);
 // return ResponseEntity.ok("평가가 성공적으로 저장되었습니다.");

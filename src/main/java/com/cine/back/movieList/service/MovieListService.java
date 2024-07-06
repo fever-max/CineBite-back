@@ -2,6 +2,7 @@ package com.cine.back.movieList.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -31,9 +32,13 @@ public class MovieListService {
         }
     }
 
-    public Optional<List<MovieDetailEntity>> getMovieGenres(Genre genre) {
+    public Optional<List<MovieDetailEntity>> getMovieGenres(List<Genre> genres) {
         try {
-            Optional<List<MovieDetailEntity>> genresList = movieDetailRepository.findByGenres(genre.getName());
+            List<String> genreNames = genres.stream()
+                    .map(Genre::getName)
+                    .collect(Collectors.toList());
+            Optional<List<MovieDetailEntity>> genresList = movieDetailRepository.findByGenres(genreNames);
+            System.out.println("장르별 조회 서비스------------------" + genres);
             log.info("장르별 영화 조회 성공");
             return genresList;
         } catch (Exception e) {

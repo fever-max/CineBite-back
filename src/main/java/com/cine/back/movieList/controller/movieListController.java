@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cine.back.movieList.dto.Genre;
@@ -41,8 +40,8 @@ public class MovieListController implements MovieListControllerDocs {
     // 장르별 정렬
     @Override
     @PostMapping("/genresList")
-    public ResponseEntity<Optional<List<MovieDetailEntity>>> getMovieGenres(@RequestPart(value = "genre") Genre genre) {
-        System.out.println(genre);
+    public ResponseEntity<Optional<List<MovieDetailEntity>>> getMovieGenres(@RequestBody List<Genre> genre) {
+        System.out.println("장르별 조회 컨트롤러------------------" + genre);
         log.info("장르별 조회 컨트롤러");
         Optional<List<MovieDetailEntity>> genresList = movieListService.getMovieGenres(genre);
         return ResponseEntity.ok().body(genresList);
@@ -60,7 +59,7 @@ public class MovieListController implements MovieListControllerDocs {
     // 한 개 영화정보 꺼내기
     @Override
     @GetMapping("/{movieId}")
-    public ResponseEntity<Optional<MovieDetailEntity>> getMovieDetail(@PathVariable int movieId) {
+    public ResponseEntity<Optional<MovieDetailEntity>> getMovieDetail(@PathVariable(value = "movieId") int movieId) {
         log.info("영화 상세 조회 컨트롤러");
         Optional<MovieDetailEntity> movieDetail = movieListService.getMovieDetail(movieId);
         return ResponseEntity.ok().body(movieDetail);
