@@ -4,12 +4,14 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cine.back.board.post.dto.PostResponseDto;
+import com.cine.back.board.tag.dto.TagRequestDto;
 import com.cine.back.board.tag.dto.TagResponseDto;
-import com.cine.back.board.tag.service.TagService;
+import com.cine.back.board.tag.service.TagSearchService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +22,13 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class TagController implements TagControllerDocs {
 
-    private final TagService tagService;
+    private final TagSearchService tagSearchService;
 
     @Override
     @GetMapping("/list")
     public ResponseEntity<List<TagResponseDto>> getRecentTags() {
         log.info("[GET][/tag/list] - 최근 태그 조회");
-        List<TagResponseDto> tagResponseDtos = tagService.getRecentTags();
+        List<TagResponseDto> tagResponseDtos = tagSearchService.getRecentTags();
         return ResponseEntity.ok().body(tagResponseDtos);
     }
 
@@ -34,14 +36,16 @@ public class TagController implements TagControllerDocs {
     @GetMapping("/list/popular")
     public ResponseEntity<List<TagResponseDto>> getPopularTags() {
         log.info("[GET][/tag/list/popular] - 인기 태그 조회");
-        throw new UnsupportedOperationException("Unimplemented method 'getPopularTags'");
+        List<TagResponseDto> tagResponseDtos = tagSearchService.getPopularTags();
+        return ResponseEntity.ok().body(tagResponseDtos);
     }
 
     @Override
-    @GetMapping("/list/post/{tagName}")
-    public ResponseEntity<List<PostResponseDto>> getPostsByTag(String tagName) {
-        log.info("[GET][/tag/list/popular/{}] - 태그 이름으로 게시물 조회", tagName);
-        throw new UnsupportedOperationException("Unimplemented method 'getPostsByTag'");
+    @PostMapping("/list/post")
+    public ResponseEntity<List<PostResponseDto>> getPostsByTag(TagRequestDto requestDto) {
+        log.info("[POST][/tag/list/popular/{}] - 태그 이름으로 게시물 조회", requestDto);
+        List<PostResponseDto> postResponseDtos = tagSearchService.getPostsByTag(requestDto.tagName());
+        return ResponseEntity.ok().body(postResponseDtos);
     }
 
 }
