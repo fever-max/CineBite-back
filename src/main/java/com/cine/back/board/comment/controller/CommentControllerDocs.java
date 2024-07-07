@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @Tag(name = "Comment", description = "Comment API")
 public interface CommentControllerDocs {
@@ -25,7 +26,7 @@ public interface CommentControllerDocs {
                         @ApiResponse(responseCode = "400", description = "댓글 저장 실패"),
                         @ApiResponse(responseCode = "500", description = "서버 내부 오류") })
         public ResponseEntity<CommentResponseDto> saveComment(@PathVariable(value = "postNo") Long postNo,
-                        @RequestBody CommentRequestDto requestDto);
+                        @Valid @RequestBody CommentRequestDto requestDto);
 
         // 게시글 댓글 조회
         @Operation(summary = "댓글 조회", description = "게시판 No로 해당 댓글을 조회합니다.")
@@ -50,6 +51,6 @@ public interface CommentControllerDocs {
                         @ApiResponse(responseCode = "500", description = "서버 내부 오류") })
         public ResponseEntity<Long> updateComment(@PathVariable(value = "postNo") Long postNo,
                         @PathVariable(value = "commentNo") Long commentNo,
-                        @RequestBody CommentRequestDto commentRequestDto);
+                        @Valid @RequestBody CommentRequestDto commentRequestDto);
 
 }

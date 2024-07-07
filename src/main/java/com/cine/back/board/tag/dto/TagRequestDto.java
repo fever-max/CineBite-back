@@ -1,4 +1,7 @@
 package com.cine.back.board.tag.dto;
 
-public record TagRequestDto(String tagName) {
+import jakarta.validation.constraints.NotBlank;
+
+public record TagRequestDto(
+        @NotBlank(message = "[NotBlank] 게시물 태그") String tagName) {
 }
