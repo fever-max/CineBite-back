@@ -25,6 +25,11 @@ public class EmailCertificationResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
     }
 
+    public static ResponseEntity<ResponseDto> duplicateEmail() {
+        ResponseDto responseBody = new ResponseDto(ResponseCode.DUPLICATE_EMAIL.getCode(),ResponseMessage.DUPLICATE_EMAIL.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+    }
+
     public static ResponseEntity<ResponseDto> mailSendFail() {
         ResponseDto responseBody = new ResponseDto(ResponseCode.MAIL_FAIL.getCode(),ResponseMessage.MAIL_FAIL.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);

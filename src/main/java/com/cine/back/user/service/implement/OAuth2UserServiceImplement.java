@@ -1,5 +1,7 @@
 package com.cine.back.user.service.implement;
 
+import java.time.LocalDate;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -43,11 +45,11 @@ public class OAuth2UserServiceImplement extends DefaultOAuth2UserService {
             log.error("지원하지 않는 소셜 로그인입니다.");
         }
 
-        String username = oAuthResponse.getProvider() + " " + oAuthResponse.getProviderId();
+        String username = oAuthResponse.getProvider() + "" + oAuthResponse.getProviderId();
         UserEntity existData = userRepository.findByUserId(username);
 
         if(existData == null){
-            String nickname = oAuthResponse.getUserNick() != null ? oAuthResponse.getUserNick() : RandomStringUtils.random(10, true, false);
+            String nickname = oAuthResponse.getUserNick() != null ? oAuthResponse.getUserNick() : RandomStringUtils.random(5, true, false);
 
             UserEntity user = UserEntity.builder()  
                     .userId(username)
@@ -55,6 +57,7 @@ public class OAuth2UserServiceImplement extends DefaultOAuth2UserService {
                     .userType(oAuthResponse.getProvider())
                     .userNick(nickname)
                     .userRole("ROLE_USER")
+                    .apDate(LocalDate.now())
                     .build();
             userRepository.save(user); 
 
