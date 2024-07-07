@@ -2,10 +2,10 @@ package com.cine.back.movieList.service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.cine.back.movieList.dto.Evaluation;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.entity.UserRating;
@@ -20,7 +20,8 @@ import com.cine.back.movieList.repository.UserRevalueRepository;
 import com.cine.back.movieList.request.MovieRatingRequest;
 import com.cine.back.movieList.request.UserRatingRequest;
 import com.cine.back.movieList.response.EvaluateResponse;
-
+import com.cine.back.favorite.entity.UserFavorite;
+import com.cine.back.favorite.repository.UserFavoriteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,10 +33,10 @@ public class EvaluateService {
     private final UserRatingRepository userRatingRepository;
     private final UserRevalueRepository userRevalueRepository;
     private final MovieMapper movieMapper;
+    private final UserFavoriteRepository userFavoriteRepository;
 
     @Transactional
     public EvaluateResponse rateMovie(int movieId, Evaluation evaluation) {
-
         log.info("[POST][/movie/{}/rate] - 평가 정보!!!! :{} ", movieId, evaluation);
         UserRatingRequest userRatingRequest = evaluation.userRatingRequest();
         MovieRatingRequest movieRatingRequest = evaluation.movieRatingRequest();
@@ -144,9 +145,21 @@ public class EvaluateService {
         int totalRatings = movie.getFreshCount() + movie.getRottenCount();
         double tomatoScore = calculateTomatoScore(totalRatings, movie.getFreshCount());
         movie.setTomatoScore(tomatoScore);
+        
+        updateUserFavoritesTomatoScore(movie);
     }
 
+    // 최종 토마토 점수 계산
     private double calculateTomatoScore(int totalRatings, int freshCount) {
         return totalRatings > 0 ? (double) freshCount / totalRatings * 100 : 0.0;
+    }
+
+    // 사용자 평가 변동 시 찜목록 tomatoScore 에 반영 
+    private void updateUserFavoritesTomatoScore(MovieDetailEntity movie) {
+        List<UserFavorite> userFavorites = userFavoriteRepository.findByMovieId(movie.getMovieId());
+        for (UserFavorite userFavorite : userFavorites) {
+            userFavorite.setTomatoScore(movie.getTomatoScore());
+            userFavoriteRepository.save(userFavorite);
+        }
     }
 }

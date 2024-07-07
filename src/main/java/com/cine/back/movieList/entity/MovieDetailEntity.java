@@ -26,17 +26,17 @@ public class MovieDetailEntity {
     
     @Id
     @JsonProperty("id")
-    @Column(name = "movie_id")
+    @Column(nullable = false, name = "movie_id")
     private int movieId;
 
     @NotNull
     @JsonProperty("title")
-    @Column(name = "title")
+    @Column(nullable = false, name = "title")
     private String title;
     
     @NotNull
     @JsonProperty("release_date")
-    @Column(length = 20)
+    @Column(nullable = false, length = 20)
     private String releaseDate;
     
     @NotNull
@@ -46,17 +46,17 @@ public class MovieDetailEntity {
     
     @NotNull
     @JsonProperty("poster_path")
-    @Column(length = 100)
+    @Column(nullable = false, length = 100)
     private String posterPath;
     
     @NotNull
     @JsonProperty("popularity")
-    @Column(length = 20)
+    @Column(nullable = false, length = 20)
     private String popularity;
     
     @NotNull
     @JsonProperty("runtime")
-    @Column(length = 100)
+    @Column(nullable = false, length = 100)
     private String runtime;
     
     @NotNull
@@ -70,23 +70,14 @@ public class MovieDetailEntity {
     private Credits credits;
     
     @NotNull
-    @Column(name = "fresh_count")
+    @Column(nullable = false, name = "fresh_count")
     private int freshCount;
     
     @NotNull
-    @Column(name = "rotten_count")
+    @Column(nullable = false, name = "rotten_count")
     private int rottenCount;
     
     @NotNull
-    @Column(name = "tomato_score")
+    @Column(nullable = false, name = "tomato_score")
     private double tomatoScore; // 평가 퍼센티지
-
-    @Builder
-    public MovieDetailEntity(int freshCount, int rottenCount, double tomatoScore) {
-        this.freshCount = freshCount;
-        this.rottenCount = rottenCount;
-        this.tomatoScore = tomatoScore;
-        
-    }
-
 }

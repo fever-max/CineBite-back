@@ -8,10 +8,11 @@ import java.util.*;
 
 public interface MovieDetailRepository extends JpaRepository<MovieDetailEntity, Integer> {
     
-    Optional<MovieDetailEntity> findByMovieId(int movieId);
-    
     Optional<List<MovieDetailEntity>> findAllByOrderByPopularityAsc();
-    
+
+    @Query("SELECT md FROM movie_details md WHERE md.movieId = :movieId")
+    Optional<MovieDetailEntity> findByMovieId(@Param("movieId") int movieId);
+
     @Query("SELECT md FROM movie_details md JOIN md.genres g WHERE g.name = :genres")
     Optional<List<MovieDetailEntity>> findByGenres(@Param("genres") String genre);
 

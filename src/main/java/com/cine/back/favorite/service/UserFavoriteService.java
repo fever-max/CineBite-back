@@ -16,10 +16,13 @@ import com.cine.back.favorite.exception.handleAddFavoriteFailure;
 import com.cine.back.favorite.exception.handleCancelFavoriteFailure;
 import com.cine.back.favorite.repository.UserFavoriteRepository;
 import com.cine.back.movieList.entity.MovieDetailEntity;
+import com.cine.back.movieList.repository.MovieDetailRepository;
 import com.cine.back.config.MovieConfig;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class UserFavoriteService {
@@ -27,12 +30,7 @@ public class UserFavoriteService {
     private final UserFavoriteRepository userFavoriteRepository;
     private final UserFavoriteMapper userFavoriteMapper;
     private final MovieConfig movieConfig;
-
-    public UserFavoriteService(UserFavoriteRepository userFavoriteRepository, UserFavoriteMapper userFavoriteMapper, MovieConfig movieConfig) {
-        this.userFavoriteRepository = userFavoriteRepository;
-        this.userFavoriteMapper = userFavoriteMapper;
-        this.movieConfig = movieConfig;
-    }
+    private final MovieDetailRepository movieDetailRepository;
 
     @Transactional
     public Optional<FavoriteResponseDto> addFavorite(FavoriteRequestDto favoriteDto) {
@@ -58,7 +56,7 @@ public class UserFavoriteService {
     private Optional<FavoriteResponseDto> cancelFavorite(UserFavorite favorite, FavoriteRequestDto favoriteDto) {
         try {
             userFavoriteRepository.delete(favorite);
-            log.info("찜 취소: 유저 {}, 영화번호 {}", favoriteDto.userId(), favoriteDto.movieId());
+            log.info("찜 취소된 정보}", favorite);
             return Optional.empty();
         } catch (Exception e) {
             log.error("찜 취소 실패: {}", e.getMessage());
@@ -70,16 +68,11 @@ public class UserFavoriteService {
     private Optional<FavoriteResponseDto> addFavoriteIfNotExists(FavoriteRequestDto favoriteDto) throws IOException {
         MovieDetailEntity movieDetail = fetchMovieDetails(favoriteDto.movieId());
         FavoriteAndMovie favoriteAndMovie = new FavoriteAndMovie(favoriteDto,
-                new MovieInfoRequest(movieDetail.getMovieId(), movieDetail.getPosterPath(), movieDetail.getTitle()));
-    
+                new MovieInfoRequest(movieDetail.getMovieId(), movieDetail.getPosterPath(), movieDetail.getTitle(), movieDetail.getTomatoScore()));
         try {
-            // UserFavorite userFavorite = userFavoriteMapper.toUserFavorite(favoriteAndMovie);
-            // UserFavorite savedFavorite = userFavoriteRepository.save(userFavorite);
             UserFavorite savedFavorite = userFavoriteRepository.save(userFavoriteMapper.toUserFavorite(favoriteAndMovie));
             FavoriteResponseDto responseDto = userFavoriteMapper.toResponseDto(savedFavorite);
-            log.info("찜 추가: 유저 {}, 영화번호 {}", favoriteDto.userId(), favoriteDto.movieId());
             log.info("찜된 영화 정보 : {}", responseDto);
-    
             return Optional.of(responseDto);
         } catch (Exception e) {
             log.error("찜 추가 실패: {}", e.getMessage());
@@ -87,9 +80,20 @@ public class UserFavoriteService {
         }
     }
     
-    // 상세정보에서 포스터, 타이틀, 내용만 가져오기
-    private MovieDetailEntity fetchMovieDetails(int movieId) throws IOException {
-        return movieConfig.fetchMovieDetails(movieId);
+    // 외부 API 데이터와 DB 추가 데이터 결합
+    public MovieDetailEntity fetchMovieDetails(int movieId) throws IOException {
+
+        // 상세정보에서 영화번호, 포스터, 타이틀(외부API)만 가져오기
+        MovieDetailEntity movieDetail = movieConfig.fetchMovieDetails(movieId);
+        
+        // DB에서 추가 데이터 가져오기
+        Optional<MovieDetailEntity> optionalMovieDetail = movieDetailRepository.findByMovieId(movieId);
+        if (optionalMovieDetail.isPresent()) {
+            MovieDetailEntity dbMovieDetail = optionalMovieDetail.get();
+            movieDetail.setTomatoScore(dbMovieDetail.getTomatoScore());
+            log.info("토마토 점수 레이팅 : {}", movieDetail.getTomatoScore());
+        }
+        return movieDetail;
     }
 
     // 찜한 영화 선택 삭제

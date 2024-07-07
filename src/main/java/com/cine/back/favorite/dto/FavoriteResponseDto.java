@@ -5,7 +5,8 @@ public record FavoriteResponseDto(
                 String userId,
                 int movieId,
                 String posterPath,
-                String title) 
+                String title,
+                double tomatoScore) 
 
 {
         public static FavoriteResponseDto of(
@@ -13,12 +14,14 @@ public record FavoriteResponseDto(
             String userId,
             int movieId,
             String posterPath,
-            String title) {
+            String title,
+            double tomatoScore) {
                 return new FavoriteResponseDto(
                     favoriteId, 
                     userId, 
                     movieId, 
                     posterPath, 
-                    title);
+                    title,
+                    tomatoScore);
                         }
 }

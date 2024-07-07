@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.entity.UserRating;
 import com.cine.back.movieList.entity.UserRevalue;
-import com.cine.back.movieList.request.MovieRatingRequest;
 import com.cine.back.movieList.request.UserRatingRequest;
 import com.cine.back.movieList.response.EvaluateResponse;
 
@@ -21,14 +20,6 @@ public class MovieMapper {
                 .rating(userRatingRequest.rating())
                 .tomato(userRatingRequest.tomato())
                 .build();
-    }
-
-    public MovieDetailEntity toMovieDetailEntity(MovieRatingRequest movieRequest){
-        return MovieDetailEntity.builder()
-                    .freshCount(movieRequest.freshCount())
-                    .rottenCount(movieRequest.rottenCount())
-                    .tomatoScore(movieRequest.tomatoScore())
-                    .build();
     }
 
     public EvaluateResponse toResponse(UserRating userRating, MovieDetailEntity movieDetail, UserRevalue userRevalue) {

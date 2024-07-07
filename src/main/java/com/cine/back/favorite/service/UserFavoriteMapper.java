@@ -22,6 +22,7 @@ public class UserFavoriteMapper {
                 .movieId(movieInfoRequest.movieId())
                 .posterPath(movieInfoRequest.posterPath())
                 .title(movieInfoRequest.title())
+                .tomatoScore((movieInfoRequest.tomatoScore()))
                 .build();
     }
 
@@ -31,7 +32,8 @@ public class UserFavoriteMapper {
                 favorite.getUserId(),
                 favorite.getMovieId(),
                 favorite.getPosterPath(),
-                favorite.getTitle());
+                favorite.getTitle(),
+                favorite.getTomatoScore());
     }
 
     public List<FavoriteResponseDto> toResponseDtos(List<UserFavorite> userFavorites) {

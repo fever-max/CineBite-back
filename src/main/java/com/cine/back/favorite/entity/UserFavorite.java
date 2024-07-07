@@ -29,22 +29,27 @@ public class UserFavorite {
     @NotNull
     @Column(nullable = false, name = "movieId")
     private int movieId;
-
+    
     @JsonProperty("poster_path")
     @NotNull
     @Column(nullable = false, length = 100)
     private String posterPath;
-
+    
     @JsonProperty("title")
     @NotNull
     @Column(nullable = false, name = "title")
     private String title;
+    
+    @NotNull
+    @Column(nullable = false, name = "tomato_Score")
+    private double tomatoScore;
 
     @Builder
-    public UserFavorite(String userId, int movieId, String posterPath, String title) {
+    public UserFavorite(String userId, int movieId, String posterPath, String title, double tomatoScore) {
         this.userId = userId;
         this.movieId = movieId;
         this.posterPath = posterPath;
         this.title = title;
+        this.tomatoScore = tomatoScore;
     }
 }
