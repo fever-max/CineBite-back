@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,11 +35,11 @@ public class PostService {
             PostEntity postEntity = postMapper.toPostEntity(postDto, boardImgUrl);
             PostEntity savedPost = postRepository.save(postEntity);
             tagService.saveTags(savedPost, postDto.tagNames());
-            log.info("게시글 작성 성공 / No: {}", savedPost.getPostNo());
+            log.info("# 게시글 작성 성공 - No: {}", savedPost.getPostNo());
             PostResponseDto responseDto = postMapper.toResponseDto(savedPost, postDto.tagNames());
             return responseDto;
         } catch (IllegalArgumentException e) {
-            log.error("잘못된 요청: {}", e);
+            log.error("# 잘못된 요청 - {}", e);
             throw e;
         }
     }
@@ -48,21 +47,21 @@ public class PostService {
     public List<PostResponseDto> getAllBoards() {
         List<PostEntity> postEntities = postRepository.findAll();
         List<PostResponseDto> postResponses = postMapper.toResponseDtos(postEntities, tagService);
-        log.info("전체 게시글 조회 성공 / 총 {}개", postResponses.size());
+        log.info("# 전체 게시글 조회 성공 - 총 {}개", postResponses.size());
         return postResponses;
     }
 
     public List<PostResponseDto> getRecentBoards() {
         List<PostEntity> postEntities = postRepository.findTop3ByOrderByCreatedDateDesc();
         List<PostResponseDto> postResponses = postMapper.toResponseDtos(postEntities, tagService);
-        log.info("최근 게시글 조회 성공 / 총 {}개", postResponses.size());
+        log.info("# 최근 게시글 조회 성공 - 총 {}개", postResponses.size());
         return postResponses;
     }
 
     public List<PostResponseDto> getPopularBoards() {
         List<PostEntity> postEntities = postRepository.findTop3ByOrderByHitCountDesc();
         List<PostResponseDto> postResponses = postMapper.toResponseDtos(postEntities, tagService);
-        log.info("인기 게시글 조회 성공 / 총 {}개", postResponses.size());
+        log.info("# 인기 게시글 조회 성공 - 총 {}개", postResponses.size());
         return postResponses;
     }
 
@@ -73,10 +72,10 @@ public class PostService {
             PostEntity updatedBoard = entityUtil.updateHitCount(postEntity);
             PostResponseDto responseDto = postMapper.toResponseDto(updatedBoard,
                     tagService.getTagNamesForBoard(postEntity));
-            log.info("게시글 조회 완료 / No: {}", postEntity.getPostNo());
+            log.info("# 게시글 조회 완료 - No: {}", postEntity.getPostNo());
             return responseDto;
         } catch (NoSuchElementException e) {
-            log.error("조회할 게시글이 없음: {}", e.getMessage());
+            log.error("#조회할 게시글이 없음 - {}", e.getMessage());
             throw e;
         }
     }
@@ -89,9 +88,9 @@ public class PostService {
                 fileService.deleteFile(postEntity.getImgUrl());
             }
             postRepository.delete(postEntity);
-            log.info("게시글 삭제 완료 / No: {}", postNo);
+            log.info("# 게시글 삭제 완료 - No: {}", postNo);
         } catch (NoSuchElementException e) {
-            log.error("삭제할 게시글이 없음: {}", e.getMessage());
+            log.error("# 삭제할 게시글이 없음 - {}", e.getMessage());
             throw e;
         }
     }
@@ -102,24 +101,24 @@ public class PostService {
         try {
             PostEntity postEntity = entityUtil.findPostById(postNo);
             if (deleteImage && postEntity.getImgUrl() != null) {
-                log.info("게시글 이미지 삭제 요청");
+                log.info("# 게시글 이미지 삭제 요청 - {}", imgFile);
                 fileService.deleteFile(postEntity.getImgUrl());
                 postEntity.setImgUrl(null);
             }
             if (imgFile != null && !imgFile.isEmpty()) {
                 if (postEntity.getImgUrl() != null) {
-                    log.info("게시글 이미지 교체 요청");
+                    log.info("# 게시글 이미지 교체 요청 - {}", imgFile);
                     fileService.deleteFile(postEntity.getImgUrl());
                 }
                 postEntity.setImgUrl(fileService.uploadFile(imgFile, "boardImages"));
             }
             PostEntity updatedBoard = postMapper.updatePostEntity(postEntity, postDto, postEntity.getImgUrl());
             List<String> tagNames = tagService.updateTags(updatedBoard, postDto.tagNames());
-            log.info("게시글 수정 완료 No: {}", updatedBoard.getPostNo());
+            log.info("# 게시글 수정 완료 - No: {}", updatedBoard.getPostNo());
             PostResponseDto responseDto = postMapper.toResponseDto(updatedBoard, tagNames);
             return responseDto;
         } catch (NoSuchElementException e) {
-            log.error("수정할 게시글이 없음: {}", e.getMessage());
+            log.error("# 수정할 게시글이 없음 - {}", e.getMessage());
             throw e;
         }
     }

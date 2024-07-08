@@ -55,7 +55,7 @@ public class TagSearchService {
                 postResponseDtos.add(responseDto);
             }
         } catch (NoSuchElementException e) {
-            log.error("{} 태그에 해당하는 게시물을 찾을 수 없음: {} ", tagName, e.getMessage());
+            log.error("# {} 태그에 해당하는 게시물을 찾을 수 없음 - {} ", tagName, e.getMessage());
             throw e;
         }
         return postResponseDtos;

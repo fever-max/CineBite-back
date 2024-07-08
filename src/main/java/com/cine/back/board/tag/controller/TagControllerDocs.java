@@ -1,7 +1,6 @@
 package com.cine.back.board.tag.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.cine.back.board.post.dto.PostResponseDto;

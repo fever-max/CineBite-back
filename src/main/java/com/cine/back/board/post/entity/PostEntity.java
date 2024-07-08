@@ -7,7 +7,6 @@ import lombok.*;
 import java.util.List;
 
 import com.cine.back.board.comment.entity.CommentEntity;
-import com.cine.back.board.comment.entity.ReplyEntity;
 import com.cine.back.board.like.entity.LikeEntity;
 
 @Entity

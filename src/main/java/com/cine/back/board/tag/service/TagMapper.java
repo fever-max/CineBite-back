@@ -4,11 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
-
-import com.cine.back.board.post.dto.PostResponseDto;
-import com.cine.back.board.post.entity.PostEntity;
 import com.cine.back.board.post.entity.PostTagEntity;
-import com.cine.back.board.post.service.TagService;
 import com.cine.back.board.tag.dto.TagResponseDto;
 
 @Component

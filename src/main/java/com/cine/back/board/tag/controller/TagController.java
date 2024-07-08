@@ -3,10 +3,7 @@ package com.cine.back.board.tag.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cine.back.board.post.dto.PostResponseDto;
 import com.cine.back.board.tag.dto.TagRequestDto;
@@ -43,7 +40,7 @@ public class TagController implements TagControllerDocs {
     @Override
     @PostMapping("/list/post")
     public ResponseEntity<List<PostResponseDto>> getPostsByTag(TagRequestDto requestDto) {
-        log.info("[POST][/tag/list/popular/{}] - 태그 이름으로 게시물 조회", requestDto);
+        log.info("[POST][/tag/list/post] - 태그 이름으로 게시물 조회: {}", requestDto);
         List<PostResponseDto> postResponseDtos = tagSearchService.getPostsByTag(requestDto.tagName());
         return ResponseEntity.ok().body(postResponseDtos);
     }
