@@ -105,7 +105,7 @@ public class UserFavoriteService {
     
     // 찜 목록 불러오기
     public List<FavoriteResponseDto> favoriteList(String userId) {
-        log.info("[GET][/favorite/list] - 유저 {}의 찜목록 ", userId);
+        log.info("# [GET][/favorite/list] - 유저 {}의 찜목록 ", userId);
         List<UserFavorite> userFavorites = userFavoriteRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("찜 목록이 없습니다."));
         return userFavoriteMapper.toResponseDtos(userFavorites);
