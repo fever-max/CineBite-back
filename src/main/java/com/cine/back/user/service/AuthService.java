@@ -26,4 +26,6 @@ public interface AuthService {
     ResponseEntity<? super ResponseDto> join(UserDTO dto);
 
     ResponseEntity<? super ResponseDto> findUserId(String userEmail);
+
+    ResponseEntity<? super ResponseDto> resetUserPwd(String userEmail, String userId);
 }
