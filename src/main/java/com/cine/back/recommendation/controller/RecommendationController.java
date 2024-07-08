@@ -1,6 +1,6 @@
 package com.cine.back.recommendation.controller;
 
-import com.cine.back.recommendation.dto.MovieDetailDto;
+import com.cine.back.recommendation.dto.RecommendationRequest;
 import com.cine.back.recommendation.service.RecommendationService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class RecommendationController {
     private final RecommendationService recommendationService;
 
     @GetMapping("/recommendations")
-    public List<MovieDetailDto> getRecommendations(@RequestParam String userId) {
+    public List<RecommendationRequest> getRecommendations(@RequestParam String userId) {
         log.info("# [GET][/recommendations] 유저 {}의 찜목록 컨트롤러 응답 ", userId);
         return recommendationService.recommendMovies(userId);
     }

@@ -2,7 +2,7 @@ package com.cine.back.recommendation.service;
 
 import com.cine.back.favorite.entity.UserFavorite;
 import com.cine.back.favorite.repository.UserFavoriteRepository;
-import com.cine.back.recommendation.dto.MovieDetailDto;
+import com.cine.back.recommendation.dto.RecommendationRequest;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.repository.MovieDetailRepository;
 import com.cine.back.movieList.exception.MovieNotFoundException;
@@ -23,7 +23,7 @@ public class RecommendationService {
     private final UserFavoriteRepository userFavoriteRepository;
     private final MovieDetailRepository movieDetailRepository;
 
-    public List<MovieDetailDto> recommendMovies(String userId) {
+    public List<RecommendationRequest> recommendMovies(String userId) {
 
         // 현재 사용자의 찜 목록을 가져오기
         List<UserFavorite> currentUserFavorites = userFavoriteRepository.findByUserId(userId).orElse(Collections.emptyList());
@@ -53,7 +53,7 @@ public class RecommendationService {
 
         // 유사한 사용자들의 찜 목록을 기반으로 영화 추천
         Set<Integer> recommendedMovieIds = new HashSet<>();
-        List<MovieDetailDto> recommendedMovies = new ArrayList<>();
+        List<RecommendationRequest> recommendedMovies = new ArrayList<>();
         similarityScores.entrySet().stream()
                 .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
                 .limit(5) // 상위 5명의 유사한 사용자들로 제한
@@ -99,8 +99,8 @@ public class RecommendationService {
     }
 
     // MovieDetailEntity를 MovieDetailDto로 변환
-    private MovieDetailDto convertToDto(MovieDetailEntity movie) {
-        return new MovieDetailDto(
+    private RecommendationRequest convertToDto(MovieDetailEntity movie) {
+        return new RecommendationRequest(
             movie.getMovieId(),
             movie.getTitle(),
             movie.getPosterPath(),

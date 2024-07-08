@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.cine.back.recommendation.dto.MovieDetailDto;
+import com.cine.back.recommendation.dto.RecommendationRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +21,6 @@ public interface RecommendationControllerDocs {
         @ApiResponse(responseCode = "400", description = "잘못된 요청으로 인한 영화 추천 실패"),
         @ApiResponse(responseCode = "500", description = "서버 내부 오류로 인한 영화 추천 실패")
     })
-    List<MovieDetailDto> getRecommendations(
+    List<RecommendationRequest> getRecommendations(
          @RequestParam(value = "userId") String userId);
 }
