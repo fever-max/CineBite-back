@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cine.back.movieList.dto.Genre;
+import com.cine.back.movieList.dto.WeeklyBoxOffices;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.service.MovieListService;
 
@@ -41,7 +42,6 @@ public class MovieListController implements MovieListControllerDocs {
     @Override
     @PostMapping("/genresList")
     public ResponseEntity<Optional<List<MovieDetailEntity>>> getMovieGenres(@RequestBody List<Genre> genre) {
-        System.out.println("장르별 조회 컨트롤러------------------" + genre);
         log.info("장르별 조회 컨트롤러");
         Optional<List<MovieDetailEntity>> genresList = movieListService.getMovieGenres(genre);
         return ResponseEntity.ok().body(genresList);
@@ -65,4 +65,12 @@ public class MovieListController implements MovieListControllerDocs {
         return ResponseEntity.ok().body(movieDetail);
     }
 
+    // 박스오피스
+    @Override
+    @GetMapping("/movieRanking")
+    public ResponseEntity<List<WeeklyBoxOffices>> getMovieRankingList() {
+        log.info("박스오피스 조회 컨트롤러");
+        List<WeeklyBoxOffices> weeklyBoxOffices = movieListService.getMovieRankingList();
+        return ResponseEntity.ok().body(weeklyBoxOffices);
+    }
 }

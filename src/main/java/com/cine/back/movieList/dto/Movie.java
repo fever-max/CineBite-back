@@ -28,6 +28,9 @@ public class Movie {
     @Column(name = "tomato_score")
     private double tomatoScore; // 평가 퍼센티지
 
+    @JsonProperty("vote_average")
+    private float voteAverage;
+
     // 지금은 트렌드 영화 목록 받고 -> movieId만 사용해서 디테일에 참조
     // 나중에 트렌드 영화 목록 출력할 때 필요
     // @JsonProperty("poster_path")

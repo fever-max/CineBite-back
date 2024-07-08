@@ -39,7 +39,7 @@ public class MovieConfig {
 
     private final OkHttpClient client = new OkHttpClient();
 
-    // 영화 목록
+    // 영화 목록 (api: Trend Movie)
     public MovieResponse fetchMovieList(int page) throws IOException {
         String url = urlHead + week + urlTail;
         Request request = new Request.Builder()
@@ -65,7 +65,7 @@ public class MovieConfig {
         }
     }
 
-    // 상세 정보
+    // 상세 정보 (api: Movie Detail)
     public MovieDetailEntity fetchMovieDetails(int movieId) throws IOException {
         Request request = new Request.Builder()
                 .url(urlDetailHead + movieId + urlDetailTail)
@@ -89,6 +89,7 @@ public class MovieConfig {
         }
     }
 
+    // 영화 목록 (api: Trend Movie)
     private MovieResponse parseTrendMovieResponse(String responseBody) throws IOException {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -99,6 +100,7 @@ public class MovieConfig {
         }
     }
 
+    // 상세 정보 (api: Movie Detail)
     private MovieDetailEntity parseMovieDetails(String responseBody) throws IOException {
         try {
             ObjectMapper objectMapper = new ObjectMapper();

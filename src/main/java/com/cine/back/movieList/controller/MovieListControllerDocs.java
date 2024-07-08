@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.cine.back.movieList.dto.Genre;
+import com.cine.back.movieList.dto.WeeklyBoxOffices;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,4 +57,13 @@ public interface MovieListControllerDocs {
         })
         ResponseEntity<Optional<MovieDetailEntity>> getMovieDetail(
                         @PathVariable(value = "movieId") int movieId);
+
+        // 흥행순 정렬
+        @Operation(summary = "흥행 순 정렬", description = "흥행 순으로 영화를 정렬합니다.")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "흥행 순으로 영화 정렬 성공"),
+                        @ApiResponse(responseCode = "400", description = "잘못된 요청으로 인한 정렬 실패"),
+                        @ApiResponse(responseCode = "500", description = "서버 내부 오류로 인한 정렬 실패")
+        })
+        ResponseEntity<List<WeeklyBoxOffices>> getMovieRankingList();
 }

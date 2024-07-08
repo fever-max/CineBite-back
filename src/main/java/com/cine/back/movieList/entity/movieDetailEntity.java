@@ -57,13 +57,16 @@ public class MovieDetailEntity {
     @JsonProperty("credits")
     private Credits credits;
 
-    // @Column(name = "fresh_count")
-    // private int freshCount;
+    @JsonProperty("vote_average")
+    private float voteAverage;
 
-    // @Column(name = "rotten_count")
-    // private int rottenCount;
+    @Column(name = "fresh_count")
+    private int freshCount;
 
-    // @Column(name = "tomato_score")
-    // private double tomatoScore; // 평가 퍼센티지
+    @Column(name = "rotten_count")
+    private int rottenCount;
+
+    @Column(name = "tomato_score")
+    private double tomatoScore; // 평가 퍼센티지
 
 }
