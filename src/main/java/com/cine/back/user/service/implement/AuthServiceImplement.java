@@ -1,6 +1,7 @@
 package com.cine.back.user.service.implement;
 
 import java.time.LocalDate;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -132,5 +133,22 @@ public class AuthServiceImplement implements AuthService {
             return ResponseDto.databaseError();
         }
         return ResponseEntity.ok(new ResponseDto());
+    }
+
+    // 아이디 찾기
+    @Override
+    public ResponseEntity<? super ResponseDto> findUserId(String userEmail) {
+        try {
+            UserEntity user = userRepository.findByUserEmail(userEmail);
+            if (user != null) {
+                String userIdPart = user.getUserId().substring(0, 3) + "***";
+                emailProvider.sendCertificationMail(userEmail, "회원님의 아이디는 " + userIdPart + "입니다.");
+                return ResponseEntity.ok(new ResponseDto());
+            } else {
+                return ResponseEntity.badRequest().body(new ResponseDto("해당 이메일로 등록된 아이디가 없습니다.", userEmail));
+            }
+        } catch (Exception e) {
+            return ResponseDto.databaseError();
+        }
     }
 }

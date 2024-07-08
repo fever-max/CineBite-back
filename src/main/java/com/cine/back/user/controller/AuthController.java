@@ -1,9 +1,6 @@
 package com.cine.back.user.controller;
 
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cine.back.user.service.AuthService;
-
 import com.cine.back.user.dto.request.IdCheckRequestDto;
 import com.cine.back.user.dto.response.IdCheckResponseDto;
 import com.cine.back.user.dto.response.ResponseDto;
@@ -13,14 +10,15 @@ import com.cine.back.user.dto.request.EmailCertificationRequestDto;
 import com.cine.back.user.dto.response.CheckCertificationResponseDto;
 import com.cine.back.user.dto.response.EmailCertificationResponseDto;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -78,5 +76,13 @@ public class AuthController implements AuthControllerDocs{
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         }
         return authService.join(userDto);
+    }
+
+    // 아이디 찾기
+    @PostMapping("/findUserId")
+    public ResponseEntity<?> findUserId(@RequestBody EmailCertificationRequestDto request) {
+
+        log.info("아이디찾기 컨트롤러 실행");
+        return authService.findUserId(request.getUserEmail());
     }
 }
