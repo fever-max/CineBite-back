@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.cine.back.user.dto.request.IdCheckRequestDto;
@@ -29,6 +30,12 @@ public interface AuthControllerDocs {
         @ApiResponse(responseCode = "409", description = "아이디 중복 체크 실패(중복된 아이디)")})
         public ResponseEntity<? super IdCheckResponseDto> idCheck(@RequestBody @Valid IdCheckRequestDto requestBody);
 
+        @Operation(summary = "이메일 중복 확인", description = "이메일 중복 여부를 확인합니다.")
+        @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "이메일 중복 확인 성공"),
+        @ApiResponse(responseCode = "409", description = "이메일 중복 확인 실패(중복된 이메일)")})
+        public ResponseEntity<? super EmailCertificationResponseDto> checkEmail(@RequestBody @Valid EmailCertificationRequestDto requestBody);
+
         @Operation(summary = "이메일 인증", description = "이메일 인증 여부를 확인합니다.")
         @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "이메일 인증 확인 성공"),
@@ -45,6 +52,6 @@ public interface AuthControllerDocs {
         @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "회원가입 성공"),
         @ApiResponse(responseCode = "409", description = "회원가입 실패")})
-        public ResponseEntity<? super ResponseDto> join(@RequestBody UserDTO userDto);
+        public ResponseEntity<? super ResponseDto> join(@RequestBody UserDTO userDto, BindingResult bindingResult);
 
 }

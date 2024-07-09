@@ -32,7 +32,7 @@ public class AuthServiceImplement implements AuthService {
     private final EmailProvider emailProvider;
     private final PasswordEncoder bCryptPasswordEncoder;
 
-    // ID 중복 확인
+    // 아이디 중복 확인
     @Override
     public ResponseEntity<? super IdCheckResponseDto> userIdCheck(IdCheckRequestDto dto) {
         try {
@@ -48,6 +48,22 @@ public class AuthServiceImplement implements AuthService {
         return IdCheckResponseDto.success();
     }
 
+    // 이메일 중복 확인
+    @Override
+    public ResponseEntity<? super EmailCertificationResponseDto> checkEmail(EmailCertificationRequestDto dto) {
+        try {
+            String userEmail = dto.getUserEmail();
+            boolean isExistEmail = userRepository.existsByUserEmail(userEmail);
+            if (isExistEmail) {
+                return EmailCertificationResponseDto.duplicateEmail();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return EmailCertificationResponseDto.success();
+    }
+
     // 이메일 인증
     @Override
     public ResponseEntity<? super EmailCertificationResponseDto> emailCertification(EmailCertificationRequestDto dto) {
@@ -61,6 +77,7 @@ public class AuthServiceImplement implements AuthService {
 
             boolean isSuccessed = emailProvider.sendCertificationMail(userEmail, certificationNumber);
             if (!isSuccessed) return EmailCertificationResponseDto.mailSendFail();
+            certificationRepository.deleteByUserEmail(userEmail);
             CertificationEntity certificationEntity = new CertificationEntity(null, userId, userEmail, certificationNumber);
             certificationRepository.save(certificationEntity);
         } catch (Exception e) {
@@ -83,6 +100,8 @@ public class AuthServiceImplement implements AuthService {
 
             boolean isMatched = certificationEntity.getUserEmail().equals(userEmail) && certificationEntity.getCertificationNumber().equals(certificationNumber);
             if (!isMatched) return CheckCertificationResponseDto.certificationFail();
+
+            certificationRepository.deleteByUserEmail(userEmail);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
