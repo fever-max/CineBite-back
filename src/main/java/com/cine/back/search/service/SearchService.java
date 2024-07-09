@@ -1,6 +1,7 @@
 package com.cine.back.search.service;
 
 import com.cine.back.search.dto.SearchRequest;
+import com.cine.back.search.entity.RelatedEntity;
 import com.cine.back.search.entity.SearchEntity;
 import com.cine.back.search.repository.SearchRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,13 +79,6 @@ public class SearchService {
     }
 
     @Transactional(readOnly = true)
-    public List<SearchEntity> findSearchEntitiesByKeyword(String keyword) {
-        List<SearchEntity> searchEntities = searchRepository.findBySearchKeyword(keyword);
-        log.info("'{}' 키워드를 포함하는 검색어 엔티티 조회 결과: {}", keyword, searchEntities);
-        return searchEntities;
-    }
-
-    @Transactional(readOnly = true)
     public List<SearchEntity> getSearchListByUserId(String userId) {
         List<SearchEntity> searchEntities;
         if (userId == null) {
@@ -91,7 +86,7 @@ public class SearchService {
         } else {
             searchEntities = searchRepository.findByUserIdOrderBySearchListTimeDesc(userId);
         }
-        log.info("'{}' 사용자의 검색 리스트 조회 결과: {}", userId, searchEntities);
+        log.info("'{}' 사용자의 최근 검색 리스트 조회 결과: {}", userId, searchEntities);
         return searchEntities;
     }
 
@@ -115,4 +110,5 @@ public class SearchService {
             throw new RuntimeException("사용자 검색어 전체 삭제 실패", e);
         }
     }
+
 }

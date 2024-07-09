@@ -66,4 +66,20 @@ public class RelatedService {
         relatedEntity.setSearchRelatedWord(keyword);
         return relatedEntity;
     }
+
+    @Transactional(readOnly = true)
+    public List<RelatedEntity> findRelatedByKeyword(String keyword) {
+        // 키워드로 검색어 번호 조회
+        List<SearchEntity> searchEntities = searchRepository.findBySearchKeyword(keyword);
+        List<Integer> searchListNos = new ArrayList<>();
+        for (SearchEntity searchEntity : searchEntities) {
+            searchListNos.add(searchEntity.getSearchListNo());
+        }
+        log.info("'{}' 키워드를 포함하는 검색어 번호 조회: {}", keyword, searchListNos);
+
+        // 검색어 번호로 연관 검색어 조회
+        List<RelatedEntity> relatedEntities = relatedRepository.findBySearchListNoIn(searchListNos);
+        log.info("연관검색어의 검색어 번호 조회, {}: {}", searchListNos, relatedEntities);
+        return relatedEntities;
+    }
 }

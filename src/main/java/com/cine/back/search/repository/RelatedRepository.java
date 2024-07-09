@@ -10,5 +10,7 @@ import com.cine.back.search.entity.RelatedEntity;
 @Repository
 public interface RelatedRepository extends JpaRepository<RelatedEntity, Integer> {
     // 연관검색어 조회
-    List<RelatedEntity> findAllBySearchRelatedWord(String secondaryKeyword);
+    List<RelatedEntity> findBySearchListNoIn(List<Integer> searchListNos);
+
+    // List<RelatedEntity> findAllBySearchRelatedWord(String secondaryKeyword);
 }
