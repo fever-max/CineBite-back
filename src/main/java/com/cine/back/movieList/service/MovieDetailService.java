@@ -1,5 +1,9 @@
 package com.cine.back.movieList.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.cine.back.config.MovieConfig;
@@ -11,21 +15,18 @@ import com.cine.back.movieList.response.MovieResponse;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
-
-
 @Slf4j
 @Service
 public class MovieDetailService {
     private final MovieDetailRepository movieDetailRepository;
     private final MovieConfig movieConfig;
-    
-    public MovieDetailService(MovieDetailRepository movieDetailRepository,MovieConfig movieConfig) {
+
+    public MovieDetailService(MovieDetailRepository movieDetailRepository, MovieConfig movieConfig) {
         this.movieDetailRepository = movieDetailRepository;
         this.movieConfig = movieConfig;
     }
 
-    //서버 실행 시 자동 저장
+    // 서버 실행 시 자동 저장
     @PostConstruct
     public void init() {
         try {
@@ -38,8 +39,8 @@ public class MovieDetailService {
 
     public List<Movie> fetchAllMovies() {
         List<Movie> allMovies = new ArrayList<>();
-    
-        for (int page = 1; page <= 1; page++) {
+
+        for (int page = 1; page <= 5; page++) {
             try {
                 MovieResponse allMovieResponse = movieConfig.fetchMovieList(page);
                 if (allMovieResponse != null) {
@@ -53,10 +54,10 @@ public class MovieDetailService {
         }
         return allMovies;
     }
-    
+
     public void getAllMovies() {
         List<Movie> allMovies = fetchAllMovies();
-        if(allMovies!=null){
+        if (allMovies != null) {
             for (Movie movie : allMovies) {
                 try {
                     MovieDetailEntity movieDetails = movieConfig.fetchMovieDetails(movie.getMovieId());
@@ -74,7 +75,8 @@ public class MovieDetailService {
     // 데이터 저장 (중복 방지)
     private void saveMovieDetail(MovieDetailEntity movieDetail) {
         try {
-            Optional<MovieDetailEntity> optionalExistingMovie = movieDetailRepository.findByMovieId(movieDetail.getMovieId());
+            Optional<MovieDetailEntity> optionalExistingMovie = movieDetailRepository
+                    .findByMovieId(movieDetail.getMovieId());
             if (optionalExistingMovie.isPresent()) {
                 MovieDetailEntity existingMovie = optionalExistingMovie.get();
                 existingMovie.setTitle(movieDetail.getTitle());

@@ -33,8 +33,8 @@ public class MovieListController implements MovieListControllerDocs {
     }
 
     // 흥행 높은순 정렬
-    @Override
     @GetMapping("/movieList")
+    @Override
     public ResponseEntity<Optional<List<MovieDetailEntity>>> getMoviePopularity() {
         log.info("전체 영화 조회 컨트롤러");
         Optional<List<MovieDetailEntity>> allMovieList = movieListService.getAllMovieList();

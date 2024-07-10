@@ -56,8 +56,15 @@ public class MovieListService {
 
     public Optional<List<MovieDetailEntity>> getMovieActors(Cast cast) {
         try {
-            Optional<List<MovieDetailEntity>> actorsList = movieDetailRepository.findByActors(cast.getName());
-            log.info("배우별 영화 조회 성공");
+            String actor = cast.getName();
+            Optional<List<MovieDetailEntity>> actorsList = movieDetailRepository.findByActors(actor);
+            if (actorsList.isPresent()) {
+                List<MovieDetailEntity> movieList = actorsList.get();
+                log.info("배우별 영화 조회 성공");
+                log.info("Found movies for actor '{}':", actor);
+            } else {
+                log.info("No movies found for actor '{}'.", actor);
+            }
             return actorsList;
         } catch (Exception e) {
             log.error("에러 - 배우별 영화 조회 실패", e);
