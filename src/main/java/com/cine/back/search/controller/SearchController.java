@@ -28,16 +28,13 @@ public class SearchController implements SearchControllerDocs {
     private final SearchService searchService;
 
     @PostMapping("/saveSearchList")
-    public ResponseEntity<Void> saveSearchData(@RequestBody SearchRequest request) {
-        log.info("검색어 저장 컨트롤러 실행");
-        try {
-            searchService.saveSearchList(request);
-            log.info("검색어 저장 컨트롤러 - 성공");
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (Exception e) {
-            log.error("검색어 저장 컨트롤러 - 실패", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    public ResponseEntity<Integer> saveSearchList(@RequestBody SearchRequest request) {
+        log.info("검색어 저장 요청: {}", request);
+        int searchListNo = searchService.saveSearchList(request);
+        if (searchListNo == -1) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(searchListNo);
         }
+        return ResponseEntity.ok().body(searchListNo);
     }
 
     @GetMapping("/user/{userId}")

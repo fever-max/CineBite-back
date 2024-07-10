@@ -21,7 +21,7 @@ public interface SearchControllerDocs {
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "사용자의 검색어 저장 성공"),
                         @ApiResponse(responseCode = "400", description = "사용자의 검색어 저장 실패") })
-        public ResponseEntity<Void> saveSearchData(@RequestBody SearchRequest request);
+        public ResponseEntity<Integer> saveSearchList(@RequestBody SearchRequest request);
 
         @Operation(summary = "사용자ID로 검색기록 조회", description = "사용자의 검색기록을 조회합니다.")
         @ApiResponses(value = {
