@@ -3,12 +3,7 @@ package com.cine.back.board.comment.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cine.back.board.comment.dto.CommentRequestDto;
 import com.cine.back.board.comment.dto.CommentResponseDto;
@@ -28,8 +23,7 @@ public class CommentController implements CommentControllerDocs {
     @Override
     @PostMapping("/post/{postNo}/comment")
     public ResponseEntity<CommentResponseDto> saveComment(Long postNo, CommentRequestDto requestDto) {
-        log.info("댓글 저장 컨트롤러, 게시글 NO: {}", postNo);
-        log.info("댓글 저장 내용: {}", requestDto.content());
+        log.info("[POST][/board/post/{}/comment] - 댓글 저장 {}", postNo, requestDto);
         CommentResponseDto responseDto = commentService.writeComment(postNo, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
@@ -37,7 +31,7 @@ public class CommentController implements CommentControllerDocs {
     @Override
     @GetMapping("/post/{postNo}/comment")
     public ResponseEntity<List<CommentResponseDto>> getAllComments(Long postNo) {
-        log.info("댓글 조회 컨트롤러, 게시글 NO: {}", postNo);
+        log.info("[GET][/board/post/{}/comment] - 댓글 조회", postNo);
         List<CommentResponseDto> commentResponses = commentService.getAllComments(postNo);
         return ResponseEntity.ok().body(commentResponses);
     }
@@ -45,7 +39,7 @@ public class CommentController implements CommentControllerDocs {
     @Override
     @DeleteMapping("/post/{postNo}/comment/{commentNo}")
     public ResponseEntity<Long> deleteCommentById(Long postNo, Long commentNo) {
-        log.info("특정 댓글 삭제 컨트롤러, Comment No: {}", commentNo);
+        log.info("[DELETE][/board/post/{}/comment/{}] - 댓글 삭제", postNo, commentNo);
         commentService.deleteComment(postNo, commentNo);
         return ResponseEntity.ok().body(postNo);
     }
@@ -54,7 +48,7 @@ public class CommentController implements CommentControllerDocs {
     @PatchMapping("/post/{postNo}/comment/{commentNo}")
     public ResponseEntity<Long> updateComment(Long postNo, Long commentNo,
             CommentRequestDto commentRequestDto) {
-        log.info("특정 댓글 수정 컨트롤러, Comment No: {}", commentNo);
+        log.info("[PATCH][/board/post/{}/comment/{}] - 댓글 수정", postNo, commentNo);
         CommentResponseDto commentResponseDto = commentService.modifyComment(commentNo, commentRequestDto);
         return ResponseEntity.ok().body(commentResponseDto.postNo());
     }

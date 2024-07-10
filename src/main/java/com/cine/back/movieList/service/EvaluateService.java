@@ -1,16 +1,27 @@
 package com.cine.back.movieList.service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.cine.back.movieList.dto.Evaluation;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.entity.UserRating;
+import com.cine.back.movieList.entity.UserRevalue;
 import com.cine.back.movieList.exception.AlreadyEvaluatedException;
+import com.cine.back.movieList.exception.EvaluationNotFoundException;
+import com.cine.back.movieList.exception.EvaluationNotPermittedException;
 import com.cine.back.movieList.exception.MovieNotFoundException;
 import com.cine.back.movieList.repository.MovieDetailRepository;
 import com.cine.back.movieList.repository.UserRatingRepository;
-
+import com.cine.back.movieList.repository.UserRevalueRepository;
+import com.cine.back.movieList.request.MovieRatingRequest;
+import com.cine.back.movieList.request.UserRatingRequest;
+import com.cine.back.movieList.response.EvaluateResponse;
+import com.cine.back.favorite.entity.UserFavorite;
+import com.cine.back.favorite.repository.UserFavoriteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,72 +29,137 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class EvaluateService {
-
     private final MovieDetailRepository movieDetailRepository;
     private final UserRatingRepository userRatingRepository;
-
-    private final int FRESH = 1;
-    private final int ROTTEN = -1;
+    private final UserRevalueRepository userRevalueRepository;
+    private final MovieMapper movieMapper;
+    private final UserFavoriteRepository userFavoriteRepository;
 
     @Transactional
-    public void rateMovie(int movieId, String userId, String rating) throws Exception {
-        AlreadyEvaluate(userId, movieId); // 이미 평가했는지 검증
-        MovieDetailEntity movie = findMovieById(movieId);
-        UserRating userRating = CreateUserRating(movieId, userId, rating, movie);
+    public EvaluateResponse rateMovie(int movieId, Evaluation evaluation) {
+        log.info("[POST][/movie/{}/rate] - 평가 정보!!!! :{} ", movieId, evaluation);
+        UserRatingRequest userRatingRequest = evaluation.userRatingRequest();
+        MovieRatingRequest movieRatingRequest = evaluation.movieRatingRequest();
+
+        validateAlreadyEvaluated(userRatingRequest.userId(), userRatingRequest.movieId());
+        MovieDetailEntity movie = findMovieById(userRatingRequest.movieId());
+        UserRating userRating = movieMapper.toUserRating(userRatingRequest);
         userRatingRepository.save(userRating);
-        updateMovieRating(movie, rating);
-        log.info("로튼 토마토 지수 : {}", movie.getTomatoScore());
+
+        updateMovieRating(movie, userRatingRequest.rating(), movieRatingRequest);
+        movieDetailRepository.save(movie);
+        log.info("[POST][/movie/{}/deleteRating] - 유저 정보 : {} 영화 정보 : {} ", movieId, userRating, movie);
+        return movieMapper.toResponse(userRating, movie, null);
     }
 
-    private void AlreadyEvaluate(String userId, int movieId) {
-        Optional<UserRating> existingRating = userRatingRepository.findByUserIdAndMovieId(userId, movieId);
-        if (existingRating.isPresent()) {
-            throw new AlreadyEvaluatedException(); // 핸들러
+    @Transactional
+    public void deleteRating(String userId, int movieId) {
+        UserRating existingRating = findExistingRating(userId, movieId);
+        MovieDetailEntity movie = findMovieById(movieId);
+
+        decrementRatingCount(movie, existingRating);
+        updateTomatoScore(movie);
+        movieDetailRepository.save(movie);
+        userRatingRepository.delete(existingRating);
+
+        saveUserRevalue(movieId, userId);
+        log.info("[DELETE][/movie/{}/deleteRating] - 삭제한 평가 정보 :{} ", movieId, existingRating);
+    }
+
+    // 해당 영화에 대한 평가 유무 확인
+    private void validateAlreadyEvaluated(String userId, int movieId) {
+        if (userRatingRepository.findByUserIdAndMovieId(userId, movieId).isPresent()) {
+            throw new AlreadyEvaluatedException();
+        }
+
+        checkRevalueRecord(userId, movieId);
+    }
+
+    private void checkRevalueRecord(String userId, int movieId) {
+        Optional<UserRevalue> revalueRecord = userRevalueRepository.findByUserIdAndMovieId(userId, movieId);
+        if (revalueRecord.isPresent()) {
+            UserRevalue userRevalue = revalueRecord.get();
+            long secondsRemaining = calculateSecondsRemaining(userRevalue.getDeletedDate());
+            
+            if (userRevalue.isCheckDeleted() && secondsRemaining > 0) {
+                throw new EvaluationNotPermittedException(secondsRemaining);
+            }
+            if (secondsRemaining <= 0) {
+                userRevalueRepository.delete(userRevalue);
+            }
         }
     }
+    
+    // 재평가 시간 한도 설정
+    private long calculateSecondsRemaining(LocalDateTime deletedDate) {
+        return 60 - ChronoUnit.SECONDS.between(deletedDate, LocalDateTime.now());
+    }
 
-    // 영화 상세 정보 조회
     private MovieDetailEntity findMovieById(int movieId) {
         return movieDetailRepository.findByMovieId(movieId)
-                .orElseThrow(MovieNotFoundException::new); // 핸들러
+                .orElseThrow(MovieNotFoundException::new);
     }
 
-    public UserRating CreateUserRating(int movieId, String userId, String rating, MovieDetailEntity movie) {
-        UserRating userRating = new UserRating();
-        userRating.setMovieId(movieId);
-        userRating.setUserId(userId);
-        userRating.setRating(rating); // 신선도 버튼 누르면 문자열로 "fresh 반환"
-        userRating.setTomato(EvaluateUpdate(rating)); // 평가에 따른 토마토 점수 설정
-        log.info("토마토 지수 : {}", userRating.getTomato());
-        userRating.setMovieDetailEntity(movie);
-        log.info("유저 아이디 : {}", userId);
-        log.info("영화 번호 : {}", movieId);
-        log.info("해당 유저의 반응 : {}", rating);
-        return userRating;
+    private UserRating findExistingRating(String userId, int movieId) {
+        return userRatingRepository.findByUserIdAndMovieId(userId, movieId)
+                .orElseThrow(EvaluationNotFoundException::new);
     }
 
-    public int EvaluateUpdate(String rating) {
-        if ("fresh".equals(rating)) {
-            return FRESH;
+    // 삭제 후 토마토 지수 업데이트
+    private void decrementRatingCount(MovieDetailEntity movie, UserRating existingRating) {
+        if ("fresh".equals(existingRating.getRating())) {
+            movie.setFreshCount(movie.getFreshCount() - 1);
+        } else if ("rotten".equals(existingRating.getRating())) {
+            movie.setRottenCount(movie.getRottenCount() - 1);
         }
-        return ROTTEN;
+    }
+    
+    // 삭제시점 저장
+    private void saveUserRevalue(int movieId, String userId) {
+        UserRevalue userRevalue = new UserRevalue(
+            movieId,
+            userId,
+            LocalDateTime.now(),
+            true
+        );
+        userRevalueRepository.save(userRevalue);
     }
 
-    public void updateMovieRating(MovieDetailEntity movie, String rating) {
-        // 총 평가 퍼센티지 계산 및 업데이트
-        if ("fresh".equals(rating)) {
-            movie.setFreshCount(movie.getFreshCount() + 1);
-        }
-        if ("rotten".equals(rating)) {
-            movie.setRottenCount(movie.getRottenCount() + 1);
-        }
+    // 토마토 지수 업데이트
+    private void updateMovieRating(MovieDetailEntity movie, String rating, MovieRatingRequest movieRatingRequest) {
+        incrementRatingCount(movie, rating);
         updateTomatoScore(movie);
     }
 
-    public void updateTomatoScore(MovieDetailEntity movie) {
+    // 영화 평가 지수 계산
+    private void incrementRatingCount(MovieDetailEntity movie, String rating) {
+        if ("fresh".equals(rating)) {
+            movie.setFreshCount(movie.getFreshCount() + 1);
+        } else if ("rotten".equals(rating)) {
+            movie.setRottenCount(movie.getRottenCount() + 1);
+        }
+    }
+
+    // 최종 토마토 점수 계산
+    private void updateTomatoScore(MovieDetailEntity movie) {
         int totalRatings = movie.getFreshCount() + movie.getRottenCount();
-        double tomatoScore = (double) movie.getFreshCount() / totalRatings * 100;
+        double tomatoScore = calculateTomatoScore(totalRatings, movie.getFreshCount());
         movie.setTomatoScore(tomatoScore);
-        movieDetailRepository.save(movie);
+        
+        updateUserFavoritesTomatoScore(movie);
+    }
+
+    // 최종 토마토 점수 계산
+    private double calculateTomatoScore(int totalRatings, int freshCount) {
+        return totalRatings > 0 ? (double) freshCount / totalRatings * 100 : 0.0;
+    }
+
+    // 사용자 평가 변동 시 찜목록 tomatoScore 에 반영 
+    private void updateUserFavoritesTomatoScore(MovieDetailEntity movie) {
+        List<UserFavorite> userFavorites = userFavoriteRepository.findByMovieId(movie.getMovieId());
+        for (UserFavorite userFavorite : userFavorites) {
+            userFavorite.setTomatoScore(movie.getTomatoScore());
+            userFavoriteRepository.save(userFavorite);
+        }
     }
 }

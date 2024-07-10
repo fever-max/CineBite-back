@@ -47,6 +47,6 @@ public interface UserFavoriteControllerDocs {
                 @ApiResponse(responseCode = "400", description = "잘못된 요청으로 인해 조회되지않았습니다."),
                 @ApiResponse(responseCode = "500", description = "서버 내부 오류로 인한 찜 목록 조회 실패"),
     })
-        ResponseEntity<List<FavoriteResponseDto>> getToFavorite(
-            @RequestParam(value = "userId") String userId) throws IOException;
+        ResponseEntity<List<FavoriteResponseDto>> getToFavoriteList(
+            @RequestParam(value = "userId") String userId);
 }

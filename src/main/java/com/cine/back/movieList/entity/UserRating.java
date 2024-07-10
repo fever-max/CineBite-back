@@ -5,30 +5,42 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 @Entity(name = "User_Rating")
 public class UserRating {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long ratingId;
 
-    @ManyToOne
-    private MovieDetailEntity movieDetailEntity;
-
-    @Column(name = "movie_id")
+    @NotNull
+    @Column(nullable = false, name = "movie_id")
     private int movieId;
-
-    @Column(name = "user_id")
+    
+    @NotNull
+    @Column(nullable = false, name = "user_id")
     private String userId;
-
-    @Column(name = "rating")
+    
+    @NotNull
+    @Column(nullable = false, name = "rating")
     private String rating; // 'fresh' or 'rotten'
-
-    @Column(name = "tomato")
+    
+    @NotNull
+    @Column(nullable = false, name = "tomato")
     private int tomato; // 평가 척도
-
+    
+    @Builder
+    public UserRating(int movieId, String userId, String rating, int tomato) {
+        this.movieId = movieId;
+        this.userId = userId;
+        this.rating = rating;
+        this.tomato = tomato;
+    }
 }

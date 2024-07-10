@@ -29,14 +29,14 @@ public class CommentService {
     public CommentResponseDto writeComment(Long postNo, CommentRequestDto requestDto) {
         try {
             PostEntity post = entityUtil.findPostById(postNo);
-            entityUtil.updateCommentCount(postNo);
+            entityUtil.updateCommentCount(post);
             CommentEntity commentEntity = commentMapper.toCommentEntity(post, requestDto);
             commentRepository.save(commentEntity);
-            log.info("댓글 저장 성공 / post No: {}, comment No: {}", postNo, commentEntity.getCommentNo());
+            log.info("# 댓글 저장 성공 - post No: {}, comment No: {}", postNo, commentEntity.getCommentNo());
             CommentResponseDto responseDto = commentMapper.toResponseDto(commentEntity);
             return responseDto;
         } catch (NoSuchElementException e) {
-            log.error("조회할 게시글이 없음: {}", e.getMessage());
+            log.error("# 조회할 게시글이 없음 - {}", e.getMessage());
             throw e;
         }
 
@@ -48,10 +48,10 @@ public class CommentService {
             PostEntity post = entityUtil.findPostById(postNo);
             List<CommentEntity> commentEntities = commentRepository.findByPost_PostNo(post.getPostNo());
             List<CommentResponseDto> commentResponseDtos = commentMapper.toResponseDtos(commentEntities);
-            log.info("댓글 조회 성공 / post No: {}, 총 댓글 수 {}개", postNo, commentResponseDtos.size());
+            log.info("# 댓글 조회 성공 - post No: {}, 총 댓글 수 {}개", postNo, commentResponseDtos.size());
             return commentResponseDtos;
         } catch (NoSuchElementException e) {
-            log.error("조회할 게시글이 없음: {}", e.getMessage());
+            log.error("# 조회할 게시글이 없음 - {}", e.getMessage());
             throw e;
         }
     }
@@ -60,10 +60,10 @@ public class CommentService {
     public void deleteComment(Long postNo, Long commentNo) {
         try {
             PostEntity post = entityUtil.findPostById(postNo);
-            entityUtil.deleteCommentCount(post.getPostNo());
+            entityUtil.deleteCommentCount(post);
             CommentEntity comment = entityUtil.findCommentById(commentNo);
             commentRepository.delete(comment);
-            log.info("댓글 삭제 성공 / comment No: {}", commentNo);
+            log.info("# 댓글 삭제 성공 - comment No: {}", commentNo);
         } catch (NoSuchElementException e) {
             log.error(e.getMessage());
             throw e;
@@ -77,10 +77,10 @@ public class CommentService {
             CommentEntity commentEntity = entityUtil.findCommentById(commentNo);
             CommentEntity updateCommentEntity = commentMapper.updateCommentEntity(commentEntity, commentRequestDto);
             CommentResponseDto commentResponseDto = commentMapper.toResponseDto(updateCommentEntity);
-            log.info("댓글 수정 성공 / comment No: {}", commentNo);
+            log.info("# 댓글 수정 성공 - comment No: {}", commentNo);
             return commentResponseDto;
         } catch (NoSuchElementException e) {
-            log.error("수정할 댓글이 없음: {}", e.getMessage());
+            log.error("# 수정할 댓글이 없음 - {}", e.getMessage());
             throw e;
         }
 
