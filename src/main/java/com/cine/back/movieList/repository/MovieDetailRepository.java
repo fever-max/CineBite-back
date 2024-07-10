@@ -7,7 +7,7 @@ import com.cine.back.movieList.entity.MovieDetailEntity;
 import java.util.*;
 
 public interface MovieDetailRepository extends JpaRepository<MovieDetailEntity, Integer> {
-    
+
     Optional<List<MovieDetailEntity>> findAllByOrderByPopularityAsc();
 
     @Query("SELECT md FROM movie_details md WHERE md.movieId = :movieId")
@@ -15,8 +15,11 @@ public interface MovieDetailRepository extends JpaRepository<MovieDetailEntity, 
 
     @Query("SELECT md FROM movie_details md JOIN md.genres g WHERE g.name = :genres")
     Optional<List<MovieDetailEntity>> findByGenres(@Param("genres") String genre);
-  
-   // 영화명, 배우, 장르로 검색
+
+    @Query("SELECT md FROM movie_details md JOIN md.credits.cast c WHERE c.name = :actor")
+    Optional<List<MovieDetailEntity>> findByActors(@Param("actor") String actor);
+
+    // 영화명, 배우, 장르로 검색
     List<MovieDetailEntity> findByTitleContainingOrCredits_Cast_NameOrGenres_Name(String title,
             String castName, String genreName);
 
