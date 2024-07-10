@@ -10,7 +10,6 @@ import com.cine.back.user.dto.UserDTO;
 import com.cine.back.user.entity.UserEntity;
 import com.cine.back.user.repository.UserRepository;
 import com.cine.back.user.service.UserService;
-import com.cine.back.user.util.FileUtil;
 
 @Service
 @Transactional
