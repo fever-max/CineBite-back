@@ -76,10 +76,11 @@ public class WebSecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(request -> request
-                .requestMatchers("/", "/login", "/reissue", "/api/v1/auth/**","/oauth2/**", "/error").permitAll()
+                .requestMatchers("/", "/login", "/reissue", "/api/v1/auth/**","/oauth2/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/user/**").permitAll()
                 .requestMatchers("/api/v1/user/**").hasRole("USER") 
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/reviewer/**").hasRole("REVIEWER")
                 .anyRequest().permitAll()
             )
             .oauth2Login(oauth2 -> oauth2
