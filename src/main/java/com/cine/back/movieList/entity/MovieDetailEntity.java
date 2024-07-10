@@ -13,7 +13,12 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity(name = "movie_details")
@@ -21,48 +26,58 @@ public class MovieDetailEntity {
     
     @Id
     @JsonProperty("id")
-    @Column(name = "movie_id")
+    @Column(nullable = false, name = "movie_id")
     private int movieId;
 
+    @NotNull
     @JsonProperty("title")
-    @Column(name = "title")
+    @Column(nullable = false, name = "title")
     private String title;
-
+    
+    @NotNull
     @JsonProperty("release_date")
-    @Column(length = 20)
+    @Column(nullable = false, length = 20)
     private String releaseDate;
-
+    
+    @NotNull
     @JsonProperty("overview")
     @Column(columnDefinition = "TEXT")
     private String overview;
-
+    
+    @NotNull
     @JsonProperty("poster_path")
-    @Column(length = 100)
+    @Column(nullable = false, length = 100)
     private String posterPath;
-
+    
+    @NotNull
     @JsonProperty("popularity")
-    @Column(length = 20)
+    @Column(nullable = false, length = 20)
     private String popularity;
-
+    
+    @NotNull
     @JsonProperty("runtime")
-    @Column(length = 100)
+    @Column(nullable = false, length = 100)
     private String runtime;
     
+    @NotNull
     @JsonProperty("genres")
     @ElementCollection
     @CollectionTable(name = "movie_genres", joinColumns = @JoinColumn(name = "movie_id"))
     private List<Genre> genres;
-
+    
+    @NotNull
     @JsonProperty("credits")
     private Credits credits;
     
-    @Column(name = "fresh_count")
+    @NotNull
+    @Column(nullable = false, name = "fresh_count")
     private int freshCount;
-
-    @Column(name = "rotten_count")
+    
+    @NotNull
+    @Column(nullable = false, name = "rotten_count")
     private int rottenCount;
     
-    @Column(name = "tomato_score")
+    @NotNull
+    @Column(nullable = false, name = "tomato_score")
     private double tomatoScore; // 평가 퍼센티지
-
 }

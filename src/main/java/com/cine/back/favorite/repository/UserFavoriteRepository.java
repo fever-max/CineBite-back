@@ -11,6 +11,8 @@ public interface UserFavoriteRepository extends JpaRepository<UserFavorite, Long
     
     Optional<List<UserFavorite>> findByUserId(String userId);
 
+    List<UserFavorite> findByMovieId(int movieId);
+
     void deleteByUserIdAndMovieId(String userId, int movieId);
 
     boolean existsByUserIdAndMovieId(String userId, int movieId);
