@@ -13,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.cine.back.user.dto.oauth2.CustomUserDetails;
 import com.cine.back.user.entity.RefreshEntity;
 import com.cine.back.user.provider.JwtProvider;
 import com.cine.back.user.repository.RefreshRepository;
@@ -46,13 +47,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     // 로그인 성공
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         String userId = authentication.getName();
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String userRole = auth.getAuthority();
-        String access = jwtProvider.create("access", userId, userRole, 10*60*1000L); // 10분
-        String refresh = jwtProvider.create("refresh", userId, userRole, 24*60*60*1000L); // 1일
+        String userNick = customUserDetails.getUserNick();
+        String access = jwtProvider.create("access", userId, userNick, userRole, 10*60*1000L); // 10분
+        String refresh = jwtProvider.create("refresh", userId, userNick, userRole, 24*60*60*1000L); // 1일
         addRefreshEntity(userId, refresh, 86400000L);
 
         response.setHeader("access", access);
@@ -83,8 +86,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
-        cookie.setSecure(true);
-        cookie.setPath("/");
         cookie.setHttpOnly(true);
         return cookie;
     }

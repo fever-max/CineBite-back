@@ -22,6 +22,9 @@ public class EvaluateService {
     private final MovieDetailRepository movieDetailRepository;
     private final UserRatingRepository userRatingRepository;
 
+    private final int FRESH = 1;
+    private final int ROTTEN = -1;
+
     @Transactional
     public void rateMovie(int movieId, String userId, String rating) throws Exception {
         AlreadyEvaluate(userId, movieId); // 이미 평가했는지 검증
@@ -29,6 +32,7 @@ public class EvaluateService {
         UserRating userRating = CreateUserRating(movieId, userId, rating, movie);
         userRatingRepository.save(userRating);
         updateMovieRating(movie, rating);
+        log.info("로튼 토마토 지수 : {}", movie.getTomatoScore());
     }
 
     private void AlreadyEvaluate(String userId, int movieId) {
@@ -50,6 +54,7 @@ public class EvaluateService {
         userRating.setUserId(userId);
         userRating.setRating(rating); // 신선도 버튼 누르면 문자열로 "fresh 반환"
         userRating.setTomato(EvaluateUpdate(rating)); // 평가에 따른 토마토 점수 설정
+        log.info("토마토 지수 : {}", userRating.getTomato());
         userRating.setMovieDetailEntity(movie);
         log.info("유저 아이디 : {}", userId);
         log.info("영화 번호 : {}", movieId);
@@ -59,9 +64,9 @@ public class EvaluateService {
 
     public int EvaluateUpdate(String rating) {
         if ("fresh".equals(rating)) {
-            return 1;
+            return FRESH;
         }
-        return -1;
+        return ROTTEN;
     }
 
     public void updateMovieRating(MovieDetailEntity movie, String rating) {
