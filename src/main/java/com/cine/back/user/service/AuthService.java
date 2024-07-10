@@ -7,6 +7,7 @@ import com.cine.back.user.dto.request.IdCheckRequestDto;
 import com.cine.back.user.dto.response.EmailCertificationResponseDto;
 import com.cine.back.user.dto.response.IdCheckResponseDto;
 import com.cine.back.user.dto.response.ResponseDto;
+
 import com.cine.back.user.dto.UserDTO;
 import com.cine.back.user.dto.request.CheckCertificationRequestDto;
 import com.cine.back.user.dto.response.CheckCertificationResponseDto;
@@ -16,9 +17,15 @@ public interface AuthService {
     
     ResponseEntity<? super IdCheckResponseDto> userIdCheck(IdCheckRequestDto dto);
 
+    ResponseEntity<? super EmailCertificationResponseDto> checkEmail(EmailCertificationRequestDto dto);
+
     ResponseEntity<? super EmailCertificationResponseDto> emailCertification(EmailCertificationRequestDto dto);
 
     ResponseEntity<? super CheckCertificationResponseDto> checkCertification(CheckCertificationRequestDto dto);
 
     ResponseEntity<? super ResponseDto> join(UserDTO dto);
+
+    ResponseEntity<? super ResponseDto> findUserId(String userEmail);
+
+    ResponseEntity<? super ResponseDto> resetUserPwd(String userEmail, String userId);
 }

@@ -23,39 +23,47 @@ public class EntityUtil {
     private final ReplyRepository replyRepository;
 
     public PostEntity findPostById(Long postNo) {
-        log.info("findPostById 실행, 찾는 PostNo: {}", postNo);
+        log.info("# findPostById 실행 -postNo: {}", postNo);
         return postRepository.findById(postNo)
                 .orElseThrow(() -> new EntityNotFoundException("게시물을 찾을 수 없습니다."));
     }
 
     public CommentEntity findCommentById(Long commentNo) {
-        log.info("findCommentById 실행, 찾는 commentNo: {}", commentNo);
+        log.info("# findCommentById 실행 - commentNo: {}", commentNo);
         return commentRepository.findById(commentNo)
                 .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
     }
 
     public ReplyEntity findReplyById(Long replyNo) {
-        log.info("findReplyById 실행, 찾는 replyNo: {}", replyNo);
+        log.info("# findReplyById 실행 - replyNo: {}", replyNo);
         return replyRepository.findById(replyNo)
                 .orElseThrow(() -> new EntityNotFoundException("대댓글을 찾을 수 없습니다."));
     }
 
-    public void updateCommentCount(Long postNo) {
-        log.info("updateCommentCount 실행, postNo: {}", postNo);
-        PostEntity post = findPostById(postNo);
+    public void updateCommentCount(PostEntity post) {
+        log.info("# updateCommentCount 실행 - postNo: {}", post.getPostNo());
         post.setCommentCount(post.getCommentCount() + 1);
     }
 
-    public void deleteCommentCount(Long postNo) {
-        log.info("deleteCommentCount 실행, postNo: {}", postNo);
-        PostEntity post = findPostById(postNo);
+    public void deleteCommentCount(PostEntity post) {
+        log.info("# deleteCommentCount 실행 - postNo: {}", post.getPostNo());
         post.setCommentCount(post.getCommentCount() - 1);
     }
 
     public PostEntity updateHitCount(PostEntity post) {
-        log.info("updateHitCount 실행, postNo: {}", post.getPostNo());
+        log.info("# updateHitCount 실행 - postNo: {}", post.getPostNo());
         post.setHitCount(post.getHitCount() + 1);
         return post;
+    }
+
+    public void updateLikeCount(PostEntity post) {
+        log.info("# updateLikeCount 실행 - postNo: {}", post.getPostNo());
+        post.setLikeCount(post.getLikeCount() + 1);
+    }
+
+    public void deleteLikeCount(PostEntity post) {
+        log.info("# deleteLikeCount 실행 - postNo: {}", post.getPostNo());
+        post.setLikeCount(post.getLikeCount() - 1);
     }
 
 }
