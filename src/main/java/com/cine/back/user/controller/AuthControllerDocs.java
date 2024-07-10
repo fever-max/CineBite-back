@@ -54,4 +54,15 @@ public interface AuthControllerDocs {
         @ApiResponse(responseCode = "409", description = "회원가입 실패")})
         public ResponseEntity<? super ResponseDto> join(@RequestBody UserDTO userDto, BindingResult bindingResult);
 
+        @Operation(summary = "아이디 찾기", description = "이메일로 아이디를 찾습니다.")
+        @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "아이디 찾기 성공"),
+        @ApiResponse(responseCode = "409", description = "아이디 찾기 실패")})
+        public ResponseEntity<?> findUserId(@RequestBody EmailCertificationRequestDto request);
+        
+        @Operation(summary = "비밀번호 초기화", description = "이메일과 아이디로 비밀번호를 초기화합니다.")
+        @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "비밀번호 초기화 성공"),
+        @ApiResponse(responseCode = "400", description = "비밀번호 초기화 실패")})
+        public ResponseEntity<?> findUserPwd(@RequestBody EmailCertificationRequestDto request);
 }

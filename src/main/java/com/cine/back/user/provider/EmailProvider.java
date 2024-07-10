@@ -37,7 +37,7 @@ public class EmailProvider {
     private String getCertificationMessage(String certificationNumber) {
         String certificationMessage = "";
         certificationMessage += "<h1 style='text-align: center;'>[CineBite 인증메일입니다.]</h1>";
-        certificationMessage += "<h3 style='text-align: center;'>인증코드 : <strong style='font-size: 32px; letter-spacing: 8px;'>" + certificationNumber + "</strong></h3>";
+        certificationMessage += "<h3 style='text-align: center;'><strong style='font-size: 32px; letter-spacing: 8px;'>" + certificationNumber + "</strong></h3>";
         return certificationMessage;
     }
 }

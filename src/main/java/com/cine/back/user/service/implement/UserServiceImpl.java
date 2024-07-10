@@ -15,7 +15,7 @@ import com.cine.back.user.service.UserService;
 @Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    
+
     private final UserRepository userRepository;
 
     @Override

@@ -18,12 +18,12 @@ public class FileService {
     private final S3Uploader s3Uploader;
 
     public String uploadFile(MultipartFile file, String directory) throws IOException {
-        log.info("uploadFile 실행, file: {} / directory: {}", file, directory);
+        log.info("# uploadFile 실행 - file: {} / directory: {}", file, directory);
         return s3Uploader.upload(file, directory);
     }
 
     public void deleteFile(String fileUrl) throws IOException {
-        log.info("deleteFile 실행, fileUrl: {}", fileUrl);
+        log.info("# deleteFile 실행 - fileUrl: {}", fileUrl);
         s3Uploader.deleteFile(fileUrl);
     }
 }
