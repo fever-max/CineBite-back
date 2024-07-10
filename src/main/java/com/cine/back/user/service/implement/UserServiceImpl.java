@@ -4,19 +4,17 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.cine.back.user.dto.UserDTO;
 import com.cine.back.user.entity.UserEntity;
 import com.cine.back.user.repository.UserRepository;
 import com.cine.back.user.service.UserService;
-import com.cine.back.user.util.FileUtil;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    
+
     private final UserRepository userRepository;
 
     @Override
