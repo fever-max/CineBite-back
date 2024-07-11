@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import com.cine.back.favorite.dto.FavoriteRequestDto;
 import com.cine.back.favorite.dto.FavoriteResponseDto;
 import com.cine.back.favorite.service.UserFavoriteService;
-import com.cine.back.paging.PagingUtil;
+import com.cine.back.paging.PageService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ import java.util.Optional;
 public class UserFavoriteController implements UserFavoriteControllerDocs{
 
     private final UserFavoriteService userFavoriteService;
-    private final PagingUtil pagingUtil;
+    private final PageService pageService;
 
     @Override
     @PostMapping("/add")
@@ -56,7 +56,7 @@ public class UserFavoriteController implements UserFavoriteControllerDocs{
     @GetMapping("/paging/favoriteList")
     public ResponseEntity<Page<FavoriteResponseDto>> getToFavoriteListPaged(@RequestParam(value ="userId") String userId, Pageable pageable) {
         log.info("[GET][/favorites/paged-list] - 페이징된 찜 목록 조회");
-        Page<FavoriteResponseDto> favoriteDtoPage = pagingUtil.getFavoriteListPaged(userId, pageable);
+        Page<FavoriteResponseDto> favoriteDtoPage = pageService.getPagedList(userId, pageable);
         return ResponseEntity.ok().body(favoriteDtoPage);
     }
 }

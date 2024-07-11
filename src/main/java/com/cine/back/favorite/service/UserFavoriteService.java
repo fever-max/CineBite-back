@@ -4,11 +4,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import org.springdoc.core.converters.models.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +21,8 @@ import com.cine.back.favorite.exception.handleCancelFavoriteFailure;
 import com.cine.back.favorite.repository.UserFavoriteRepository;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.repository.MovieDetailRepository;
+import com.cine.back.paging.PageService;
+import com.cine.back.paging.PagingUtil;
 import com.cine.back.config.MovieConfig;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class UserFavoriteService {
+public class UserFavoriteService implements PageService<FavoriteResponseDto>{
 
     private final UserFavoriteRepository userFavoriteRepository;
     private final UserFavoriteMapper userFavoriteMapper;
@@ -117,18 +118,23 @@ public class UserFavoriteService {
     }
 
     // 페이징
-    // public Page<FavoriteResponseDto> getFaovriteListPaged(Pageable pageable) {
-        
-    //     int page = pageable.getPageNumber() - 1;
-    //     int pageLimit = 3;
+    @Override
+    public Page<FavoriteResponseDto> getPagedList(String userId, Pageable pageable) {
+        PageRequest pageRequest = PagingUtil.createPageRequest(
+            pageable.getPageNumber(), // 요청할 페이지 번호
+            pageable.getPageSize(), // 한 페이지에 나타낼 항목 수
+            "favoriteId",   // 해당 필드를 기준으로 정렬
+            Sort.Direction.DESC);
+        Page<UserFavorite> userFavorites = userFavoriteRepository.findByUserId(userId, pageRequest);
 
-    //     Page<UserFavorite> userFavorites = userFavoriteRepository.findAll(
-    //         PageRequest.of(page, pageLimit, Sort.by(Direction.DESC, "favoriteId")));
-
-    //         Page<FavoriteResponseDto> favoriteResponseDto = userFavorites.map(
-    //             userFavorite  -> new FavoriteResponseDto(userFavorite));
-
-    //             return favoriteResponseDto;
-            
-    // }
+        return userFavorites.map(userFavorite -> new FavoriteResponseDto(
+                userFavorite.getFavoriteId(),
+                userFavorite.getUserId(),
+                userFavorite.getMovieId(),
+                userFavorite.getPosterPath(),
+                userFavorite.getTitle(),
+                userFavorite.getTomatoScore()
+        ));
+    }
+    
 }
