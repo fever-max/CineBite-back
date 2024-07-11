@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.springdoc.core.converters.models.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -110,4 +115,20 @@ public class UserFavoriteService {
                 .orElseThrow(() -> new RuntimeException("찜 목록이 없습니다."));
         return userFavoriteMapper.toResponseDtos(userFavorites);
     }
+
+    // 페이징
+    // public Page<FavoriteResponseDto> getFaovriteListPaged(Pageable pageable) {
+        
+    //     int page = pageable.getPageNumber() - 1;
+    //     int pageLimit = 3;
+
+    //     Page<UserFavorite> userFavorites = userFavoriteRepository.findAll(
+    //         PageRequest.of(page, pageLimit, Sort.by(Direction.DESC, "favoriteId")));
+
+    //         Page<FavoriteResponseDto> favoriteResponseDto = userFavorites.map(
+    //             userFavorite  -> new FavoriteResponseDto(userFavorite));
+
+    //             return favoriteResponseDto;
+            
+    // }
 }

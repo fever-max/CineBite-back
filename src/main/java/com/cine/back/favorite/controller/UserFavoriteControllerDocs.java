@@ -1,7 +1,10 @@
 package com.cine.back.favorite.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.cine.back.favorite.dto.FavoriteRequestDto;
@@ -49,4 +52,14 @@ public interface UserFavoriteControllerDocs {
     })
         ResponseEntity<List<FavoriteResponseDto>> getToFavoriteList(
             @RequestParam(value = "userId") String userId);
+
+    @Operation(summary = "사용자의 찜 목록 페이징", description = "해당 영화를 페이징합니다.")
+    @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "찜목록에 페이징되었습니다."),
+                @ApiResponse(responseCode = "400", description = "잘못된 요청으로 인해 페이징되지않았습니다."),
+                @ApiResponse(responseCode = "500", description = "서버 내부 오류로 인한 찜 목록 페이징 실패"),
+    })
+        ResponseEntity<Page<FavoriteResponseDto>> getToFavoriteListPaged(
+            // @RequestParam(value = "userId") String userId, 
+            @RequestParam(value ="userId")String userId, Pageable pageable);
 }

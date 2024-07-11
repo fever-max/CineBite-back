@@ -2,6 +2,9 @@ package com.cine.back;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import com.cine.back.favorite.repository.UserFavoriteRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,5 +18,10 @@ public class BackApplication {
 		log.info("Info level log message / 정보 메세지 예시");
 		log.error("Error level log message / 오류 메세지 예시");
 	}
+
+	// @Bean
+	// public AddFavoriteTest addFavorite(UserFavoriteRepository favoriteResponseDto) {
+	// 	return new AddFavoriteTest(favoriteResponseDto);
+	// }
 
 }
