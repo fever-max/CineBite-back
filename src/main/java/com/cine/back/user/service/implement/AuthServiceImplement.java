@@ -73,8 +73,8 @@ public class AuthServiceImplement implements AuthService {
             String userId = dto.getUserId();
             String userEmail = dto.getUserEmail();
 
-            boolean isExistId = userRepository.existsByUserId(userId);
-            if (isExistId) return EmailCertificationResponseDto.duplicateId();
+            // boolean isExistId = userRepository.existsByUserId(userId);
+            // if (isExistId) return EmailCertificationResponseDto.duplicateId();
             String certificationNumber = CertificationNumber.getCertificationNumber();
 
             boolean isSuccessed = emailProvider.sendCertificationMail(userEmail, certificationNumber);
@@ -119,6 +119,10 @@ public class AuthServiceImplement implements AuthService {
             boolean isExistId = userRepository.existsByUserId(userId);
             if(isExistId) return IdCheckResponseDto.duplicateId();
 
+            String userProfileImg = dto.getUserProfileImg();
+            if (userProfileImg == null || userProfileImg.isEmpty()) {
+                userProfileImg = "/images/default-avatar.png";
+            }
             UserEntity user = UserEntity.builder()
                     .userId(userId)
                     .userPwd(bCryptPasswordEncoder.encode(dto.getUserPwd()))
@@ -127,6 +131,7 @@ public class AuthServiceImplement implements AuthService {
                     .userRole("ROLE_USER")
                     .userType("web")
                     .apDate(LocalDate.now())
+                    .userProfileImg(userProfileImg)
                     .build();
             userRepository.save(user);
         } catch (Exception e) {
