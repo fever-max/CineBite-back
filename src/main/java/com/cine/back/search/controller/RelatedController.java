@@ -40,10 +40,12 @@ public class RelatedController {
     public ResponseEntity<List<RelatedEntity>> findRelatedByKeyword(@PathVariable(value = "keyword") String keyword) {
         log.info("키워드로 연관 검색어 조회 컨트롤러 실행: {}", keyword);
         List<RelatedEntity> relatedEntities = relatedService.findRelatedByKeyword(keyword);
-        if (relatedEntities.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
+        if (!relatedEntities.isEmpty()) {
             return ResponseEntity.ok(relatedEntities);
+        } else {
+            // 연관검색어는 비어있을 수 있음. 그래서 오류가 아님
+            log.warn("키워드로 연관 검색어 조회 컨트롤러 - 조회 결과 없음");
+            return ResponseEntity.noContent().build();
         }
     }
 

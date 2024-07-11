@@ -1,7 +1,6 @@
 package com.cine.back.search.service;
 
 import com.cine.back.search.dto.SearchRequest;
-import com.cine.back.search.entity.RelatedEntity;
 import com.cine.back.search.entity.SearchEntity;
 import com.cine.back.search.repository.SearchRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +23,7 @@ public class SearchService {
     @Transactional
     public int saveSearchList(SearchRequest request) {
         log.info("검색어 저장 서비스 시작");
-
-        String userId = checkUserId(request.userId());
+        String userId = request.userId();
         List<String> keywords = request.keywords();
 
         int searchListNo = 0;
@@ -51,14 +48,6 @@ public class SearchService {
         }
         log.info("검색어 저장 서비스 완료, searchListNo: {}", searchListNo);
         return searchListNo;
-    }
-
-    private String checkUserId(String userId) {
-        if (userId == null || userId.isEmpty()) {
-            userId = "guest";
-            log.info("사용자 ID가 없습니다. 'guest'로 설정합니다.");
-        }
-        return userId;
     }
 
     @Transactional

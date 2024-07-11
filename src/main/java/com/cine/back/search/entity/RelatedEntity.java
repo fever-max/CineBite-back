@@ -21,7 +21,12 @@ public class RelatedEntity {
     @Column(name = "search_list_no")
     private int searchListNo; // SearchEntity의 ID
 
+    @Column(name = "search_keyword")
+    private String searchKeyword; // 검색어
+
     @Column(name = "search_related_word", length = 500)
     private String searchRelatedWord; // 연관 검색어
 
+    @Column(name = "search_related_count")
+    private int searchRelatedCount; // 연관 검색어 빈도수
 }

@@ -16,6 +16,7 @@ import com.cine.back.movieList.exception.AlreadyEvaluatedException;
 import com.cine.back.movieList.exception.EvaluationNotFoundException;
 import com.cine.back.movieList.exception.EvaluationNotPermittedException;
 import com.cine.back.movieList.exception.MovieNotFoundException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     /**
@@ -24,7 +25,6 @@ public class GlobalExceptionHandler {
      * @ExceptionHandler()
      */
 
-    
     private static final int BAD_REQUEST_ERROR = 400;
     private static final int NOT_FOUND_ERROR = 404;
     private static final int CONFILCT_ERROR = 409;
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleIOException(IOException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 처리 중 오류: " + e.getMessage());
     }
-    
+
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<String> handleIllegalStateException(IllegalStateException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류: " + e.getMessage());
@@ -68,29 +68,25 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleAlreadyEvaluatedException(AlreadyEvaluatedException e) {
         return ResponseEntity.status(CONFILCT_ERROR).body(e.getMessage());
     }
-    
+
     @ExceptionHandler(handleCancelFavoriteFailure.class)
     public ResponseEntity<String> handleCancelFavoriteFailure(handleCancelFavoriteFailure e) {
         return ResponseEntity.status(BAD_REQUEST_ERROR).body(e.getMessage());
     }
-    
+
     @ExceptionHandler(handleAddFavoriteFailure.class)
     public ResponseEntity<String> handleAddOrCancelFavoriteFailure(handleAddFavoriteFailure e) {
         return ResponseEntity.status(BAD_REQUEST_ERROR).body(e.getMessage());
     }
-    
+
     @ExceptionHandler(EvaluationNotPermittedException.class)
     public ResponseEntity<?> EvaluationNotPermittedException(EvaluationNotPermittedException e) {
         return ResponseEntity.status(CONFILCT_ERROR).body("아직 평가할 수 없습니다." + e.getMessage());
     }
-    
+
     @ExceptionHandler(EvaluationNotFoundException.class)
     public ResponseEntity<?> EvaluationNotFoundException(EvaluationNotFoundException e) {
         return ResponseEntity.status(NOT_FOUND_ERROR).body(e.getMessage());
     }
-
-
-
-
 
 }
