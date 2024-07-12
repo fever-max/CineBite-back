@@ -6,10 +6,14 @@ import com.cine.back.recommendation.dto.RecommendationRequest;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.repository.MovieDetailRepository;
 import com.cine.back.movieList.exception.MovieNotFoundException;
+import com.cine.back.paging.PagingUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,7 +27,7 @@ public class RecommendationService {
     private final UserFavoriteRepository userFavoriteRepository;
     private final MovieDetailRepository movieDetailRepository;
 
-    public List<RecommendationRequest> recommendMovies(String userId) {
+    public Page<RecommendationRequest> recommendMovies(String userId, Pageable pageable) {
 
         // 현재 사용자의 찜 목록을 가져오기
         List<UserFavorite> currentUserFavorites = userFavoriteRepository.findByUserId(userId).orElse(Collections.emptyList());
@@ -72,7 +76,13 @@ public class RecommendationService {
                             });
                 });
         log.info("# [GET][/recommendations] 서비스 - 유저 {}의 찜목록 : {} ", userId, recommendedMovies);
-        return recommendedMovies;
+
+        // 페이징 처리
+        int start = (int)pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), recommendedMovies.size());
+        Page<RecommendationRequest> page = new PageImpl<>(recommendedMovies.subList(start, end), pageable, recommendedMovies.size());
+
+        return page;
     }
 
     // 다른 사용자들의 찜목록 조회
@@ -98,7 +108,7 @@ public class RecommendationService {
                 .orElseThrow(MovieNotFoundException::new);
     }
 
-    // MovieDetailEntity를 MovieDetailDto로 변환
+    // MovieDetailEntity를 RecommendationRequest로 변환
     private RecommendationRequest convertToDto(MovieDetailEntity movie) {
         return new RecommendationRequest(
             movie.getMovieId(),

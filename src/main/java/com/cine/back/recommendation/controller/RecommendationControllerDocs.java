@@ -2,6 +2,9 @@ package com.cine.back.recommendation.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cine.back.recommendation.dto.RecommendationRequest;
@@ -21,6 +24,7 @@ public interface RecommendationControllerDocs {
         @ApiResponse(responseCode = "400", description = "잘못된 요청으로 인한 영화 추천 실패"),
         @ApiResponse(responseCode = "500", description = "서버 내부 오류로 인한 영화 추천 실패")
     })
-    List<RecommendationRequest> getRecommendations(
-         @RequestParam(value = "userId") String userId);
+    ResponseEntity<Page<RecommendationRequest>> getRecommendations(
+         @RequestParam(value = "userId") String userId,
+         Pageable pageable);
 }
