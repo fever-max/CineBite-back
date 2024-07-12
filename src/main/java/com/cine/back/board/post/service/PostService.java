@@ -75,7 +75,7 @@ public class PostService {
             log.info("# 게시글 조회 완료 - No: {}", postEntity.getPostNo());
             return responseDto;
         } catch (NoSuchElementException e) {
-            log.error("#조회할 게시글이 없음 - {}", e.getMessage());
+            log.error("# 조회할 게시글이 없음 - {}", e.getMessage());
             throw e;
         }
     }
