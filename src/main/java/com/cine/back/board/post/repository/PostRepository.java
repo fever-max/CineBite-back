@@ -14,4 +14,13 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
 
     // 인기 게시글 3개 조회
     List<PostEntity> findTop3ByOrderByHitCountDesc();
+
+    // 글 제목으로 검색
+    List<PostEntity> findByPostTitleContaining(String title);
+
+    // 글 내용으로 검색
+    List<PostEntity> findByPostContentContaining(String content);
+
+    // 작성자로 검색
+    List<PostEntity> findByUserIdContaining(String userId);
 }
