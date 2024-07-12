@@ -27,15 +27,17 @@ public class RecommendationService {
 
         // 현재 사용자의 찜 목록을 가져오기
         List<UserFavorite> currentUserFavorites = userFavoriteRepository.findByUserId(userId).orElse(Collections.emptyList());
+
+        // 가져온 찜목록에서 영화번호들만 Set에 추가
         Set<Integer> currentUserMovieIds = currentUserFavorites.stream()
                 .map(UserFavorite::getMovieId)
                 .collect(Collectors.toSet());
 
-        // 다른 사용자들의 찜 목록을 가져오기
+        // 모든 사용자들의 찜 목록을 가져오기
         Map<String, List<UserFavorite>> allUserFavorites = getAllUserFavorites();
         log.info("# [GET][/recommendations] 서비스 - 다른 사용자들의 찜목록 : {} ", allUserFavorites);
 
-        // 현재 사용자와 다른 사용자의 찜 목록을 비교하여 유사한 사용자들을 찾습니다.
+        // 현재 사용자와 다른 사용자의 찜 목록을 비교하여 유사한 사용자들을 찾기
         Map<String, Double> similarityScores = new HashMap<>();
         for (Map.Entry<String, List<UserFavorite>> entry : allUserFavorites.entrySet()) {
             String otherUserId = entry.getKey();
@@ -64,7 +66,7 @@ public class RecommendationService {
                             .map(UserFavorite::getMovieId)
                             .filter(movieId -> !currentUserMovieIds.contains(movieId)) // 현재 사용자가 보지 않은 영화만 추천
                             .filter(movieId -> !recommendedMovieIds.contains(movieId)) // 중복 제거
-                            .map(this::findMovieById) // 영화 정보를 가져옵니다.
+                            .map(this::findMovieById) // 영화 정보를 가져오기
                             .map(this::convertToDto) // 가져오고 싶은 데이터(DTO)로 변환
                             .forEach(movie -> {
                                 recommendedMovies.add(movie);
@@ -98,7 +100,7 @@ public class RecommendationService {
                 .orElseThrow(MovieNotFoundException::new);
     }
 
-    // MovieDetailEntity를 MovieDetailDto로 변환
+    // MovieDetailEntity에서 필요한 필드만 가져와 MovieDetailDto로 변환
     private RecommendationRequest convertToDto(MovieDetailEntity movie) {
         return new RecommendationRequest(
             movie.getMovieId(),
