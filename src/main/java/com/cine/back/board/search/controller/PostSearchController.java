@@ -44,7 +44,7 @@ public class PostSearchController implements PostSearchControllerDocs {
     @Override
     @PostMapping("/post/userId")
     public ResponseEntity<List<PostResponseDto>> findByUser(@RequestBody PostUserIdDto postUserIdDto) {
-        log.info("[POST][/search/post/userId] - 게시글 내용 조회: {}", postUserIdDto.userId());
+        log.info("[POST][/search/post/userId] - 게시글 작성자 조회: {}", postUserIdDto.userId());
         List<PostResponseDto> postResponseDtos = searchService.getPostsByUser(postUserIdDto.userId());
         return ResponseEntity.ok().body(postResponseDtos);
     }
