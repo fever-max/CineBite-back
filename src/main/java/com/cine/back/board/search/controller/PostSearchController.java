@@ -8,14 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cine.back.board.post.dto.PostRequestDto;
 import com.cine.back.board.post.dto.PostResponseDto;
 import com.cine.back.board.search.dto.PostContentDto;
 import com.cine.back.board.search.dto.PostTitleDto;
 import com.cine.back.board.search.dto.PostUserIdDto;
 import com.cine.back.board.search.service.PostSearchService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
