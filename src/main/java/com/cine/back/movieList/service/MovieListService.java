@@ -1,5 +1,6 @@
 package com.cine.back.movieList.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,8 +74,8 @@ public class MovieListService {
                     .findByTitleContainingOrCredits_Cast_NameOrGenres_Name(keyword, keyword, keyword);
             if (searchResults.isEmpty()) {
                 log.warn("검색 결과 없음 - '{}'에 대한 영화를 찾지 못했습니다.", keyword);
-                // 검색 결과가 없을 경우 비슷한 장르의 영화 추천
-                return recommendSimilarGenre(keyword);
+                // 검색 결과가 없을 경우 전체 영화 목록(인기순) 반환
+                return getAllMovieList().orElse(new ArrayList<>());
             }
             return searchResults;
         } catch (Exception e) {
@@ -83,14 +84,4 @@ public class MovieListService {
         }
     }
 
-    // 비슷한 장르 영화 추천
-    public List<MovieDetailEntity> recommendSimilarGenre(String genre) {
-        log.info("영화 추천 서비스 - 같은 장르 영화 추천: {}", genre);
-        try {
-            return movieDetailRepository.findByGenres_NameOrderByReleaseDateDesc(genre);
-        } catch (Exception e) {
-            log.error("영화 추천 서비스 - 같은 장르 영화 추천 실패", e);
-            return List.of();
-        }
-    }
 }

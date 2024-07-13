@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cine.back.movieList.dto.Genre;
@@ -84,21 +83,4 @@ public class MovieListController implements MovieListControllerDocs {
         }
     }
 
-    // 같은 장르의 영화 추천
-    @GetMapping("/recommend")
-    public ResponseEntity<List<MovieDetailEntity>> recommendSimilarGenreMovies(@RequestParam String genre) {
-        log.info("영화 추천 컨트롤러 컨트롤러 실행 - 장르: {}", genre);
-        try {
-            List<MovieDetailEntity> recommendedMovies = movieListService.recommendSimilarGenre(genre);
-            if (recommendedMovies.isEmpty()) {
-                log.warn("영화 추천 컨트롤러 - 추천할 영화 없음: {}", genre);
-                return ResponseEntity.noContent().build();
-            }
-            log.info("영화 추천 컨트롤러 - 추천 영화 반환: {}", recommendedMovies);
-            return ResponseEntity.ok(recommendedMovies);
-        } catch (Exception e) {
-            log.error("영화 추천 컨트롤러 - 추천 중 오류 발생: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
 }
