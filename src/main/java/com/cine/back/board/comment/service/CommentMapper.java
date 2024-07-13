@@ -41,7 +41,8 @@ public class CommentMapper {
                 commentEntity.getCommentNo(),
                 commentEntity.getUserId(),
                 commentEntity.getCommentContent(),
-                commentEntity.getCreatedDate());
+                commentEntity.getCreatedDate(),
+                commentEntity.getUpdateDate());
     }
 
     public List<CommentResponseDto> toResponseDtos(List<CommentEntity> commentEntities) {
@@ -62,7 +63,8 @@ public class CommentMapper {
                 replyEntity.getReplyNo(),
                 replyEntity.getUserId(),
                 replyEntity.getReplyContent(),
-                replyEntity.getCreatedDate());
+                replyEntity.getCreatedDate(),
+                replyEntity.getUpdateDate());
     }
 
     public List<ReplyResponseDto> toReplyResponseDtos(List<ReplyEntity> replyEntities) {

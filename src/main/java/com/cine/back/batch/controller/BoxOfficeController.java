@@ -2,7 +2,9 @@ package com.cine.back.batch.controller;
 
 import com.cine.back.batch.response.BoxOfficeResponse;
 import com.cine.back.batch.service.ApiCall;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +22,7 @@ public class BoxOfficeController {
     }
 
     @GetMapping("/getMovieInfo")
-    public ResponseEntity<BoxOfficeResponse> getBoxOfficeInfo(){
+    public ResponseEntity<BoxOfficeResponse> getBoxOfficeInfo() {
         return ResponseEntity.ok(apiCall.getDailyBoxOffice());
     }
 }
