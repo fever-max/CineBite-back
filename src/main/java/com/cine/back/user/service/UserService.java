@@ -9,4 +9,6 @@ public interface UserService {
     public boolean validatePassword(String userId, String userPwd);
     
     public UserDTO updateUser(UserDTO request);
+
+    public void modify(UserDTO userDto);
 }
