@@ -27,7 +27,8 @@ public class TomatoController implements TomatoControllerDocs {
     }
 
     @PostMapping("/{movieId}/rate")
-    public ResponseEntity<?> rateMovie(@RequestBody Evaluation evaluation, @PathVariable int movieId) {
+    public ResponseEntity<?> rateMovie(@RequestBody Evaluation evaluation,
+            @PathVariable(value = "movieId") int movieId) {
         try {
             log.info("[POST][/movie/{}/rate] - 평가 저장", movieId);
             EvaluateResponse response = evaluateService.rateMovie(movieId, evaluation);
@@ -39,8 +40,8 @@ public class TomatoController implements TomatoControllerDocs {
 
     @DeleteMapping("/{movieId}/deleteRating")
     public ResponseEntity<?> deleteRating(
-                @RequestParam String userId,
-                @PathVariable int movieId) {
+            @RequestParam(value = "userId") String userId,
+            @PathVariable(value = "movieId") int movieId) {
         try {
             log.info("[DELETE][/movie/{}/deleteRating] - 평가 삭제", movieId);
             evaluateService.deleteRating(userId, movieId);

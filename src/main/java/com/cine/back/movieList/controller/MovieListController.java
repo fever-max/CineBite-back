@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cine.back.movieList.dto.Cast;
 import com.cine.back.movieList.dto.Genre;
+import com.cine.back.movieList.dto.WeeklyBoxOffices;
 import com.cine.back.movieList.entity.MovieDetailEntity;
 import com.cine.back.movieList.service.MovieListService;
 
@@ -31,8 +33,8 @@ public class MovieListController implements MovieListControllerDocs {
     }
 
     // 흥행 높은순 정렬
-    @Override
     @GetMapping("/movieList")
+    @Override
     public ResponseEntity<Optional<List<MovieDetailEntity>>> getMoviePopularity() {
         log.info("전체 영화 조회 컨트롤러");
         Optional<List<MovieDetailEntity>> allMovieList = movieListService.getAllMovieList();
@@ -42,7 +44,7 @@ public class MovieListController implements MovieListControllerDocs {
     // 장르별 정렬
     @Override
     @PostMapping("/genresList")
-    public ResponseEntity<Optional<List<MovieDetailEntity>>> getMovieGenres(@RequestBody Genre genre) {
+    public ResponseEntity<Optional<List<MovieDetailEntity>>> getMovieGenres(@RequestBody List<Genre> genre) {
         log.info("장르별 조회 컨트롤러");
         Optional<List<MovieDetailEntity>> genresList = movieListService.getMovieGenres(genre);
         return ResponseEntity.ok().body(genresList);
@@ -51,9 +53,9 @@ public class MovieListController implements MovieListControllerDocs {
     // 배우별 정렬
     @Override
     @PostMapping("/actorList")
-    public ResponseEntity<Optional<List<MovieDetailEntity>>> getMovieActors(@RequestBody String actor) {
+    public ResponseEntity<Optional<List<MovieDetailEntity>>> getMovieActors(@RequestBody Cast cast) {
         log.info("배우별 조회 컨트롤러");
-        Optional<List<MovieDetailEntity>> actorsList = movieListService.getMovieActors(actor);
+        Optional<List<MovieDetailEntity>> actorsList = movieListService.getMovieActors(cast);
         return ResponseEntity.ok().body(actorsList);
     }
 
@@ -100,5 +102,14 @@ public class MovieListController implements MovieListControllerDocs {
             log.error("영화 추천 컨트롤러 - 추천 중 오류 발생: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    // 박스오피스
+    @Override
+    @GetMapping("/movieRanking")
+    public ResponseEntity<List<WeeklyBoxOffices>> getMovieRankingList() {
+        log.info("박스오피스 조회 컨트롤러");
+        List<WeeklyBoxOffices> weeklyBoxOffices = movieListService.getMovieRankingList();
+        return ResponseEntity.ok().body(weeklyBoxOffices);
     }
 }
