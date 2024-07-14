@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Like", description = "Post Like API")
 public interface LikeControllerDocs {
 
-        @Operation(summary = "게시글 좋아요", description = "게시글을 좋아합니다.")
+        @Operation(summary = "게시글 좋아요", description = "작성자의 아이디로 게시글을 좋아합니다.")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "좋아요 성공"),
                         @ApiResponse(responseCode = "404", description = "좋아요 저장 실패"),

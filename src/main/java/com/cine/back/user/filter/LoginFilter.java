@@ -54,7 +54,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
         String userRole = auth.getAuthority();
         String userNick = customUserDetails.getUserNick();
-        String access = jwtProvider.create("access", userId, userNick, userRole, 10*60*1000L); // 10분
+        String access = jwtProvider.create("access", userId, userNick, userRole, 30*60*1000L); // 30분
         String refresh = jwtProvider.create("refresh", userId, userNick, userRole, 24*60*60*1000L); // 1일
         addRefreshEntity(userId, refresh, 86400000L);
 
