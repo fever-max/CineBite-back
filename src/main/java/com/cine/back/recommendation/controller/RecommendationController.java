@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -25,7 +23,7 @@ public class RecommendationController implements RecommendationControllerDocs{
     @Override
     @GetMapping("/recommendations")
     public ResponseEntity<Page<RecommendationRequest>> getRecommendations(@RequestParam String userId, Pageable pageable) {
-        log.info("# [GET][/recommendations] 유저 {}의 찜목록 컨트롤러 응답 ", userId);
+        log.info("[GET][/recommendations] 유저 {}의 찜목록 컨트롤러 응답 ", userId);
         Page<RecommendationRequest> recommendations = recommendationService.recommendMovies(userId, pageable);
         return ResponseEntity.ok(recommendations);
     }

@@ -37,7 +37,7 @@ public class EvaluateService {
 
     @Transactional
     public EvaluateResponse rateMovie(int movieId, Evaluation evaluation) {
-        log.info("[POST][/movie/{}/rate] - 평가 정보!!!! :{} ", movieId, evaluation);
+        log.info("# 평가 정보 :{} ", movieId, evaluation);
         UserRatingRequest userRatingRequest = evaluation.userRatingRequest();
         MovieRatingRequest movieRatingRequest = evaluation.movieRatingRequest();
 
@@ -48,7 +48,7 @@ public class EvaluateService {
 
         updateMovieRating(movie, userRatingRequest.rating(), movieRatingRequest);
         movieDetailRepository.save(movie);
-        log.info("[POST][/movie/{}/deleteRating] - 유저 정보 : {} 영화 정보 : {} ", movieId, userRating, movie);
+        log.info("# 유저 정보 : {} 영화 정보 : {} ", movieId, userRating, movie);
         return movieMapper.toResponse(userRating, movie, null);
     }
 
@@ -63,7 +63,7 @@ public class EvaluateService {
         userRatingRepository.delete(existingRating);
 
         saveUserRevalue(movieId, userId);
-        log.info("[DELETE][/movie/{}/deleteRating] - 삭제한 평가 정보 :{} ", movieId, existingRating);
+        log.info("# 삭제한 평가 정보 :{} ", movieId, existingRating);
     }
 
     // 해당 영화에 대한 평가 유무 확인

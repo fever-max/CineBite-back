@@ -46,9 +46,9 @@ public class UserFavoriteController implements UserFavoriteControllerDocs{
     
     @Override
     @GetMapping("/list")
-    public ResponseEntity<List<FavoriteResponseDto>> getToFavoriteList(@RequestParam String userId) {
+    public ResponseEntity<List<FavoriteResponseDto>> getToUserFavoriteList(@RequestParam String userId) {
         log.info("[GET][/favorites/list] - 찜 목록 조회 : {}", userId);
-        List<FavoriteResponseDto> favoriteDto = userFavoriteService.favoriteList(userId);
+        List<FavoriteResponseDto> favoriteDto = userFavoriteService.getToFavoriteList(userId);
         log.info("전체 찜목록 반환 : {}", favoriteDto);
         return ResponseEntity.ok().body(favoriteDto);
     }

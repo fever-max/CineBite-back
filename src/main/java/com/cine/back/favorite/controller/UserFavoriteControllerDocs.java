@@ -50,7 +50,7 @@ public interface UserFavoriteControllerDocs {
                 @ApiResponse(responseCode = "400", description = "잘못된 요청으로 인해 조회되지않았습니다."),
                 @ApiResponse(responseCode = "500", description = "서버 내부 오류로 인한 찜 목록 조회 실패"),
     })
-        ResponseEntity<List<FavoriteResponseDto>> getToFavoriteList(
+        ResponseEntity<List<FavoriteResponseDto>> getToUserFavoriteList(
             @RequestParam(value = "userId") String userId);
 
     @Operation(summary = "사용자의 찜 목록 페이징", description = "해당 영화를 페이징합니다.")

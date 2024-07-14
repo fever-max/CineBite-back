@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class PagingUtil {
-
     public static PageRequest createPageRequest(int page, int size, String sortBy, Sort.Direction direction) {
         return PageRequest.of(page - 1, size, Sort.by(direction, sortBy));
     }
