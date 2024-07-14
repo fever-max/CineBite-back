@@ -39,6 +39,9 @@ public class FileUtil {
         String savedName = userId + ".png";
         Path savePath = Paths.get(uploadPath, savedName).toAbsolutePath();
         try {
+            if (Files.exists(savePath)) {
+                Files.delete(savePath);
+            }
             Files.createDirectories(savePath.getParent());
             Files.copy(file.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {

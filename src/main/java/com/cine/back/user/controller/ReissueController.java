@@ -16,13 +16,14 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.Date;
+import java.util.*;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
 @ResponseBody
-public class ReissueController implements ReissueControllerDocs{
+public class ReissueController implements ReissueControllerDocs {
 
     private final JwtProvider jwtProvider;
     private final RefreshRepository refreshRepository;
@@ -37,6 +38,7 @@ public class ReissueController implements ReissueControllerDocs{
     @Transactional
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         log.debug("Reissue started");
+
         // refresh token 확인
         String refresh = null;
         Cookie[] cookies = request.getCookies();
@@ -70,7 +72,7 @@ public class ReissueController implements ReissueControllerDocs{
             log.debug("Invalid refresh category");
             return new ResponseEntity<>("invalid refresh category", HttpStatus.BAD_REQUEST);
         }
-    
+
         // DB 존재여부 확인
         Boolean isExist = refreshRepository.existsByRefresh(refresh);
         if (!isExist) {
@@ -82,9 +84,9 @@ public class ReissueController implements ReissueControllerDocs{
         String userNick = jwtProvider.getUserNick(refresh);
         String userRole = jwtProvider.getUserRole(refresh);
 
-        String newAccess = jwtProvider.create("access", userId, userNick, userRole, 10 * 60 * 1000L);
+        String newAccess = jwtProvider.create("access", userId, userNick, userRole, 30 * 60 * 1000L);
         String newRefresh = jwtProvider.create("refresh", userId, userNick, userRole, 24 * 60 * 60 * 1000L);
-    
+
         // DB에 기존 토큰 삭제 후 새 토큰 저장
         refreshRepository.deleteByRefresh(refresh);
         addRefreshEntity(userId, newRefresh, 24 * 60 * 60 * 1000L);
@@ -97,18 +99,21 @@ public class ReissueController implements ReissueControllerDocs{
     }
 
     private void addRefreshEntity(String userId, String refresh, Long expiredMs) {
+        List<RefreshEntity> existingTokens = refreshRepository.findByUserId(userId);
+        if (!existingTokens.isEmpty()) {
+            refreshRepository.deleteAll(existingTokens);
+        }
         Date date = new Date(System.currentTimeMillis() + expiredMs);
         RefreshEntity refreshEntity = new RefreshEntity();
         refreshEntity.setUserId(userId);
         refreshEntity.setRefresh(refresh);
-        refreshEntity.setExpiration(date.toString());
+        refreshEntity.setExpiration(date);
         refreshRepository.save(refreshEntity);
-        log.debug("new refresh: {}", userId);
     }
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
+        cookie.setMaxAge(24 * 60 * 60);
         cookie.setHttpOnly(true);
         log.debug("Cookie created: {}={}", key, value);
         return cookie;

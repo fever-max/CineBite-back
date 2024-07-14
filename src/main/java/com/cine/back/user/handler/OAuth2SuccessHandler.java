@@ -44,11 +44,15 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     
     // Refresh 토큰 저장
     private void addRefreshEntity(String userId, String refresh, Long expiredMs) {
+        List<RefreshEntity> existingTokens = refreshRepository.findByUserId(userId);
+        if (!existingTokens.isEmpty()) {
+            refreshRepository.deleteAll(existingTokens);
+        }
         Date date = new Date(System.currentTimeMillis() + expiredMs);
         RefreshEntity refreshEntity = new RefreshEntity();
         refreshEntity.setUserId(userId);
         refreshEntity.setRefresh(refresh);
-        refreshEntity.setExpiration(date.toString());
+        refreshEntity.setExpiration(date);
         refreshRepository.save(refreshEntity);
     }
 
