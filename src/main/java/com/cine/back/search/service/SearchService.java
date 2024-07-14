@@ -23,8 +23,7 @@ public class SearchService {
     @Transactional
     public int saveSearchList(SearchRequest request) {
         log.info("검색어 저장 서비스 시작");
-
-        String userId = checkUserId(request.userId());
+        String userId = request.userId();
         List<String> keywords = request.keywords();
 
         int searchListNo = 0;
@@ -51,14 +50,6 @@ public class SearchService {
         return searchListNo;
     }
 
-    private String checkUserId(String userId) {
-        if (userId == null || userId.isEmpty()) {
-            userId = "guest";
-            log.info("사용자 ID가 없습니다. 'guest'로 설정합니다.");
-        }
-        return userId;
-    }
-
     @Transactional
     private SearchEntity saveSearchEntity(String userId, String keyword) {
         SearchEntity searchEntity = buildSearchEntity(userId, keyword);
@@ -77,13 +68,6 @@ public class SearchService {
     }
 
     @Transactional(readOnly = true)
-    public List<SearchEntity> findSearchEntitiesByKeyword(String keyword) {
-        List<SearchEntity> searchEntities = searchRepository.findBySearchKeyword(keyword);
-        log.info("'{}' 키워드를 포함하는 검색어 엔티티 조회 결과: {}", keyword, searchEntities);
-        return searchEntities;
-    }
-
-    @Transactional(readOnly = true)
     public List<SearchEntity> getSearchListByUserId(String userId) {
         List<SearchEntity> searchEntities;
         if (userId == null) {
@@ -91,7 +75,7 @@ public class SearchService {
         } else {
             searchEntities = searchRepository.findByUserIdOrderBySearchListTimeDesc(userId);
         }
-        log.info("'{}' 사용자의 검색 리스트 조회 결과: {}", userId, searchEntities);
+        log.info("'{}' 사용자의 최근 검색 리스트 조회 결과: {}", userId, searchEntities);
         return searchEntities;
     }
 
@@ -115,4 +99,5 @@ public class SearchService {
             throw new RuntimeException("사용자 검색어 전체 삭제 실패", e);
         }
     }
+
 }

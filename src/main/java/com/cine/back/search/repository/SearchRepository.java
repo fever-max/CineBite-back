@@ -14,7 +14,7 @@ public interface SearchRepository extends JpaRepository<SearchEntity, Integer> {
     List<SearchEntity> findByUserIdOrderBySearchListTimeDesc(String userId);
 
     // 검색어로 조회
-    List<SearchEntity> findBySearchKeyword(String searchKeyword);
+    SearchEntity findBySearchKeyword(String searchKeyword);
 
     // 검색어번호로 조회
     SearchEntity findBySearchListNo(int searchListNo);
