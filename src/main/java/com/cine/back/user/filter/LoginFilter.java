@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
+
 @Slf4j
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
@@ -67,11 +70,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     
     // Refresh 토큰 저장
     private void addRefreshEntity(String userId, String refresh, Long expiredMs) {
+        List<RefreshEntity> existingTokens = refreshRepository.findByUserId(userId);
+        if (!existingTokens.isEmpty()) {
+            refreshRepository.deleteAll(existingTokens);
+        }
         Date date = new Date(System.currentTimeMillis() + expiredMs);
         RefreshEntity refreshEntity = new RefreshEntity();
         refreshEntity.setUserId(userId);
         refreshEntity.setRefresh(refresh);
-        refreshEntity.setExpiration(date.toString());
+        refreshEntity.setExpiration(date);
         refreshRepository.save(refreshEntity);
     }
 
@@ -98,5 +105,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected String obtainUsername(HttpServletRequest request) {
         return request.getParameter("userId");
+    }
+
+    // 매일 자정에 실행되도록 설정
+    @Scheduled(cron = "0 0 0 * * *")
+    @Transactional
+    public void cleanupExpiredTokens() {
+        Date now = new Date();
+        List<RefreshEntity> expiredTokens = refreshRepository.findByExpirationBefore(now);
+        refreshRepository.deleteAll(expiredTokens);
     }
 }

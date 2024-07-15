@@ -1,5 +1,6 @@
 package com.cine.back.user.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -15,10 +17,16 @@ import lombok.Setter;
 public class RefreshEntity {
     
     @Id
+    @Column(length = 20, name = "user_no")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userNo;
     
+    @Column(length = 50, name = "user_id")
     private String userId;
+
+    @Column(length = 5000, name = "refresh")
     private String refresh;
-    private String expiration;
+
+    @Column(length = 100, name = "expiration")
+    private Date expiration;
 }

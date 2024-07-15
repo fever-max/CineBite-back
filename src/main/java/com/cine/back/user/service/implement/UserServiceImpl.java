@@ -92,10 +92,6 @@ public class UserServiceImpl implements UserService {
 
         if (multipartFile != null) {
             profileImage = fileUtil.saveFile(multipartFile, userDTO.getUserName());
-            if (beforeProfileImage != null) {
-                log.info("기존 프로필 이미지 삭제 시도: " + beforeProfileImage);
-                fileUtil.deleteFile(beforeProfileImage);
-            }
             user.setUserProfileImg(profileImage);
         }
         if (Boolean.parseBoolean(userDTO.getIsDelete())) {
