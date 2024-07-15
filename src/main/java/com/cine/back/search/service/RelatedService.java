@@ -33,6 +33,7 @@ public class RelatedService {
         log.info("연관 검색어 저장 서비스 - 완료");
     }
 
+    @Transactional
     public void processRelatedEntity(int previousSearchListNo, String keyword) {
         log.info("연관 검색어 저장/업데이트 서비스 - 시작");
 
@@ -52,24 +53,16 @@ public class RelatedService {
         log.info("연관 검색어 저장/업데이트 서비스 - 완료");
     }
 
+    @Transactional
     private void saveNewRelatedEntity(SearchEntity searchEntity, String keyword) {
         RelatedEntity relatedEntity = createRelatedEntity(searchEntity, keyword);
         relatedRepository.save(relatedEntity);
         log.info("새로운 연관 검색어 저장 - 키워드 '{}'", keyword);
     }
 
-    private RelatedEntity createRelatedEntity(SearchEntity searchEntity, String keyword) {
-        RelatedEntity relatedEntity = new RelatedEntity();
-        relatedEntity.setSearchListNo(searchEntity.getSearchListNo());
-        relatedEntity.setSearchKeyword(searchEntity.getSearchKeyword());
-        relatedEntity.setSearchRelatedWord(keyword);
-        relatedEntity.setSearchRelatedCount(1);
-        return relatedEntity;
-    }
-
+    @Transactional
     private void updateRelatedEntity(RelatedEntity relatedEntity) {
         relatedEntity.setSearchRelatedCount(relatedEntity.getSearchRelatedCount() + 1);
-        relatedRepository.save(relatedEntity);
         log.info("기존 연관 검색어 업데이트 - 키워드 '{}'", relatedEntity.getSearchRelatedWord());
     }
 
@@ -79,9 +72,18 @@ public class RelatedService {
                 .findBySearchKeywordOrderBySearchRelatedCountDesc(keyword);
         if (relatedEntities.isEmpty()) {
             log.info("'{}' 키워드를 포함하는 연관 검색어 조회 실패", keyword);
-            return Collections.emptyList();
+        } else {
+            log.info("'{}' 키워드를 포함하는 연관 검색어 조회: {}", keyword, relatedEntities);
         }
-        log.info("'{}' 키워드를 포함하는 연관 검색어 조회: {}", keyword, relatedEntities);
         return relatedEntities;
+    }
+
+    private RelatedEntity createRelatedEntity(SearchEntity searchEntity, String keyword) {
+        RelatedEntity relatedEntity = new RelatedEntity();
+        relatedEntity.setSearchListNo(searchEntity.getSearchListNo());
+        relatedEntity.setSearchKeyword(searchEntity.getSearchKeyword());
+        relatedEntity.setSearchRelatedWord(keyword);
+        relatedEntity.setSearchRelatedCount(1);
+        return relatedEntity;
     }
 }
