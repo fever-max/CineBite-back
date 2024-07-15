@@ -92,7 +92,7 @@ public class MovieListService {
             if (searchResults.isEmpty()) {
                 log.warn("검색 결과 없음 - '{}'에 대한 영화를 찾지 못했습니다.", keyword);
                 // 검색 결과가 없을 경우 전체 영화 목록(인기순) 반환
-                return getAllMovieList().orElse(new ArrayList<>());
+                return List.of();
             }
             return searchResults;
         } catch (Exception e) {
