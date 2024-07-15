@@ -2,26 +2,59 @@
 
 // import static org.mockito.ArgumentMatchers.anyInt;
 
-// import com.cine.back.favorite.dto.FavoriteRequestDto;
-// import com.cine.back.movieList.entity.MovieDetailEntity;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.context.event.ApplicationReadyEvent;
+// import org.springframework.context.event.EventListener;
 
-// public class AddFavoriteTest() {
-//     // given
-//     FavoriteRequestDto favoriteDto = new FavoriteRequestDto("user1", 123);
-//     MovieDetailEntity movieDetail = new MovieDetailEntity(5, 3, 62.5);
-//     movieDetail.setMovieId(123);
-//     movieDetail.setPosterPath("/path/to/poster");
-//     movieDetail.setTitle("Test Movie");
+// import com.cine.back.favorite.entity.UserFavorite;
+// import com.cine.back.favorite.repository.UserFavoriteRepository;
 
-//     when(movieConfig.fetchMovieDetails(anyInt())).thenReturn(movieDetail);
-//     when(userFavoriteRepository.save(any(UserFavorite.class))).thenAnswer(i -> i.getArguments()[0]);
+// import lombok.RequiredArgsConstructor;
 
-//     // when
-//     Optional<FavoriteResponseDto> response = userFavoriteService.addFavorite(favoriteDto);
+// @RequiredArgsConstructor
+// public class AddFavoriteTest {
 
-//     // then
-//     assertTrue(response.isPresent());
-//     assertEquals(123, response.get().movieId());
-//     assertEquals(62.5, response.get().tomatoScore(), 0.01);
+//     @Autowired
+//     private final UserFavoriteRepository userFavoriteRepository;
+
+//     @EventListener(ApplicationReadyEvent.class)
+//     public void initData() {
+//         userFavoriteRepository.save(UserFavorite.builder()
+//                 .userId("유저1")
+//                 .movieId(11)
+//                 .posterPath("포스터1")
+//                 .title("제목1")
+//                 .tomatoScore(10)
+//                 .build());
+//         userFavoriteRepository.save(UserFavorite.builder()
+//                 .userId("유저2")
+//                 .movieId(11)
+//                 .posterPath("포스터2")
+//                 .title("제목2")
+//                 .tomatoScore(10)
+//                 .build());
+//         userFavoriteRepository.save(UserFavorite.builder()
+//                 .userId("유저3")
+//                 .movieId(11)
+//                 .posterPath("포스터3")
+//                 .title("제목3")
+//                 .tomatoScore(10)
+//                 .build());
+//         userFavoriteRepository.save(UserFavorite.builder()
+//                 .userId("유저4")
+//                 .movieId(11)
+//                 .posterPath("포스터4")
+//                 .title("제목4")
+//                 .tomatoScore(10)
+//                 .build());
+//         userFavoriteRepository.save(UserFavorite.builder()
+//                 .userId("유저5")
+//                 .movieId(11)
+//                 .posterPath("포스터5")
+//                 .title("제목5")
+//                 .tomatoScore(10)
+//                 .build());
+ 
+//     }
 
 // }

@@ -5,24 +5,26 @@ import org.springframework.web.bind.annotation.*;
 import com.cine.back.favorite.dto.FavoriteRequestDto;
 import com.cine.back.favorite.dto.FavoriteResponseDto;
 import com.cine.back.favorite.service.UserFavoriteService;
+import com.cine.back.paging.PageService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/favorites")
 public class UserFavoriteController implements UserFavoriteControllerDocs{
 
     private final UserFavoriteService userFavoriteService;
-
-    public UserFavoriteController(UserFavoriteService userFavoriteService) {
-        this.userFavoriteService = userFavoriteService;
-    }
+    private final PageService pageService;
 
     @Override
     @PostMapping("/add")
@@ -44,10 +46,17 @@ public class UserFavoriteController implements UserFavoriteControllerDocs{
     
     @Override
     @GetMapping("/list")
-    public ResponseEntity<List<FavoriteResponseDto>> getToFavoriteList(@RequestParam String userId) {
+    public ResponseEntity<List<FavoriteResponseDto>> getToUserFavoriteList(@RequestParam String userId) {
         log.info("[GET][/favorites/list] - 찜 목록 조회 : {}", userId);
-        List<FavoriteResponseDto> favoriteDto = userFavoriteService.favoriteList(userId);
+        List<FavoriteResponseDto> favoriteDto = userFavoriteService.getToFavoriteList(userId);
         log.info("전체 찜목록 반환 : {}", favoriteDto);
         return ResponseEntity.ok().body(favoriteDto);
+    }
+
+    @GetMapping("/paging/favoriteList")
+    public ResponseEntity<Page<FavoriteResponseDto>> getToFavoriteListPaged(@RequestParam(value ="userId") String userId, Pageable pageable) {
+        log.info("[GET][/favorites/paged-list] - 페이징된 찜 목록 조회");
+        Page<FavoriteResponseDto> favoriteDtoPage = pageService.getPagedList(userId, pageable);
+        return ResponseEntity.ok().body(favoriteDtoPage);
     }
 }

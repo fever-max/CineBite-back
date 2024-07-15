@@ -1,5 +1,7 @@
 package com.cine.back.favorite.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cine.back.favorite.entity.UserFavorite;
@@ -18,4 +20,6 @@ public interface UserFavoriteRepository extends JpaRepository<UserFavorite, Long
     boolean existsByUserIdAndMovieId(String userId, int movieId);
 
     Optional<UserFavorite> findByUserIdAndMovieId(String userId, int movieId);
+
+    Page<UserFavorite> findByUserId(String userId, Pageable pageable);
 }
